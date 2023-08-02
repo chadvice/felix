@@ -37,11 +37,6 @@ const routes: Routes = [
     redirectTo: 'homePage',
     pathMatch: 'full'
   }
-  // {
-  //   path: 'alerts/alert/:AlertId',
-  //   loadComponent: () => import('../tab3/alert-detail/alert-detail.page').then( m => m.AlertDetailPage),
-  //   canActivate: [isLoggedInGuard]
-  // }
 ];
 
 @NgModule({
