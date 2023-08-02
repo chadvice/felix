@@ -1,4 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
+import {CdkDragDrop, CdkDrag, CdkDropList, moveItemInArray, DragDropModule} from '@angular/cdk/drag-drop';
 
 import { SylvesterApiService } from '../sylvester-api.service';
 import { SylvesterMessengerService } from '../sylvester-messenger.service';
@@ -11,9 +12,14 @@ import { Subscription } from 'rxjs';
   styleUrls: ['./table-detail.component.scss']
 })
 export class TableDetailComponent implements OnInit, OnDestroy {
+  isLoading: boolean = false;
+
   dataTableName: string = '';
   dataTable: table | null = null;
+
   displayData!: row[];
+  displayedColumns!: string[];
+
   tableNameSubscription!: Subscription;
 
   constructor (
@@ -35,22 +41,20 @@ export class TableDetailComponent implements OnInit, OnDestroy {
   }
 
   getTableData(): void {
+    this.isLoading = true;
     this.apiService.getTable(this.dataTableName).subscribe(table => {
       this.dataTable = table;
       this.displayData = table.data.rows;
-      console.log();
+      this.displayedColumns = table.data.columns.map(col => col.name);
+
+      this.isLoading = false;
     })
   }
 
-  getDisplayedColumns(): string[] {
-    if (this.dataTable) {
-      return this.dataTable?.data.columns .map(col => col.name)
-    } else {
-      return [];
-    }
+  rowClicked(row: any): void {
   }
 
-  rowClicked(row: any): void {
-
+  drop(event: CdkDragDrop<string[]>) {
+    moveItemInArray(this.displayedColumns, event.previousIndex, event.currentIndex);
   }
 }
