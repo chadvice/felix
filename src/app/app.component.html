@@ -6,7 +6,6 @@
     <a mat-button style="font-family: monospace; font-size: 24px; font-weight: bold;" [routerLink]="'/homePage'" [disabled]="!auth.isAuthenticated()"> NELNET </a>
     &nbsp;&nbsp;
     <div *ngIf="auth.isAuthenticated()">
-      <!-- <a mat-button style="font-family: monospace; font-size: 24px; font-weight: bold;" [routerLink]="'/homePage'"> NELNET </a> -->
       <button mat-button style="font-size: 18px; padding-right: 10px; padding-left: 10px;" *ngFor="let item of navigation"
         [routerLink]="[item.link]" routerLinkActive="mat-accent" color="white" [disabled]=item.disabled>
         {{item.label}}
@@ -23,7 +22,6 @@
 <mat-sidenav-container *ngIf="auth.isAuthenticated()" class="sidenav-container">
   <mat-sidenav #sidenav mode="side" opened class="sidenav">
     <mat-nav-list>
-      <!-- <a mat-list-item href="javascript:void(0)" (click)="sidenav.toggle()">Toggle</a> -->
       <a mat-list-item *ngFor="let table of rows" href="javascript:void(0)" (click)="showTableDetail(table)">{{table.name}}</a>
     </mat-nav-list>
   </mat-sidenav>
