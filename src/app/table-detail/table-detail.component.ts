@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 
 import { SylvesterApiService } from '../sylvester-api.service';
 import { SylvesterMessengerService } from '../sylvester-messenger.service';
-import { table } from '../nelnet/nelnet-table';
+import { row, table } from '../nelnet/nelnet-table';
 import { Subscription } from 'rxjs';
 
 @Component({
@@ -11,8 +11,9 @@ import { Subscription } from 'rxjs';
   styleUrls: ['./table-detail.component.scss']
 })
 export class TableDetailComponent implements OnInit, OnDestroy {
-  tableName: string = '';
-  table: table | null = null;
+  dataTableName: string = '';
+  dataTable: table | null = null;
+  displayData!: row[];
   tableNameSubscription!: Subscription;
 
   constructor (
@@ -22,7 +23,7 @@ export class TableDetailComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.tableNameSubscription = this.messenger.detailTableName.subscribe(tableName => {
-      this.tableName = tableName;
+      this.dataTableName = tableName;
 
       this.getTableData();
     })
@@ -34,8 +35,22 @@ export class TableDetailComponent implements OnInit, OnDestroy {
   }
 
   getTableData(): void {
-    this.apiService.getTable(this.tableName).subscribe(table => {
-      this.table = table;
+    this.apiService.getTable(this.dataTableName).subscribe(table => {
+      this.dataTable = table;
+      this.displayData = table.data.rows;
+      console.log();
     })
+  }
+
+  getDisplayedColumns(): string[] {
+    if (this.dataTable) {
+      return this.dataTable?.data.columns .map(col => col.name)
+    } else {
+      return [];
+    }
+  }
+
+  rowClicked(row: any): void {
+
   }
 }
