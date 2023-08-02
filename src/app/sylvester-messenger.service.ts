@@ -15,7 +15,8 @@ export class SylvesterMessengerService {;
 
   constructor() { }
 
-  setDetailTableName(tableInfo: TableInfo) {
+  setDetailTableName(tableInfo: TableInfo | null) {
     this.detailTableNameSource.next(tableInfo);
   }
+
 }

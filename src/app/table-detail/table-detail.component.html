@@ -5,7 +5,7 @@
 <div style="padding: 10px;">
     <div style="padding: 10px; margin-bottom: 10px; text-align: left;">
         <span style="font-size: x-large; font-weight: bold;">{{dataTableDescription}}</span>
-        <span style="float:right;">
+        <span *ngIf="showControlButtons" style="float:right;">
             <button mat-raised-button color="primary" style="margin-left: 10px;">New Row</button>
             <button mat-raised-button color="primary" style="margin-left: 10px;">New Table</button>
             <button mat-raised-button color="primary" style="margin-left: 10px;">Edit {{dataTableName}} Structure</button>

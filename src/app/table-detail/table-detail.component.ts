@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, Input } from '@angular/core';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 
 import { SylvesterApiService } from '../sylvester-api.service';
@@ -15,7 +15,8 @@ export class TableDetailComponent implements OnInit, OnDestroy {
   isLoading: boolean = false;
 
   dataTableName: string = '';
-  dataTableDescription: string = '';
+  @Input() showControlButtons: boolean = true;
+  @Input() dataTableDescription: string = '';
   dataTable: table | null = null;
 
   displayData!: row[];
