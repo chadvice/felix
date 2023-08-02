@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 
+import { AuthService } from './auth/auth.service';
 import { SylvesterApiService } from './sylvester-api.service';
 import { SylvesterMessengerService } from './sylvester-messenger.service';
 import { table, row } from './nelnet/nelnet-table';
@@ -17,7 +18,15 @@ export class AppComponent implements OnInit {
   rows!: row[];
   selectedTableName: string | null = null;
 
+  navigation = [
+    { link: '/usersPage', label: 'Users', disabled: false },
+    { link: '/rolesPage', label: 'Roles', disabled: false },
+    { link: '/metadataPage', label: 'Metadata', disabled: false },
+    { link: '/migrationsPage', label: 'Migrations', disabled: false }
+  ];
+
   constructor (
+    public auth: AuthService,
     private apiService: SylvesterApiService,
     private messenger: SylvesterMessengerService,
     private router: Router
@@ -27,12 +36,13 @@ export class AppComponent implements OnInit {
     this.apiService.getTables().subscribe(tables => {
       this.tables = tables;
       this.rows = tables.data.rows;
-      console.log();
+      
+      this.router.navigate(['/homePage']);
     })
   }
 
-  showTableDetail(tableName: any): void {
-    this.messenger.setDetailTableName(tableName);
+  showTableDetail(table: row): void {
+    this.messenger.setDetailTableName({name: table.name, description: table.description})
     this.router.navigate(['/tableDetail']);
   }
 }

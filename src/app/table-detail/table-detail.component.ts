@@ -15,6 +15,7 @@ export class TableDetailComponent implements OnInit, OnDestroy {
   isLoading: boolean = false;
 
   dataTableName: string = '';
+  dataTableDescription: string = '';
   dataTable: table | null = null;
 
   displayData!: row[];
@@ -28,9 +29,11 @@ export class TableDetailComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    this.tableNameSubscription = this.messenger.detailTableName.subscribe(tableName => {
-      this.dataTableName = tableName;
-
+    this.tableNameSubscription = this.messenger.detailTableName.subscribe(tableInfo => {
+      if (tableInfo) {
+        this.dataTableName = tableInfo.name;
+        this.dataTableDescription = tableInfo.description;
+      }
       this.getTableData();
     })
 

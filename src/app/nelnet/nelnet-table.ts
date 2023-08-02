@@ -5,7 +5,7 @@ export interface column {
   
 export interface row {
     id: number,
-    name: true,
+    name: string,
     description: string,
     created_at: Date
 }
