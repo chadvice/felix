@@ -2,9 +2,6 @@
 
 @include mat.core();
 
-// #04121D
-// #314C5E
-
 $apollo-typography: mat.define-typography-config(
   $font-family: "Roboto",
   $button: mat.define-typography-level($font-size: 14px, $font-weight: 500, $letter-spacing: normal)
