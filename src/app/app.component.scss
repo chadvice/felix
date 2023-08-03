@@ -2,6 +2,10 @@
     flex: 1 1 auto;
 }
 
+.mdc-list-item:focus {
+  color: green !important;
+}
+
 .sidenav-container {
     position: absolute;
     // top: 60px;
@@ -18,3 +22,7 @@
   background: #314C5E;
 //   background: rgba(255, 0, 0, 0.5);
 }
+
+// .active-list-item {
+//   color: green !important;
+// }

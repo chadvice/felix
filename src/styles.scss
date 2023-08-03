@@ -4,6 +4,16 @@
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
+// We have to unset these in order for the active item in the sidenave to be highlighted
+.mdc-list-item__primary-text {
+  color: unset !important;
+}
+
+a.mdc-list-item {
+  // color: unset !important;
+  color: lightgray !important;
+}
+///////////////////////////////////////////////////////////////////////////////////////////
 
 // Overlay style for loading spinner
 .loading-overlay {
