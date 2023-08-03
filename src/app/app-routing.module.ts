@@ -29,7 +29,11 @@ const routes: Routes = [
     component: MigrationsPageComponent
   },
   {
-    path: 'tableDetail',
+    path: 'tableDetail/:dataTableName/:dataTableDescription',
+    component: TableDetailComponent
+  },
+  {
+    path: 'tableDetail/:dataTableDescription',
     component: TableDetailComponent
   },
   {

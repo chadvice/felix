@@ -3,7 +3,6 @@ import { Router } from '@angular/router';
 
 import { AuthService } from './auth/auth.service';
 import { SylvesterApiService } from './sylvester-api.service';
-import { SylvesterMessengerService } from './sylvester-messenger.service';
 import { table, row } from './nelnet/nelnet-table';
 
 @Component({
@@ -21,14 +20,13 @@ export class AppComponent implements OnInit {
   navigation = [
     { link: '/usersPage', label: 'Users', disabled: false },
     { link: '/rolesPage', label: 'Roles', disabled: false },
-    { link: '/metadataPage', label: 'Metadata', disabled: false },
-    { link: '/migrationsPage', label: 'Migrations', disabled: false }
+    { link: '/tableDetail/Metadata', label: 'Metadata', disabled: false },
+    { link: '/tableDetail/migrations/Migrations', label: 'Migrations', disabled: false }
   ];
 
   constructor (
     public auth: AuthService,
     private apiService: SylvesterApiService,
-    private messenger: SylvesterMessengerService,
     private router: Router
   ) {}
 
@@ -39,10 +37,5 @@ export class AppComponent implements OnInit {
       
       this.router.navigate(['/homePage']);
     })
-  }
-
-  showTableDetail(table: row): void {
-    this.messenger.setDetailTableName({name: table.name, description: table.description})
-    this.router.navigate(['/tableDetail']);
   }
 }

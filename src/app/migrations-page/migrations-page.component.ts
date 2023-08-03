@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 
-import { SylvesterMessengerService } from '../sylvester-messenger.service';
 
 @Component({
   selector: 'app-migrations-page',
@@ -9,11 +8,9 @@ import { SylvesterMessengerService } from '../sylvester-messenger.service';
 })
 export class MigrationsPageComponent implements OnInit {
   constructor(
-    private messenger: SylvesterMessengerService
   ) {}
 
   ngOnInit(): void {
-    this.messenger.setDetailTableName({name: 'migrations', description: 'Migrations'})
   }
 
 }
