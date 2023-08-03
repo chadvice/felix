@@ -12,8 +12,6 @@ import { TableDetailComponent } from './table-detail/table-detail.component';
 import { HomePageComponent } from './home-page/home-page.component';
 import { UsersPageComponent } from './users-page/users-page.component';
 import { RolesPageComponent } from './roles-page/roles-page.component';
-import { MetadataPageComponent } from './metadata-page/metadata-page.component';
-import { MigrationsPageComponent } from './migrations-page/migrations-page.component';
 
 
 @NgModule({
@@ -22,9 +20,7 @@ import { MigrationsPageComponent } from './migrations-page/migrations-page.compo
     TableDetailComponent,
     HomePageComponent,
     UsersPageComponent,
-    RolesPageComponent,
-    MetadataPageComponent,
-    MigrationsPageComponent
+    RolesPageComponent
   ],
   imports: [
     BrowserModule,
