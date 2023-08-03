@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { OidcClient, TokenResponse } from '@pingidentity-developers-experience/ping-oidc-client-sdk';
+import { AuthConfig } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -14,13 +15,10 @@ export class AuthService {
   }
 
   async init() {
-    const environmentID = '2e6fb850-41fc-4f87-9fbe-18fe1447439c';
-    const clientID = 'e8e7c06f-8bd3-4554-a4ba-d5b32541cca6';
-
     try {
-      this.oidcClient = await OidcClient.initializeFromOpenIdConfig(`https://auth.pingone.com/${environmentID}/as`, {
-        client_id: clientID,
-        redirect_uri: 'http://localhost:4200',
+      this.oidcClient = await OidcClient.initializeFromOpenIdConfig(`https://auth.pingone.com/${AuthConfig.pingEnvironmentID}/as`, {
+        client_id: AuthConfig.pingClientID,
+        redirect_uri: AuthConfig.pingRedirectUri,
         scope: 'openid profile email, revokescope'
       });
 
@@ -57,7 +55,7 @@ export class AuthService {
   }
 
   logout() {
-    this.oidcClient?.endSession('http://localhost:4200');
+    this.oidcClient?.endSession(AuthConfig.pingEndSessionUri);
   }
 
   isAuthenticated(): boolean {
