@@ -63,4 +63,8 @@ export class AuthService {
       return false;
     }
   }
+
+  getToken(): string | undefined {
+    return this.token?.access_token;
+  }
 }

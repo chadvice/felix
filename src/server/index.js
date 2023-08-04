@@ -7,6 +7,23 @@ const cors = require('cors');
 
 const port = process.env.PORT || '3000';
 const rootPath = path.resolve(__dirname, '../../dist');
+
+// Ping JWT Authentication Stuff
+// const eJwt = require('express-jwt');
+var { expressjwt: eJwt } = require("express-jwt");
+const jwks = require('jwks-rsa');
+const jwtCheck = eJwt({
+  secret: jwks.expressJwtSecret({
+      cache: true,
+      rateLimit: true,
+      jwksRequestsPerMinute: 5,
+      jwksUri: 'https://auth.pingone.com/2e6fb850-41fc-4f87-9fbe-18fe1447439c/as/jwks'
+  }),
+  // audience: 'https://agon-apollo.herokuapp.com/api',
+  // issuer: 'https://agon.us.auth0.com/',
+  algorithms: ['RS256']
+});
+
 const app = express();
 
 const corsOptions = {
@@ -29,8 +46,8 @@ app.use(cors(corsOptions));
 
 app.use(express.static(`${rootPath}/sylvester`));
 
-app.use('/api', routes, (err, req, res, next) => {
-// app.use('/api', jwtCheck, routes, (err, req, res, next) => {
+// app.use('/api', routes, (err, req, res, next) => {
+app.use('/api', jwtCheck, routes, (err, req, res, next) => {
   if (err.name === 'UnauthorizedError') {
     return res.status(401).send({
       success: false,

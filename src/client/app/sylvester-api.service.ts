@@ -1,30 +1,33 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, catchError, of } from 'rxjs';
+
 import { environment } from '../environments/environment';
+import {AuthService } from './auth/auth.service';
 import { table } from './nelnet/nelnet-table';
 
 @Injectable({
   providedIn: 'root'
 })
 export class SylvesterApiService {
-  private httpOptions = {
-    headers: new HttpHeaders(
-      {
-        'Content-Type': 'application/json; charset=UTF-8',
-        'x-api-key': 'fpQwusK0HH6Ltlox2yf3r738VuG0ri1qaopWAzMa'
-      }
-    )
-  };
+  // private httpOptions = {
+  //   headers: new HttpHeaders(
+  //     {
+  //       'Content-Type': 'application/json; charset=UTF-8',
+  //       'x-api-key': 'fpQwusK0HH6Ltlox2yf3r738VuG0ri1qaopWAzMa'
+  //     }
+  //   )
+  // };
 
   constructor(
-    private http: HttpClient
+    private http: HttpClient,
+    private auth: AuthService
   ) { }
 
   getTables():Observable<table> {
     const url: string = `${environment.sylvesterApiUrl}/tables`
 
-    return this.http.get<table>(url, this.httpOptions).pipe(
+    return this.http.get<table>(url, this.getHttpOptions()).pipe(
       catchError(this.handleError<table>('getTables')),
     )
   }
@@ -32,9 +35,21 @@ export class SylvesterApiService {
   getTable(tableName: string):Observable<table> {
     const url: string = `${environment.sylvesterApiUrl}/table/${tableName}`
 
-    return this.http.get<table>(url, this.httpOptions).pipe(
+    return this.http.get<table>(url, this.getHttpOptions()).pipe(
       catchError(this.handleError<table>('getTable')),
     )
+  }
+
+  getHttpOptions() {
+    const httpOptions = {
+      headers: new HttpHeaders(
+        {
+          Authorization: 'Bearer ' + this.auth.getToken()
+        }
+      )
+    }
+
+    return httpOptions;
   }
 
   private handleError<T>(operation = 'operation', result?: T) {
