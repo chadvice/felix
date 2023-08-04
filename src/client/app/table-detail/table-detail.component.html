@@ -5,7 +5,14 @@
 <div style="padding: 10px;">
     <div style="padding: 10px; margin-bottom: 10px; text-align: left;">
         <span style="font-size: x-large; font-weight: bold;">{{dataTableDescription}}</span>
+        <span *ngIf="filterString.length > 0">&nbsp; [filter active]</span>
+
         <span *ngIf="showControlButtons" style="float:right;">
+            <button mat-raised-button color="primary" style="margin-left: 10px;" (click)="toggleShowFilter()">
+                <span *ngIf="showFilter">Hide</span>
+                <span *ngIf="!showFilter">Show</span>
+                Filter
+            </button>
             <button mat-raised-button color="primary" style="margin-left: 10px;">New Row</button>
             <button mat-raised-button color="primary" style="margin-left: 10px;">New Table</button>
             <button mat-raised-button color="primary" style="margin-left: 10px;">Edit {{dataTableName}} Structure</button>
@@ -14,8 +21,26 @@
         </span>
     </div>
 
+    <div *ngIf="showFilter" style="width: 100%;">
+        <mat-form-field *ngIf="dataTable">
+            <mat-label>Select Filter Column</mat-label>
+            <mat-select [(value)]="selectedFilterColumn" name="filterColumn" (selectionChange)="filterColumnChanged()">
+                <mat-option>--</mat-option>
+                <mat-option *ngFor="let column of filterColumns" [value]="column">
+                    {{column}}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+
+        <mat-form-field *ngIf="dataTable && selectedFilterColumn" style="margin-left: 10px;">
+            <mat-label>Filter</mat-label>
+            <input matInput name="filterString" [(ngModel)]="filterString" (input)="onFilterChange()">
+            <button mat-button matSuffix (click)="filterString=''; sortData(currentSort);"><mat-icon>close</mat-icon></button>
+        </mat-form-field>
+    </div>
+
     <mat-card appearance="outlined" class="mat-mdc-elevation-specific mat-elevation-z8" style="width: 100%;">
-        <div class="table-container">
+        <div [class]="getTableClass()">
             <table mat-table
                     [dataSource]="sortedData"  
                     matSort
