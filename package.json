@@ -1,6 +1,10 @@
 {
   "name": "sylvester",
   "version": "1.0.0",
+  "engines": {
+    "node": "18.16.0",
+    "npm": "9.5.1"
+  },
   "scripts": {
     "ng": "ng",
     "start": "node src/server/index.js",
