@@ -3,17 +3,10 @@ export interface column {
     type: string
 }
   
-export interface row {
-    id: number,
-    name: string,
-    description: string,
-    created_at: Date
-}
-  
 export interface table {
     data: {
       columns: column[],
-      rows: row[]
+      rows: any[]
     },
     message: string
 }
