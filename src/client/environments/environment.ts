@@ -1,4 +1,6 @@
-
+export const environment = {
+    sylvesterApiUrl: 'http://localhost:3000/api'
+}
 
 export const AuthConfig = {
     pingEnvironmentID: '2e6fb850-41fc-4f87-9fbe-18fe1447439c',

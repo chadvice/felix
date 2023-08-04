@@ -1,15 +1,13 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, catchError, of } from 'rxjs';
-
+import { environment } from '../environments/environment';
 import { table } from './nelnet/nelnet-table';
 
 @Injectable({
   providedIn: 'root'
 })
 export class SylvesterApiService {
-  baseUrl: string = 'https://t7c9qq4yyi.execute-api.us-east-1.amazonaws.com/development';
-
   private httpOptions = {
     headers: new HttpHeaders(
       {
@@ -24,7 +22,7 @@ export class SylvesterApiService {
   ) { }
 
   getTables():Observable<table> {
-    const url: string = `${this.baseUrl}/table`
+    const url: string = `${environment.sylvesterApiUrl}/tables`
 
     return this.http.get<table>(url, this.httpOptions).pipe(
       catchError(this.handleError<table>('getTables')),
@@ -32,7 +30,7 @@ export class SylvesterApiService {
   }
 
   getTable(tableName: string):Observable<table> {
-    const url: string = `${this.baseUrl}/table/${tableName}`
+    const url: string = `${environment.sylvesterApiUrl}/table/${tableName}`
 
     return this.http.get<table>(url, this.httpOptions).pipe(
       catchError(this.handleError<table>('getTable')),

@@ -11,7 +11,7 @@
         {{item.label}}
       </button>
     </div>
-    <button  mat-raised-button style="font-size: 18px" color="accent" (click)="test()">TEST</button>
+
     <span class="spacer"></span>
 
     <button *ngIf="!auth.isAuthenticated()" mat-raised-button style="font-size: 18px" color="accent" (click)="auth.login()">Login</button>

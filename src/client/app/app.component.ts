@@ -35,8 +35,6 @@ export class AppComponent implements OnInit {
       this.apiService.getTables().subscribe(tables => {
         this.tables = tables;
         this.rows = tables.data.rows;
-        
-        // this.router.navigate(['/homePage']);
       })
     })
   }
