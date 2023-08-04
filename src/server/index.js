@@ -33,7 +33,6 @@ const corsOptions = {
 
 // Redirect production requests to SSL site (taken from https://jaketrent.com/post/https-redirect-node-heroku/)
 if(process.env.NODE_ENV === 'production') {
-  app.use()
     app.use((req, res, next) => {
       if (req.header('x-forwarded-proto') !== 'https')
         res.redirect(`https://${req.header('host')}${req.url}`)
