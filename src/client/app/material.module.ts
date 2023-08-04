@@ -8,6 +8,7 @@ import { MatListModule } from '@angular/material/list';
 import { MatTableModule } from '@angular/material/table';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatCardModule } from '@angular/material/card';
+import { MatSortModule } from '@angular/material/sort';
 
 @NgModule({
     exports: [
@@ -18,7 +19,8 @@ import { MatCardModule } from '@angular/material/card';
         MatListModule,
         MatTableModule,
         MatProgressSpinnerModule,
-        MatCardModule
+        MatCardModule,
+        MatSortModule
     ]
 })
 

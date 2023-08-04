@@ -41,6 +41,7 @@ export class SylvesterApiService {
   }
 
   getHttpOptions() {
+    const x = this.auth.getToken();
     const httpOptions = {
       headers: new HttpHeaders(
         {

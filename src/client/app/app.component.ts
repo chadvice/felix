@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 
 import { AuthService } from './auth/auth.service';
 import { SylvesterApiService } from './sylvester-api.service';
-import { table, row } from './nelnet/nelnet-table';
+import { table } from './nelnet/nelnet-table';
 
 @Component({
   selector: 'app-root',
@@ -14,7 +14,7 @@ export class AppComponent implements OnInit {
   title = 'Sylvester';
   
   tables!: table;
-  rows!: row[];
+  rows!: any[];
   selectedTableName: string | null = null;
 
   navigation = [
