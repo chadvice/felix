@@ -3,7 +3,7 @@
     <!-- <button mat-icon-button (click)="sidenav.toggle()">
       <mat-icon>menu</mat-icon>
     </button> -->
-    <a mat-button style="font-family: monospace; font-size: 24px; font-weight: bold;" [routerLink]="'/homePage'" [disabled]="!auth.isAuthenticated()"> NELNET </a>
+    <a mat-button style="font-family:'Courier New', Courier, monospace; font-size: 24px; font-weight: bold;" [routerLink]="'/homePage'" [disabled]="!auth.isAuthenticated()"> NELNET </a>
     &nbsp;&nbsp;
     <div *ngIf="auth.isAuthenticated()">
       <button mat-button style="font-size: 18px; padding-right: 10px; padding-left: 10px;" *ngFor="let item of navigation"
@@ -11,7 +11,7 @@
         {{item.label}}
       </button>
     </div>
-
+    <button  mat-raised-button style="font-size: 18px" color="accent" (click)="test()">TEST</button>
     <span class="spacer"></span>
 
     <button *ngIf="!auth.isAuthenticated()" mat-raised-button style="font-size: 18px" color="accent" (click)="auth.login()">Login</button>
