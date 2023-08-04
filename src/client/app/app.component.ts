@@ -31,11 +31,14 @@ export class AppComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.apiService.getTables().subscribe(tables => {
-      this.tables = tables;
-      this.rows = tables.data.rows;
-      
-      this.router.navigate(['/homePage']);
+    this.auth.init().then(_ => {
+      this.apiService.getTables().subscribe(tables => {
+        this.tables = tables;
+        this.rows = tables.data.rows;
+        
+        // this.router.navigate(['/homePage']);
+      })
     })
   }
+
 }

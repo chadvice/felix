@@ -11,7 +11,7 @@ export class AuthService {
   userInfo?: any;
 
   constructor() {
-    this.init();
+    // this.init();
   }
 
   async init() {
@@ -22,12 +22,10 @@ export class AuthService {
         scope: 'openid profile email, revokescope'
       });
 
-      const x = await this.oidcClient.hasToken();
-      console.log();
-
       if (await this.oidcClient.hasToken()) {
         const token = await this.oidcClient.getToken();
         this.tokenAvailable(token);
+      } else {
       }
     } catch (err) {
       console.error('Error initializing OidcClient', err);
@@ -59,7 +57,7 @@ export class AuthService {
   }
 
   isAuthenticated(): boolean {
-    if (this.token) {
+    if (this. token) {
       return true;
     } else {
       return false;
