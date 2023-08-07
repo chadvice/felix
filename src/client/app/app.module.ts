@@ -12,7 +12,7 @@ import { TableDetailComponent } from './table-detail/table-detail.component';
 import { HomePageComponent } from './home-page/home-page.component';
 import { UsersPageComponent } from './users-page/users-page.component';
 import { RolesPageComponent } from './roles-page/roles-page.component';
-
+import { SessionExpiredDialogComponent } from './session-expired-dialog/session-expired-dialog.component';
 
 @NgModule({
   declarations: [
@@ -20,7 +20,8 @@ import { RolesPageComponent } from './roles-page/roles-page.component';
     TableDetailComponent,
     HomePageComponent,
     UsersPageComponent,
-    RolesPageComponent
+    RolesPageComponent,
+    SessionExpiredDialogComponent
   ],
   imports: [
     BrowserModule,

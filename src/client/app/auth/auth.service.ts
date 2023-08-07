@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
+import { MatDialogRef, MatDialog } from '@angular/material/dialog';
 import { OidcClient, TokenResponse } from '@pingidentity-developers-experience/ping-oidc-client-sdk';
 import { AuthConfig } from '../../environments/environment';
+import { SessionExpiredDialogComponent } from '../session-expired-dialog/session-expired-dialog.component';
 
 @Injectable({
   providedIn: 'root'
@@ -10,7 +12,11 @@ export class AuthService {
   token?: TokenResponse;
   userInfo?: any;
 
-  constructor() {
+  sessionExpiredDialogRef!: MatDialogRef<SessionExpiredDialogComponent>;
+
+  constructor(
+    private dialog: MatDialog,
+  ) {
     // this.init();
   }
 
@@ -25,10 +31,10 @@ export class AuthService {
       if (await this.oidcClient.hasToken()) {
         const token = await this.oidcClient.getToken();
         this.tokenAvailable(token);
-      } else {
       }
     } catch (err) {
-      console.error('Error initializing OidcClient', err);
+      console.log('Error initializing OidcClient', err);
+      this.sessionExpiredDialogRef = this.dialog.open(SessionExpiredDialogComponent, {disableClose: true});
     }
   }
 
@@ -57,7 +63,7 @@ export class AuthService {
   }
 
   isAuthenticated(): boolean {
-    if (this. token) {
+    if (this.token) {
       return true;
     } else {
       return false;
@@ -66,5 +72,18 @@ export class AuthService {
 
   getToken(): string | undefined {
     return this.token?.access_token;
+  }
+
+  getTokenResponse(): TokenResponse | undefined {
+    return this.token;
+  }
+
+  tokenExpired(): boolean {
+    if (this.token) {
+      const expiration = (JSON.parse(atob(this.token.access_token.split('.')[1]))).exp;
+      return (Math.floor((new Date).getTime() / 1000)) >= expiration;
+    } else {
+      return true;
+    }
   }
 }
