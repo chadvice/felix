@@ -16,12 +16,13 @@ export class AppComponent implements OnInit {
   tables!: table;
   rows!: any[];
   selectedTableName: string | null = null;
+  showSideNav: boolean = false;
 
   navigation = [
     { link: '/usersPage', label: 'Users', disabled: false },
     { link: '/rolesPage', label: 'Roles', disabled: false },
-    { link: '/tableDetail/Metadata', label: 'Metadata', disabled: false },
-    { link: '/tableDetail/migrations/Migrations', label: 'Migrations', disabled: false }
+    // { link: '/tableDetail/Metadata', label: 'Metadata', disabled: false },
+    // { link: '/tableDetail/migrations/Migrations', label: 'Migrations', disabled: false }
   ];
 
   constructor (
