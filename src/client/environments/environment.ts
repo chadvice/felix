@@ -1,5 +1,5 @@
 export const environment = {
-    sylvesterApiUrl: 'http://localhost:3000/api'
+    sylvesterApiUrl: 'http://localhost:3030/api'
 }
 
 export const AuthConfig = {

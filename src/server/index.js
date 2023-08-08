@@ -5,7 +5,7 @@ const path = require('path');
 const routes = require('./routes');
 const cors = require('cors');
 
-const port = process.env.PORT || '3000';
+const port = process.env.PORT || '3030';
 const rootPath = path.resolve(__dirname, '../../dist');
 
 // Ping JWT Authentication Stuff
