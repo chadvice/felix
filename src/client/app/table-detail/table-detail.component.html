@@ -37,6 +37,10 @@
             <input matInput name="filterString" [(ngModel)]="filterString" (input)="onFilterChange()">
             <button mat-button matSuffix (click)="filterString=''; sortData(currentSort);"><mat-icon>close</mat-icon></button>
         </mat-form-field>
+
+        <button *ngIf="dataTable && selectedFilterColumn" mat-raised-button color="primary" (click)="clearFilter()" style="margin-left: 10px;">
+            Clear Filter
+        </button>
     </div>
 
     <mat-card appearance="outlined" class="mat-mdc-elevation-specific mat-elevation-z8" style="width: 100%;">

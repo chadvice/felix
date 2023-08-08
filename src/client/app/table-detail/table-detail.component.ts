@@ -134,6 +134,12 @@ export class TableDetailComponent implements OnInit, OnDestroy {
     this.sortData(this.currentSort);
   }
 
+  clearFilter(): void {
+    this.selectedFilterColumn = '';
+    this.filterColumnChanged();
+    this.showFilter = false;
+  }
+
   rowClicked(row: any): void {
     console.log();
   }
