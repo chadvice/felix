@@ -1,0 +1,17 @@
+.mat-mdc-dialog-content { max-height: unset; }
+
+.form-container {
+    width: 100%;
+    height: calc(90vh - 180px);
+    margin: 10px;
+    overflow: auto;
+}
+
+.button-container {
+    text-align: center;
+    padding-top: 10px;
+}
+
+.mat-mdc-form-field {
+    padding-left: 10px;
+}

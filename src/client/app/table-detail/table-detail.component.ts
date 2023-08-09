@@ -1,12 +1,14 @@
 import { Component, OnInit, OnDestroy, Input } from '@angular/core';
+import { MatDialogRef, MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
 import { Sort } from '@angular/material/sort';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
+import { Observable, Subscription } from 'rxjs';
 
 import { UtilsService } from '../utils.service';
 import { SylvesterApiService } from '../sylvester-api.service';
-import { column, table } from '../nelnet/nelnet-table';
-import { Observable, Subscription } from 'rxjs';
+import { table } from '../nelnet/nelnet-table';
+import { TableRowEditorDialogComponent, TableRowEditorDialogData } from '../table-row-editor-dialog/table-row-editor-dialog.component';
 
 @Component({
   selector: 'app-table-detail',
@@ -35,10 +37,13 @@ export class TableDetailComponent implements OnInit, OnDestroy {
   selectedFilterColumn: string = '';
   filterString: string = '';
 
+  tableRowEditorDialogRef!: MatDialogRef<TableRowEditorDialogComponent>;
+
   constructor (
     private utils: UtilsService,
     private activeRoute: ActivatedRoute,
-    private apiService: SylvesterApiService
+    private apiService: SylvesterApiService,
+    private dialog: MatDialog
   ) {}
 
   ngOnInit(): void {
@@ -140,8 +145,14 @@ export class TableDetailComponent implements OnInit, OnDestroy {
     this.showFilter = false;
   }
 
-  rowClicked(row: any): void {
-    console.log();
+  rowClicked(index: number): void {
+    const dialogData: TableRowEditorDialogData = {
+      tableName: this.dataTableName,
+      tableDescription: this.dataTableDescription,
+      cols: this.dataTable.data.columns,
+      record: this.dataTable.data.rows[index]
+    }
+    this.tableRowEditorDialogRef = this.dialog.open(TableRowEditorDialogComponent, {data: dialogData, disableClose: true, height: '90%'});
   }
 
   getTableClass(): string {

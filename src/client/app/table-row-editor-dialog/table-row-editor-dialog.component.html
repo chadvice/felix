@@ -1,0 +1,19 @@
+<mat-dialog-content>
+    <mat-card appearance="outlined" class="mat-mdc-elevation-specific mat-elevation-z8">
+        <mat-card-header>
+            <mat-card-title>{{data.tableName}}</mat-card-title>
+            <mat-card-subtitle>{{data.tableDescription}}</mat-card-subtitle>
+        </mat-card-header>
+        <div class="form-container">
+            <mat-form-field *ngFor="let col of data.cols" style="width: 400px;">
+                <mat-label>{{col.name}}</mat-label>
+                <input matInput name="{{col.name}}" [(ngModel)]="data.record[col.name]">
+            </mat-form-field>
+        </div>
+    </mat-card>
+
+    <div class="button-container">
+        <button mat-raised-button color="accent" mat-dialog-close>Save</button>
+        <button mat-raised-button color="warn" style="margin-left: 10px;" mat-dialog-close>Cancel</button>
+    </div>
+</mat-dialog-content>

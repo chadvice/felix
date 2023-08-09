@@ -61,7 +61,7 @@
                 </ng-container>
 
                 <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true;"></tr>
-                <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="table-row" (click)="rowClicked(row)"></tr>
+                <tr mat-row *matRowDef="let row; let i=index; columns: displayedColumns;" class="table-row" (click)="rowClicked(i)"></tr>
             </table>
         </div>
     </mat-card>
