@@ -7,7 +7,7 @@
         <div class="form-container">
             <mat-form-field *ngFor="let col of data.cols" style="width: 400px;">
                 <mat-label>{{col.name}}</mat-label>
-                <input matInput name="{{col.name}}" [(ngModel)]="data.record[col.name]">
+                <input matInput name="{{col.name}}" [(ngModel)]="data.record[col.name]" [disabled]="col.name ==='id'">
             </mat-form-field>
         </div>
     </mat-card>
