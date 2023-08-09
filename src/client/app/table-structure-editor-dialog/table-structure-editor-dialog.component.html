@@ -1,0 +1,41 @@
+<mat-dialog-content>
+    <mat-card appearance="outlined" class="mat-mdc-elevation-specific mat-elevation-z8">
+        <mat-card-header>
+            <mat-card-title>
+                Edit Table Structure
+            </mat-card-title>
+        </mat-card-header>
+
+        <div class="form-container">
+            <mat-form-field style="width: 400px;">
+                <mat-label>Table Name</mat-label>
+                <input matInput name="tableName" [(ngModel)]="data.tableName">
+            </mat-form-field>
+
+            <mat-form-field style="width: 400px; margin-left: 10px;">
+                <mat-label>Table Description</mat-label>
+                <input matInput name="tableDescription" [(ngModel)]="data.tableDescription">
+            </mat-form-field>
+            <br>
+            <mat-form-field *ngFor="let col of cols">
+                <mat-label>Column Name</mat-label>
+                <input matInput name="{{col.name}}" [(ngModel)]="col.name" [disabled]="col.name ==='id'" (input)="colDataChanged()">
+                <button mat-button matSuffix color="warn" (click)="removeColumnClicked(col.name)"><mat-icon>delete</mat-icon></button>
+            </mat-form-field>
+        </div>
+    </mat-card>
+
+    <table>
+        <tr>
+            <td style="width: 33%; text-align: left;">
+                <button mat-raised-button color="accent" (click)="addColumn()" [disabled]="addMode">Add Column</button>
+            </td>
+            <td style="width: 34%; text-align: center;">
+                <button mat-raised-button color="accent" mat-dialog-close>Save</button>
+                <button mat-raised-button color="warn" style="margin-left: 10px;" mat-dialog-close>Cancel</button>
+            </td>
+            <td style="width: 33%; text-align: right;">
+            </td>
+        </tr>
+    </table>
+</mat-dialog-content>

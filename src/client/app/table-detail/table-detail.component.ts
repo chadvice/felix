@@ -9,6 +9,7 @@ import { UtilsService } from '../utils.service';
 import { SylvesterApiService } from '../sylvester-api.service';
 import { table } from '../nelnet/nelnet-table';
 import { TableRowEditorDialogComponent, TableRowEditorDialogData } from '../table-row-editor-dialog/table-row-editor-dialog.component';
+import { TableStructureEditorDialogComponent, TableStructureEditorDialogData } from '../table-structure-editor-dialog/table-structure-editor-dialog.component';
 
 @Component({
   selector: 'app-table-detail',
@@ -38,6 +39,7 @@ export class TableDetailComponent implements OnInit, OnDestroy {
   filterString: string = '';
 
   tableRowEditorDialogRef!: MatDialogRef<TableRowEditorDialogComponent>;
+  tableStructureEditorDialogRef!: MatDialogRef<TableStructureEditorDialogComponent>;
 
   constructor (
     private utils: UtilsService,
@@ -152,7 +154,18 @@ export class TableDetailComponent implements OnInit, OnDestroy {
       cols: this.dataTable.data.columns,
       record: this.dataTable.data.rows[index]
     }
+
     this.tableRowEditorDialogRef = this.dialog.open(TableRowEditorDialogComponent, {data: dialogData, disableClose: true, height: '90%'});
+  }
+
+  editTableStructure(): void {
+    const dialogData: TableStructureEditorDialogData = {
+      tableName: this.dataTableName,
+      tableDescription: this.dataTableDescription,
+      cols: this.dataTable.data.columns
+    }
+
+    this.tableStructureEditorDialogRef = this.dialog.open(TableStructureEditorDialogComponent, {data: dialogData, disableClose: true, height: '90%'});
   }
 
   getTableClass(): string {

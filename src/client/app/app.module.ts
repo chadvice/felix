@@ -15,6 +15,7 @@ import { RolesPageComponent } from './roles-page/roles-page.component';
 import { SessionExpiredDialogComponent } from './session-expired-dialog/session-expired-dialog.component';
 import { HttpInterceptService } from './http-intercept.service';
 import { TableRowEditorDialogComponent } from './table-row-editor-dialog/table-row-editor-dialog.component';
+import { TableStructureEditorDialogComponent } from './table-structure-editor-dialog/table-structure-editor-dialog.component';
 
 @NgModule({
   declarations: [
@@ -24,7 +25,8 @@ import { TableRowEditorDialogComponent } from './table-row-editor-dialog/table-r
     UsersPageComponent,
     RolesPageComponent,
     SessionExpiredDialogComponent,
-    TableRowEditorDialogComponent
+    TableRowEditorDialogComponent,
+    TableStructureEditorDialogComponent
   ],
   imports: [
     BrowserModule,
