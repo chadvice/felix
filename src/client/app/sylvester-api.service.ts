@@ -3,7 +3,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, catchError, of } from 'rxjs';
 
 import { environment } from '../environments/environment';
-import {AuthService } from './auth/auth.service';
+import { AuthService } from './auth/auth.service';
 import { table } from './nelnet/nelnet-table';
 
 @Injectable({
@@ -61,6 +61,11 @@ export class SylvesterApiService {
 
       // TODO: better job of transforming error for user consumption
       console.log(`${operation} failed: ${error.message}`);
+
+      if (error.status === 401) {
+        alert('apiservice::handleError(): error.status = 401, calling auth.init()')
+        this.auth.init();
+      }
 
       // Let the app keep running by returning an empty result.
       return of(result as T);
