@@ -28,7 +28,7 @@ export class SylvesterApiService {
     const url: string = `${environment.sylvesterApiUrl}/felixtables`
 
     return this.http.get<table>(url, this.getHttpOptions()).pipe(
-      catchError(this.handleError<table>('getTables')),
+      catchError(this.handleError<table>('getFelixTables')),
     )
   }
 
@@ -36,7 +36,7 @@ export class SylvesterApiService {
     const url: string = `${environment.sylvesterApiUrl}/felixtable/${tableName}`
 
     return this.http.get<table>(url, this.getHttpOptions()).pipe(
-      catchError(this.handleError<table>('getTable')),
+      catchError(this.handleError<table>('getFelixTable')),
     )
   }
 
