@@ -47,10 +47,10 @@ app.use(express.static(`${rootPath}/sylvester`));
 
 // app.use('/api', routes, (err, req, res, next) => {
 app.use('/api', jwtCheck, routes, (err, req, res, next) => {
-  if (err.name === 'UnauthorizedError') {
+  if (err.  name === 'UnauthorizedError') {
     return res.status(401).send({
       success: false,
-      message: 'No token provided.'
+      message: err.message
     });
   }
 });
