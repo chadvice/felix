@@ -1,9 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
 
 import { AuthService } from './auth/auth.service';
 import { SylvesterApiService } from './sylvester-api.service';
-import { table } from './nelnet/nelnet-table';
+import { SylvesterCollectionsDocument } from './nelnet/sylvester-collection';
 
 @Component({
   selector: 'app-root',
@@ -13,29 +12,25 @@ import { table } from './nelnet/nelnet-table';
 export class AppComponent implements OnInit {
   title = 'Sylvester';
   
-  tables!: table;
-  rows!: any[];
+  tables!: SylvesterCollectionsDocument[];
   selectedTableName: string | null = null;
   showSideNav: boolean = false;
 
   navigation = [
     { link: '/usersPage', label: 'Users', disabled: false },
-    { link: '/rolesPage', label: 'Roles', disabled: false },
-    // { link: '/tableDetail/Metadata', label: 'Metadata', disabled: false },
-    // { link: '/tableDetail/migrations/Migrations', label: 'Migrations', disabled: false }
+    { link: '/rolesPage', label: 'Roles', disabled: false }
   ];
 
   constructor (
     public auth: AuthService,
-    private apiService: SylvesterApiService,
-    private router: Router
+    private apiService: SylvesterApiService
   ) {}
 
   ngOnInit(): void {
     this.auth.init().then(_ => {
-      this.apiService.getFelixTables().subscribe(tables => {
+      this.apiService.getTables().subscribe(tables => {
         this.tables = tables;
-        this.rows = tables.data.rows;
+        console.log();
       })
     })
   }

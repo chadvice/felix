@@ -1,12 +1,12 @@
 import { Component, Inject } from '@angular/core';
 
-import { column } from '../nelnet/nelnet-table';
+import { felixColumn } from '../nelnet/nelnet-table';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 export interface TableRowEditorDialogData {
   tableName: string,
   tableDescription: string,
-  cols: column[],
+  cols: felixColumn[],
   record: any
 }
 

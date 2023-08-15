@@ -4,7 +4,8 @@ import { Observable, catchError, of } from 'rxjs';
 
 import { environment } from '../environments/environment';
 import { AuthService } from './auth/auth.service';
-import { table } from './nelnet/nelnet-table';
+import { felixTable } from './nelnet/nelnet-table';
+import { SylvesterCollectionsDocument } from './nelnet/sylvester-collection';
 
 @Injectable({
   providedIn: 'root'
@@ -24,35 +25,35 @@ export class SylvesterApiService {
     private auth: AuthService
   ) { }
 
-  getFelixTables():Observable<table> {
+  getFelixTables():Observable<felixTable> {
     const url: string = `${environment.sylvesterApiUrl}/felixtables`
 
-    return this.http.get<table>(url, this.getHttpOptions()).pipe(
-      catchError(this.handleError<table>('getFelixTables')),
+    return this.http.get<felixTable>(url, this.getHttpOptions()).pipe(
+      catchError(this.handleError<felixTable>('getFelixTables')),
     )
   }
 
-  getFelixTable(tableName: string):Observable<table> {
+  getFelixTable(tableName: string):Observable<felixTable> {
     const url: string = `${environment.sylvesterApiUrl}/felixtable/${tableName}`
 
-    return this.http.get<table>(url, this.getHttpOptions()).pipe(
-      catchError(this.handleError<table>('getFelixTable')),
+    return this.http.get<felixTable>(url, this.getHttpOptions()).pipe(
+      catchError(this.handleError<felixTable>('getFelixTable')),
     )
   }
 
-  getTables():Observable<table> {
+  getTables():Observable<SylvesterCollectionsDocument[]> {
     const url: string = `${environment.sylvesterApiUrl}/tables`
 
-    return this.http.get<table>(url, this.getHttpOptions()).pipe(
-      catchError(this.handleError<table>('getTables')),
+    return this.http.get<SylvesterCollectionsDocument[]>(url, this.getHttpOptions()).pipe(
+      catchError(this.handleError<SylvesterCollectionsDocument[]>('getTables')),
     )
   }
 
-  getTable(tableName: string):Observable<table> {
+  getTable(tableName: string):Observable<any[]> {
     const url: string = `${environment.sylvesterApiUrl}/table/${tableName}`
 
-    return this.http.get<table>(url, this.getHttpOptions()).pipe(
-      catchError(this.handleError<table>('getTable')),
+    return this.http.get<any[]>(url, this.getHttpOptions()).pipe(
+      catchError(this.handleError<any[]>('getTable')),
     )
   }
 

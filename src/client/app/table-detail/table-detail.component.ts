@@ -7,7 +7,7 @@ import { Observable, Subscription } from 'rxjs';
 
 import { UtilsService } from '../utils.service';
 import { SylvesterApiService } from '../sylvester-api.service';
-import { table } from '../nelnet/nelnet-table';
+import { felixTable } from '../nelnet/nelnet-table';
 import { TableRowEditorDialogComponent, TableRowEditorDialogData } from '../table-row-editor-dialog/table-row-editor-dialog.component';
 import { TableStructureEditorDialogComponent, TableStructureEditorDialogData } from '../table-structure-editor-dialog/table-structure-editor-dialog.component';
 
@@ -22,7 +22,7 @@ export class TableDetailComponent implements OnInit, OnDestroy {
   @Input() dataTableName: string = '';
   @Input() dataTableDescription: string = '';
   @Input() showControlButtons: boolean = true;
-  dataTable!: table;
+  dataTable!: felixTable;
 
   displayData!: any[];
   sortedData!: any[];
@@ -72,7 +72,7 @@ export class TableDetailComponent implements OnInit, OnDestroy {
 
   getTableData(): void {
     this.isLoading = true;
-    let tableData$: Observable<table>;
+    let tableData$: Observable<felixTable>;
 
     // If we were called without a dataTableName then we get all of the tables
     if (this.dataTableName) {

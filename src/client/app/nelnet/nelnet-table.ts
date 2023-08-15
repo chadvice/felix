@@ -1,11 +1,11 @@
-export interface column {
+export interface felixColumn {
     name: string,
     type: string
 }
   
-export interface table {
+export interface felixTable {
     data: {
-      columns: column[],
+      columns: felixColumn[],
       rows: any[]
     },
     message: string
