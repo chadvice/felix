@@ -10,3 +10,13 @@ export interface SylvesterCollectionsDocument {
         }
     ]
 }
+
+export interface SylvesterCollection {
+    columns: [
+        {
+            name: string,
+            type: string
+        }
+    ],
+    rows: any[]
+}

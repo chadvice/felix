@@ -1,15 +1,15 @@
-import { Component, OnInit, OnDestroy, Input } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { MatDialogRef, MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
 import { Sort } from '@angular/material/sort';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
-import { Observable, Subscription } from 'rxjs';
+import { Subscription } from 'rxjs';
 
 import { UtilsService } from '../utils.service';
 import { SylvesterApiService } from '../sylvester-api.service';
-import { felixTable } from '../nelnet/nelnet-table';
 import { TableRowEditorDialogComponent, TableRowEditorDialogData } from '../table-row-editor-dialog/table-row-editor-dialog.component';
 import { TableStructureEditorDialogComponent, TableStructureEditorDialogData } from '../table-structure-editor-dialog/table-structure-editor-dialog.component';
+import { SylvesterCollection } from '../nelnet/sylvester-collection';
 
 @Component({
   selector: 'app-table-detail',
@@ -19,10 +19,10 @@ import { TableStructureEditorDialogComponent, TableStructureEditorDialogData } f
 export class TableDetailComponent implements OnInit, OnDestroy {
   isLoading: boolean = false;
 
-  @Input() dataTableName: string = '';
-  @Input() dataTableDescription: string = '';
-  @Input() showControlButtons: boolean = true;
-  dataTable!: felixTable;
+  dataTableName!: string ;
+  dataTableDescription!: string;
+  showControlButtons: boolean = true;
+  dataTable!: SylvesterCollection;
 
   displayData!: any[];
   sortedData!: any[];
@@ -72,21 +72,13 @@ export class TableDetailComponent implements OnInit, OnDestroy {
 
   getTableData(): void {
     this.isLoading = true;
-    let tableData$: Observable<felixTable>;
 
-    // If we were called without a dataTableName then we get all of the tables
-    if (this.dataTableName) {
-      tableData$ = this.apiService.getFelixTable(this.dataTableName);
-    } else {
-      tableData$ = this.apiService.getFelixTables();
-    }
-
-    tableData$.subscribe(table => {
+    this.apiService.getTable(this.dataTableName).subscribe(table => {
       this.dataTable = table;
-      this.displayData = table.data.rows.slice();
+      this.displayData = table.rows.slice();
       this.sortData(this.currentSort);
-      this.displayedColumns = table.data.columns.map(col => col.name);
-      this.filterColumns = table.data.columns.filter(col => col.type === 'varchar').map(col => col.name);
+      this.displayedColumns = table.columns.map(col => col.name);
+      this.filterColumns = table.columns.filter(col => col.type === 'varchar').map(col => col.name);
 
       this.isLoading = false;
     })
@@ -151,8 +143,8 @@ export class TableDetailComponent implements OnInit, OnDestroy {
     const dialogData: TableRowEditorDialogData = {
       tableName: this.dataTableName,
       tableDescription: this.dataTableDescription,
-      cols: this.dataTable.data.columns,
-      record: this.dataTable.data.rows[index]
+      cols: this.dataTable.columns,
+      record: this.dataTable.rows[index]
     }
 
     this.tableRowEditorDialogRef = this.dialog.open(TableRowEditorDialogComponent, {data: dialogData, disableClose: true, height: '90%'});
@@ -162,7 +154,7 @@ export class TableDetailComponent implements OnInit, OnDestroy {
     const dialogData: TableStructureEditorDialogData = {
       tableName: this.dataTableName,
       tableDescription: this.dataTableDescription,
-      cols: this.dataTable.data.columns
+      cols: this.dataTable.columns
     }
 
     this.tableStructureEditorDialogRef = this.dialog.open(TableStructureEditorDialogComponent, {data: dialogData, disableClose: true, height: '90%'});

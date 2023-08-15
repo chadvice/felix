@@ -5,7 +5,7 @@ import { Observable, catchError, of } from 'rxjs';
 import { environment } from '../environments/environment';
 import { AuthService } from './auth/auth.service';
 import { felixTable } from './nelnet/nelnet-table';
-import { SylvesterCollectionsDocument } from './nelnet/sylvester-collection';
+import { SylvesterCollection, SylvesterCollectionsDocument } from './nelnet/sylvester-collection';
 
 @Injectable({
   providedIn: 'root'
@@ -25,21 +25,21 @@ export class SylvesterApiService {
     private auth: AuthService
   ) { }
 
-  getFelixTables():Observable<felixTable> {
-    const url: string = `${environment.sylvesterApiUrl}/felixtables`
+  // getFelixTables():Observable<felixTable> {
+  //   const url: string = `${environment.sylvesterApiUrl}/felixtables`
 
-    return this.http.get<felixTable>(url, this.getHttpOptions()).pipe(
-      catchError(this.handleError<felixTable>('getFelixTables')),
-    )
-  }
+  //   return this.http.get<felixTable>(url, this.getHttpOptions()).pipe(
+  //     catchError(this.handleError<felixTable>('getFelixTables')),
+  //   )
+  // }
 
-  getFelixTable(tableName: string):Observable<felixTable> {
-    const url: string = `${environment.sylvesterApiUrl}/felixtable/${tableName}`
+  // getFelixTable(tableName: string):Observable<felixTable> {
+  //   const url: string = `${environment.sylvesterApiUrl}/felixtable/${tableName}`
 
-    return this.http.get<felixTable>(url, this.getHttpOptions()).pipe(
-      catchError(this.handleError<felixTable>('getFelixTable')),
-    )
-  }
+  //   return this.http.get<felixTable>(url, this.getHttpOptions()).pipe(
+  //     catchError(this.handleError<felixTable>('getFelixTable')),
+  //   )
+  // }
 
   getTables():Observable<SylvesterCollectionsDocument[]> {
     const url: string = `${environment.sylvesterApiUrl}/tables`
@@ -49,11 +49,11 @@ export class SylvesterApiService {
     )
   }
 
-  getTable(tableName: string):Observable<any[]> {
+  getTable(tableName: string):Observable<SylvesterCollection> {
     const url: string = `${environment.sylvesterApiUrl}/table/${tableName}`
 
-    return this.http.get<any[]>(url, this.getHttpOptions()).pipe(
-      catchError(this.handleError<any[]>('getTable')),
+    return this.http.get<SylvesterCollection>(url, this.getHttpOptions()).pipe(
+      catchError(this.handleError<SylvesterCollection>('getTable')),
     )
   }
 
