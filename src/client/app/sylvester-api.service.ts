@@ -24,6 +24,22 @@ export class SylvesterApiService {
     private auth: AuthService
   ) { }
 
+  getFelixTables():Observable<table> {
+    const url: string = `${environment.sylvesterApiUrl}/felixtables`
+
+    return this.http.get<table>(url, this.getHttpOptions()).pipe(
+      catchError(this.handleError<table>('getTables')),
+    )
+  }
+
+  getFelixTable(tableName: string):Observable<table> {
+    const url: string = `${environment.sylvesterApiUrl}/felixtable/${tableName}`
+
+    return this.http.get<table>(url, this.getHttpOptions()).pipe(
+      catchError(this.handleError<table>('getTable')),
+    )
+  }
+
   getTables():Observable<table> {
     const url: string = `${environment.sylvesterApiUrl}/tables`
 

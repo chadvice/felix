@@ -33,7 +33,7 @@ export class AppComponent implements OnInit {
 
   ngOnInit(): void {
     this.auth.init().then(_ => {
-      this.apiService.getTables().subscribe(tables => {
+      this.apiService.getFelixTables().subscribe(tables => {
         this.tables = tables;
         this.rows = tables.data.rows;
       })

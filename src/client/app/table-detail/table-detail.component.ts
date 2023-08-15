@@ -76,9 +76,9 @@ export class TableDetailComponent implements OnInit, OnDestroy {
 
     // If we were called without a dataTableName then we get all of the tables
     if (this.dataTableName) {
-      tableData$ = this.apiService.getTable(this.dataTableName);
+      tableData$ = this.apiService.getFelixTable(this.dataTableName);
     } else {
-      tableData$ = this.apiService.getTables();
+      tableData$ = this.apiService.getFelixTables();
     }
 
     tableData$.subscribe(table => {
