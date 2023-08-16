@@ -80,7 +80,7 @@ export class SylvesterApiService {
       console.log(`${operation} failed: ${error.message}`);
 
       if (error.status === 401) {
-        alert('apiservice::handleError(): error.status = 401, calling auth.init()')
+        // alert('apiservice::handleError(): error.status = 401, calling auth.init()')
         this.auth.init();
       }
 
