@@ -148,6 +148,14 @@ export class TableDetailComponent implements OnInit, OnDestroy {
     }
 
     this.tableRowEditorDialogRef = this.dialog.open(TableRowEditorDialogComponent, {data: dialogData, disableClose: true, height: '90%'});
+
+    this.tableRowEditorDialogRef.afterClosed().subscribe(document => {
+      if (document) {
+        this.apiService.updateDocument(this.dataTableName, document).subscribe(resp => {
+          console.log();
+        })
+      }
+    })
   }
 
   editTableStructure(): void {

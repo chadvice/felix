@@ -1,22 +1,17 @@
+export interface SylvesterDocumentField {
+    name: string,
+    type: string
+}
+
 export interface SylvesterCollectionsDocument {
     _id: string,
     created: Date,
     name: string,
     description: string,
-    fields: [
-        {
-            name: string,
-            type: string
-        }
-    ]
+    fields: SylvesterDocumentField[]
 }
 
 export interface SylvesterCollection {
-    columns: [
-        {
-            name: string,
-            type: string
-        }
-    ],
+    columns: SylvesterDocumentField[],
     rows: any[]
 }

@@ -4,6 +4,7 @@ const express = require('express');
 const path = require('path');
 const routes = require('./routes');
 const cors = require('cors');
+const bodyParser = require('body-parser');
 
 const port = process.env.PORT || '3030';
 const rootPath = path.resolve(__dirname, '../../dist');
@@ -31,6 +32,10 @@ const corsOptions = {
   optionsSuccessStatus: 200,
 };
 
+app.use(cors(corsOptions));
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
+
 // Redirect production requests to SSL site (taken from https://jaketrent.com/post/https-redirect-node-heroku/)
 if(process.env.NODE_ENV === 'production') {
     app.use((req, res, next) => {
@@ -40,8 +45,6 @@ if(process.env.NODE_ENV === 'production') {
         next()
     })
 }
-
-app.use(cors(corsOptions));
 
 app.use(express.static(`${rootPath}/sylvester`));
 

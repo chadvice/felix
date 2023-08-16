@@ -13,7 +13,7 @@
     </mat-card>
 
     <div class="button-container">
-        <button mat-raised-button color="accent" mat-dialog-close>Save</button>
-        <button mat-raised-button color="warn" style="margin-left: 10px;" mat-dialog-close>Cancel</button>
+        <button mat-raised-button color="accent" [mat-dialog-close]="data.record">Save</button>
+        <button mat-raised-button color="warn" style="margin-left: 10px;" [mat-dialog-close]="null">Cancel</button>
     </div>
 </mat-dialog-content>

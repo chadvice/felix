@@ -7,39 +7,19 @@ import { AuthService } from './auth/auth.service';
 import { felixTable } from './nelnet/nelnet-table';
 import { SylvesterCollection, SylvesterCollectionsDocument } from './nelnet/sylvester-collection';
 
+interface APIResponse {
+  status: string,
+  message?: string
+}
+
 @Injectable({
   providedIn: 'root'
 })
 export class SylvesterApiService {
-  // private httpOptions = {
-  //   headers: new HttpHeaders(
-  //     {
-  //       'Content-Type': 'application/json; charset=UTF-8',
-  //       'x-api-key': 'fpQwusK0HH6Ltlox2yf3r738VuG0ri1qaopWAzMa'
-  //     }
-  //   )
-  // };
-
   constructor(
     private http: HttpClient,
     private auth: AuthService
   ) { }
-
-  // getFelixTables():Observable<felixTable> {
-  //   const url: string = `${environment.sylvesterApiUrl}/felixtables`
-
-  //   return this.http.get<felixTable>(url, this.getHttpOptions()).pipe(
-  //     catchError(this.handleError<felixTable>('getFelixTables')),
-  //   )
-  // }
-
-  // getFelixTable(tableName: string):Observable<felixTable> {
-  //   const url: string = `${environment.sylvesterApiUrl}/felixtable/${tableName}`
-
-  //   return this.http.get<felixTable>(url, this.getHttpOptions()).pipe(
-  //     catchError(this.handleError<felixTable>('getFelixTable')),
-  //   )
-  // }
 
   getTables():Observable<SylvesterCollectionsDocument[]> {
     const url: string = `${environment.sylvesterApiUrl}/tables`
@@ -54,6 +34,19 @@ export class SylvesterApiService {
 
     return this.http.get<SylvesterCollection>(url, this.getHttpOptions()).pipe(
       catchError(this.handleError<SylvesterCollection>('getTable')),
+    )
+  }
+
+  updateDocument(collection: string, document: Object):Observable<APIResponse> {
+    const url: string = `${environment.sylvesterApiUrl}/document`
+
+    const body = {
+      collection: collection,
+      document: document
+    }
+
+    return this.http.post<APIResponse>(url, body, this.getHttpOptions()).pipe(
+      catchError(this.handleError<APIResponse>('updateDocument')),
     )
   }
 
