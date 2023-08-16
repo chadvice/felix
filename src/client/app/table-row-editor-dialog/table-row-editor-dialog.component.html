@@ -5,15 +5,17 @@
             <mat-card-subtitle>{{data.tableDescription}}</mat-card-subtitle>
         </mat-card-header>
         <div class="form-container">
+            <form  #dataForm="ngForm">
             <mat-form-field *ngFor="let col of data.cols" style="width: 400px;">
                 <mat-label>{{col.name}}</mat-label>
                 <input matInput name="{{col.name}}" [(ngModel)]="data.record[col.name]">
             </mat-form-field>
+            </form>
         </div>
     </mat-card>
 
     <div class="button-container">
         <button mat-raised-button color="accent" [mat-dialog-close]="data.record">Save</button>
-        <button mat-raised-button color="warn" style="margin-left: 10px;" [mat-dialog-close]="null">Cancel</button>
+        <button mat-raised-button color="warn" style="margin-left: 10px;" (click)="cancel()">Cancel</button>
     </div>
 </mat-dialog-content>
