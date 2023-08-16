@@ -144,7 +144,8 @@ export class TableDetailComponent implements OnInit, OnDestroy {
       tableName: this.dataTableName,
       tableDescription: this.dataTableDescription,
       cols: this.dataTable.columns,
-      record: {...this.dataTable.rows[index]}
+      record: {...this.dataTable.rows[index]},
+      new: false
     }
 
     this.tableRowEditorDialogRef = this.dialog.open(TableRowEditorDialogComponent, {data: dialogData, disableClose: true, height: '90%'});
@@ -152,6 +153,30 @@ export class TableDetailComponent implements OnInit, OnDestroy {
     this.tableRowEditorDialogRef.afterClosed().subscribe(document => {
       if (document) {
         this.apiService.updateDocument(this.dataTableName, document).subscribe(resp => {
+          if (resp.status === 'OK') {
+            this.getTableData();
+          } else {
+            //TODO: handle errors here
+          }
+        })
+      }
+    })
+  }
+
+  addDocument(): void {
+    const dialogData: TableRowEditorDialogData = {
+      tableName: this.dataTableName,
+      tableDescription: this.dataTableDescription,
+      cols: this.dataTable.columns,
+      record: {},
+      new: true
+    }
+
+    this.tableRowEditorDialogRef = this.dialog.open(TableRowEditorDialogComponent, {data: dialogData, disableClose: true, height: '90%'});
+
+    this.tableRowEditorDialogRef.afterClosed().subscribe(document => {
+      if (document) {
+        this.apiService.insertDocument(this.dataTableName, document).subscribe(resp => {
           if (resp.status === 'OK') {
             this.getTableData();
           } else {

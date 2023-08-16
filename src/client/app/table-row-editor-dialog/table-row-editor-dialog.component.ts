@@ -8,7 +8,8 @@ export interface TableRowEditorDialogData {
   tableName: string,
   tableDescription: string,
   cols: SylvesterDocumentField[],
-  record: any
+  record: any,
+  new: boolean
 }
 
 @Component({
@@ -43,5 +44,15 @@ export class TableRowEditorDialogComponent {
       } else {
         this.dialogRef.close(null);
       }
+    }
+
+    documentIsEmpty(): boolean {
+      for (let i = 0; i < this.data.cols.length; i++) {
+        if (Object.hasOwn(this.data.record, this.data.cols[i].name) && this.data.record[this.data.cols[i].name]?.length !== 0) {
+          return false;
+        }
+      }
+
+      return true;
     }
 }
