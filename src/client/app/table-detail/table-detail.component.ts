@@ -78,7 +78,7 @@ export class TableDetailComponent implements OnInit, OnDestroy {
       this.displayData = table.rows.slice();
       this.sortData(this.currentSort);
       this.displayedColumns = table.columns.map(col => col.name);
-      this.filterColumns = table.columns.filter(col => col.type === 'varchar').map(col => col.name);
+      this.filterColumns = table.columns.map(col => col.name);
 
       this.isLoading = false;
     })
@@ -139,7 +139,8 @@ export class TableDetailComponent implements OnInit, OnDestroy {
     this.showFilter = false;
   }
 
-  rowClicked(index: number): void {
+  rowClicked(clickedRow: number): void {
+    const index = this.dataTable.rows.findIndex(row => row._id === this.sortedData[clickedRow]._id);
     const dialogData: TableRowEditorDialogData = {
       tableName: this.dataTableName,
       tableDescription: this.dataTableDescription,
