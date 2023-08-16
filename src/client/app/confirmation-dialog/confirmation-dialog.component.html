@@ -1,0 +1,43 @@
+<mat-dialog-content>
+    <h2 style="text-align: center">{{data.title}}</h2>
+  
+    {{data.message}}
+  
+    <div *ngIf="data.messageCentered; else notCentered">
+      <div *ngFor="let msg of data.messageArray" style="text-align: center">
+          {{msg}}
+      </div>
+    </div>
+    <ng-template #notCentered>
+      <div *ngFor="let msg of data.messageArray">
+          {{msg}}
+      </div>
+    </ng-template>
+    <br><br>
+    <div [ngSwitch]="data.mode" style="text-align: center">
+      <!-- OK -->
+      <div *ngSwitchCase="ConfirmDialogMode.OK">
+        <button mat-raised-button type="button" (click)="closeDialog(true)">OK</button>
+      </div>
+      <!-- Yes / No -->
+      <div *ngSwitchCase="ConfirmDialogMode.YES_NO">
+        <button mat-raised-button color="accent" type="button" (click)="closeDialog(true)">Yes</button>
+        <button mat-raised-button color="warn" type="button" (click)="closeDialog(false)">No</button>
+      </div>
+      <!-- Save / Cancel -->
+      <div *ngSwitchCase="ConfirmDialogMode.SAVE_CANCEL">
+        <button mat-raised-button color="accent" type="button" (click)="closeDialog(true)">Save</button>
+        <button mat-raised-button type="button" (click)="closeDialog(false)">Cancel</button>
+      </div>
+      <!-- Delete / Cancel -->
+      <div *ngSwitchCase="ConfirmDialogMode.DELETE_CANCEL">
+        <button mat-raised-button color="warn" type="button" (click)="closeDialog(true)">Delete</button>
+        <button mat-raised-button color="accent" type="button" (click)="closeDialog(false)">Cancel</button>
+      </div>
+      <!-- Discard / Cancel -->
+      <div *ngSwitchCase="ConfirmDialogMode.DISCARD_CANCEL">
+        <button mat-raised-button color="warn" type="button" (click)="closeDialog(true)">Discard</button>
+        <button mat-raised-button color="accent" type="button" (click)="closeDialog(false)">Cancel</button>
+      </div>
+    </div>
+</mat-dialog-content>
