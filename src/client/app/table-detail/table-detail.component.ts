@@ -150,15 +150,25 @@ export class TableDetailComponent implements OnInit, OnDestroy {
 
     this.tableRowEditorDialogRef = this.dialog.open(TableRowEditorDialogComponent, {data: dialogData, disableClose: true, height: '90%'});
 
-    this.tableRowEditorDialogRef.afterClosed().subscribe(document => {
-      if (document) {
-        this.apiService.updateDocument(this.dataTableName, document).subscribe(resp => {
-          if (resp.status === 'OK') {
-            this.getTableData();
-          } else {
-            //TODO: handle errors here
-          }
-        })
+    this.tableRowEditorDialogRef.afterClosed().subscribe(dialogResp => {
+      if (dialogResp) {
+        if (dialogResp.action === 'save') {
+          this.apiService.updateDocument(this.dataTableName, dialogResp.document).subscribe(resp => {
+            if (resp.status === 'OK') {
+              this.getTableData();
+            } else {
+              //TODO: handle errors here
+            }
+          })
+        } else if (dialogResp.action === 'delete') {
+          this.apiService.deleteDocument(this.dataTableName, this.dataTable.rows[index]._id).subscribe(resp => {
+            if (resp.status === 'OK') {
+              this.getTableData();
+            } else {
+              //TODO: handle errors here
+            }
+          })
+        }
       }
     })
   }
@@ -174,9 +184,9 @@ export class TableDetailComponent implements OnInit, OnDestroy {
 
     this.tableRowEditorDialogRef = this.dialog.open(TableRowEditorDialogComponent, {data: dialogData, disableClose: true, height: '90%'});
 
-    this.tableRowEditorDialogRef.afterClosed().subscribe(document => {
-      if (document) {
-        this.apiService.insertDocument(this.dataTableName, document).subscribe(resp => {
+    this.tableRowEditorDialogRef.afterClosed().subscribe(dialogResp => {
+      if (dialogResp && dialogResp.action === 'save') {
+        this.apiService.insertDocument(this.dataTableName, dialogResp.document).subscribe(resp => {
           if (resp.status === 'OK') {
             this.getTableData();
           } else {

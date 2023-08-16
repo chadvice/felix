@@ -45,8 +45,29 @@ export class SylvesterApiService {
       document: document
     }
 
-    return this.http.post<APIResponse>(url, body, this.getHttpOptions()).pipe(
+    return this.http.put<APIResponse>(url, body, this.getHttpOptions()).pipe(
       catchError(this.handleError<APIResponse>('updateDocument')),
+    )
+  }
+
+  insertDocument(collection: string, document: Object):Observable<APIResponse> {
+    const url: string = `${environment.sylvesterApiUrl}/document`
+
+    const body = {
+      collection: collection,
+      document: document
+    }
+
+    return this.http.post<APIResponse>(url, body, this.getHttpOptions()).pipe(
+      catchError(this.handleError<APIResponse>('insertDocument')),
+    )
+  }
+
+  deleteDocument(collection: string, id: string):Observable<APIResponse> {
+    const url: string = `${environment.sylvesterApiUrl}/document/${collection}/${id}`
+
+    return this.http.delete<APIResponse>(url, this.getHttpOptions()).pipe(
+      catchError(this.handleError<APIResponse>('deleteDocument')),
     )
   }
 

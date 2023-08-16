@@ -6,16 +6,20 @@
         </mat-card-header>
         <div class="form-container">
             <form  #dataForm="ngForm">
-            <mat-form-field *ngFor="let col of data.cols" style="width: 400px;">
-                <mat-label>{{col.name}}</mat-label>
-                <input matInput name="{{col.name}}" [(ngModel)]="data.record[col.name]">
-            </mat-form-field>
+                <mat-form-field *ngFor="let col of data.cols" style="width: 400px;">
+                    <mat-label>{{col.name}}</mat-label>
+                    <input matInput name="{{col.name}}" [(ngModel)]="data.record[col.name]">
+                </mat-form-field>
             </form>
         </div>
     </mat-card>
 
     <div class="button-container">
-        <button mat-raised-button color="accent" [mat-dialog-close]="data.record" [disabled]="documentIsEmpty()">Save</button>
+        <button mat-raised-button color="accent" (click)="save()" [disabled]="documentIsEmpty()">Save</button>
         <button mat-raised-button color="warn" style="margin-left: 10px;" (click)="cancel()">Cancel</button>
+
+        <div style="float: right;">
+            <button mat-raised-button color="warn" style="margin-left: 10px;" (click)="delete()">Delete Record</button>
+        </div>
     </div>
 </mat-dialog-content>

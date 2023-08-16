@@ -48,8 +48,39 @@ async function updateDocument(req, res) {
     }
 }
 
+async function insertDocument(req, res) {
+    try {
+        const db = mongo.getDB();
+        const collectionName = req.body.collection;
+        const document = req.body.document;
+        const collection = db.collection(collectionName);
+
+        const resp = await collection.insertOne(document);
+        res.status(200).json({status: 'OK'});
+    } catch(err) {
+        res.status(200).json({status: 'ERROR', message: err.message});
+    }
+}
+
+async function deleteDocument(req, res) {
+    try {
+        const db = mongo.getDB();
+        const collectionName = req.params.collection;
+        const id = req.params.id;
+        const collection = db.collection(collectionName);
+        const query = { _id: new ObjectId(id) };
+
+        const resp = await collection.deleteOne(query);
+        res.status(200).json({status: 'OK'});
+    } catch(err) {
+        res.status(200).json({status: 'ERROR', message: err.message});
+    }
+}
+
 module.exports = {
     getTables,
     getTable,
-    updateDocument
+    updateDocument,
+    insertDocument,
+    deleteDocument
 }

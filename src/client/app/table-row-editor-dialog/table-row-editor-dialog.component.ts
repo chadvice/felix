@@ -36,14 +36,33 @@ export class TableRowEditorDialogComponent {
           messageCentered: true
         }
         this.confirmationDialogRef = this.dialog.open(ConfirmationDialogComponent, {data: dialogData});
-        this.confirmationDialogRef.afterClosed().subscribe(discard => {
-          if (discard) {
+        this.confirmationDialogRef.afterClosed().subscribe(confirmResp => {
+          if (confirmResp) {
             this.dialogRef.close(null);
           }
         })
       } else {
         this.dialogRef.close(null);
       }
+    }
+
+    save(): void {
+      this.dialogRef.close({action: 'save', document: this.data.record})
+    }
+
+    delete(): void {
+      const dialogData = {
+        mode: CONFIRM_DIALOG_MODE.DELETE_CANCEL,
+        title: 'Delete Record?',
+        messageArray: ['Do you really want to delete this record?', 'This action can not be undone.'],
+        messageCentered: true
+      }
+      this.confirmationDialogRef = this.dialog.open(ConfirmationDialogComponent, {data: dialogData});
+      this.confirmationDialogRef.afterClosed().subscribe(confirmResp => {
+        if (confirmResp) {
+          this.dialogRef.close({action: 'delete', document: null})
+        }
+      })
     }
 
     documentIsEmpty(): boolean {
