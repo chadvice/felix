@@ -19,7 +19,7 @@
             <br>
             <mat-form-field *ngFor="let col of cols">
                 <mat-label>Column Name</mat-label>
-                <input matInput name="{{col.name}}" [(ngModel)]="col.name" [disabled]="col.name ==='id'" (input)="colDataChanged()">
+                <input matInput name="{{col.name}}" [(ngModel)]="col.name" (input)="colDataChanged()">
                 <button mat-button matSuffix color="warn" (click)="removeColumnClicked(col.name)"><mat-icon>delete</mat-icon></button>
             </mat-form-field>
         </div>

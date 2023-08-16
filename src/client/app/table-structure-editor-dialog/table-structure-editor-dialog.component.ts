@@ -23,7 +23,7 @@ export class TableStructureEditorDialogComponent implements OnInit {
     ) { }
   
   ngOnInit(): void {
-    this.cols = this.data.cols.filter(col => col.name !== 'id');
+    this.cols = this.data.cols;
   }
 
   addColumn(): void {
