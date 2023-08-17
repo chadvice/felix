@@ -4,10 +4,11 @@ const { MongoClient } = require('mongodb');
 const url = 'mongodb+srv://sylvester_app:bERt3wMDSI6UG1kr@cluster0.flt5v5d.mongodb.net/?retryWrites=true&w=majority';
 const dbName = 'Sylvester';
 
+let client;
 let DB;
 
 async function connect(callback) {
-    const client = new MongoClient(url);
+    client = new MongoClient(url);
     await client.connect();
     console.log('Connected successfully to server');
 
@@ -18,8 +19,12 @@ function getDB() {
     return DB;
 }
 
+function getClient() {
+    return client;
+}
+
 module.exports = {
     connect,
     getDB,
-    DB
+    getClient
 };

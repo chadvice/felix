@@ -6,6 +6,10 @@ router.get('/tables', (req, res) => {
     sylvesterService.getTableNames(req, res);
 });
 
+router.put('/collection', (req, res) => {
+    sylvesterService.updateCollection(req, res);
+});
+
 router.get('/table/:tableName', (req, res) => {
     sylvesterService.getTable(req, res);
 });

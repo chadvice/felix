@@ -12,7 +12,72 @@ async function getTableNames(req, res) {
 
     const resp = await collection.find({}, options).toArray();
 
-    res.status(200).json(resp.map(x => x.name));
+    res.status(200).json(resp.map(r => r.name));
+}
+
+async function updateCollection(req, res) {
+    const db = mongo.getDB();
+    const client = mongo.getClient();
+    const collection = db.collection('Collections');
+    const session = client.startSession();
+
+    const collectionName = req.body.collectionName;
+    const newDescription = req.body.newDescription;
+    const fieldChanges   = req.body.fieldChanges;
+
+    const transactionOptions = {
+        readPreference: 'primary',
+        readConcern: { level: 'local' },
+        writeConcern: { w: 'majority' }
+    };
+
+    let status = 'OK';
+    let statusMessage = '';
+    try {
+        const transactionResults = await session.withTransaction(async () => {
+            // Change the description, if requested
+            if (newDescription?.length > 0) {
+                console.log(`Changing table description to ${newDescription}`);
+                await collection.updateOne({name: collectionName}, { $set: { "description" : newDescription } }, { session: session });
+            }
+
+            // Apply any field changes requested
+            if (fieldChanges?.length > 0) {
+                const dataCollection = db.collection(collectionName);
+
+                for (let n = 0; n < fieldChanges.length; n++) {
+                    const oldName = fieldChanges[n].oldName;
+                    const newName = fieldChanges[n].newName;
+                    const removed = fieldChanges[n].removed;
+                    const added   = fieldChanges[n].added;
+
+                    if (oldName && newName && !removed) {
+                        console.log(`Renaming field ${oldName} -> ${newName}`);
+                        await dataCollection.updateMany({}, { $rename: { [oldName]: newName } }, { session: session });
+                        await collection.updateOne({'name': collectionName, 'fields.name': oldName}, {$set: {"fields.$.name": newName}}, { session: session });
+                    } else if (oldName && removed) {
+                        console.log(`Removing field ${oldName}`);
+                        await dataCollection.updateMany({}, { $unset: { oldName: '' } }, { session: session });
+                        await collection.updateOne({'name': collectionName}, {$pull: {fields: {name: oldName}}}, {session: session});
+                    } else if (newName && added){
+                        console.log(`Adding field ${newName}`);
+                        const resp = await collection.updateOne({'name': collectionName}, {$push: {'fields': {'name': newName, 'type': 'string'}}}, {session: session});
+                        console.log();
+                    }
+                }
+            }
+        }, transactionOptions);
+
+        if (!transactionResults) {
+            status = 'ERR';
+            statusMessage = 'Collection update transaction aborted';
+        }
+    } catch(err) {
+        status = 'ERROR';
+        statusMessage = err.message;
+    } finally {
+        res.status(200).json({status: status, message: statusMessage});
+    }
 }
 
 async function getTable(req, res) {
@@ -85,6 +150,7 @@ async function deleteDocument(req, res) {
 
 module.exports = {
     getTableNames,
+    updateCollection,
     getTable,
     updateDocument,
     insertDocument,
