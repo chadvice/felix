@@ -1,12 +1,12 @@
 import { Component, Inject, OnInit } from '@angular/core';
 
-import { felixColumn } from '../nelnet/nelnet-table';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { SylvesterDocumentField } from '../nelnet/sylvester-collection';
 
 export interface TableStructureEditorDialogData {
   tableName: string,
   tableDescription: string,
-  cols: felixColumn[]
+  cols: SylvesterDocumentField[]
 }
 
 @Component({
@@ -15,7 +15,7 @@ export interface TableStructureEditorDialogData {
   styleUrls: ['./table-structure-editor-dialog.component.scss']
 })
 export class TableStructureEditorDialogComponent implements OnInit {
-  cols!: felixColumn[];
+  cols!: SylvesterDocumentField[];
   addMode: boolean = false;
 
   constructor (
@@ -30,7 +30,7 @@ export class TableStructureEditorDialogComponent implements OnInit {
     //TODO Scroll to bottom when new column is added
     this.addMode = true;
 
-    const newCol: felixColumn = {
+    const newCol: SylvesterDocumentField = {
       name: '',
       type: 'varchar'
     }
