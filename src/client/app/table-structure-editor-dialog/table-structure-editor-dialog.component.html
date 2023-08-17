@@ -2,17 +2,12 @@
     <mat-card appearance="outlined" class="mat-mdc-elevation-specific mat-elevation-z8">
         <mat-card-header>
             <mat-card-title>
-                Edit Table Structure
+                Edit {{data.tableName}} Table Structure
             </mat-card-title>
         </mat-card-header>
 
         <div class="form-container">
             <mat-form-field style="width: 400px;">
-                <mat-label>Table Name</mat-label>
-                <input matInput name="tableName" [(ngModel)]="data.tableName">
-            </mat-form-field>
-
-            <mat-form-field style="width: 400px; margin-left: 10px;">
                 <mat-label>Table Description</mat-label>
                 <input matInput name="tableDescription" [(ngModel)]="data.tableDescription">
             </mat-form-field>
