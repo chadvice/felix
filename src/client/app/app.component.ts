@@ -12,7 +12,7 @@ import { SylvesterCollectionsDocument } from './nelnet/sylvester-collection';
 export class AppComponent implements OnInit {
   title = 'Sylvester';
   
-  tables!: SylvesterCollectionsDocument[];
+  tableNames!: string[];
   selectedTableName: string | null = null;
   showSideNav: boolean = false;
 
@@ -28,8 +28,8 @@ export class AppComponent implements OnInit {
 
   ngOnInit(): void {
     this.auth.init().then(_ => {
-      this.apiService.getTables().subscribe(tables => {
-        this.tables = tables;
+      this.apiService.getTables().subscribe(tableNames => {
+        this.tableNames = tableNames;
         console.log();
       })
     })

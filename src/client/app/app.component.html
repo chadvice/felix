@@ -27,7 +27,7 @@
 <mat-sidenav-container *ngIf="auth.isAuthenticated()" class="sidenav-container">
   <mat-sidenav #sidenav mode="side" [opened]="showSideNav" class="sidenav">
     <mat-nav-list>
-      <a mat-list-item *ngFor="let table of tables;" [routerLink]="['/tableDetail', table.name]"> {{table.name}} </a>
+      <a mat-list-item *ngFor="let tableName of tableNames;" [routerLink]="['/tableDetail', tableName]"> {{tableName}} </a>
     </mat-nav-list>
   </mat-sidenav>
   <mat-sidenav-content>

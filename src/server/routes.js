@@ -3,7 +3,7 @@ const router = express.Router();
 const sylvesterService = require('./sylvester.service');
 
 router.get('/tables', (req, res) => {
-    sylvesterService.getTables(req, res);
+    sylvesterService.getTableNames(req, res);
 });
 
 router.get('/table/:tableName', (req, res) => {

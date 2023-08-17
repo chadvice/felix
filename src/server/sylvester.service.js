@@ -2,12 +2,17 @@ const mongo = require('./mongo');
 const {ObjectId} = require('mongodb');
 mongo.connect();
 
-async function getTables(req, res) {
+async function getTableNames(req, res) {
     const db = mongo.getDB();
     const collection = db.collection('Collections');
-    const resp = await collection.find({}).toArray();
 
-    res.status(200).json(resp);
+    const options = {
+      projection: { _id: 0, 'name': 1 }
+    };
+
+    const resp = await collection.find({}, options).toArray();
+
+    res.status(200).json(resp.map(x => x.name));
 }
 
 async function getTable(req, res) {
@@ -79,7 +84,7 @@ async function deleteDocument(req, res) {
 }
 
 module.exports = {
-    getTables,
+    getTableNames,
     getTable,
     updateDocument,
     insertDocument,
