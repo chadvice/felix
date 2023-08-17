@@ -19,11 +19,7 @@ const routes: Routes = [
     component: RolesPageComponent
   },
   {
-    path: 'tableDetail/:dataTableName/:dataTableDescription',
-    component: TableDetailComponent
-  },
-  {
-    path: 'tableDetail/:dataTableDescription',
+    path: 'tableDetail/:dataTableName',
     component: TableDetailComponent
   },
   {

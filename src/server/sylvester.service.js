@@ -17,7 +17,7 @@ async function getTable(req, res) {
     const colsCollection = db.collection('Collections');
     const query = { 'name': tableName };
     const options = {
-      projection: { _id: 0, 'fields': 1 }
+      projection: { _id: 0, 'description': 1, 'fields': 1 }
     };
     const cols = await colsCollection.findOne(query, options);
 
@@ -25,6 +25,7 @@ async function getTable(req, res) {
     const rows = await rowsCollection.find({}).toArray();
 
     const resp = {
+        description: cols.description,
         columns: cols.fields,
         rows: rows
     }

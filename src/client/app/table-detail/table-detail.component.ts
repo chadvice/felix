@@ -58,7 +58,6 @@ export class TableDetailComponent implements OnInit, OnDestroy {
 
     this.activeRouteSubscription = this.activeRoute.params.subscribe(params => {
       this.dataTableName = params['dataTableName'];
-      this.dataTableDescription = params['dataTableDescription'];
 
       this.filterString = '';
       this.selectedFilterColumn = '';
@@ -77,6 +76,8 @@ export class TableDetailComponent implements OnInit, OnDestroy {
       this.dataTable = table;
       this.displayData = table.rows.slice();
       this.sortData(this.currentSort);
+
+      this.dataTableDescription = table.description;
       this.displayedColumns = table.columns.map(col => col.name);
       this.filterColumns = table.columns.map(col => col.name);
 
