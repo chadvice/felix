@@ -91,11 +91,6 @@ async function updateCollection(req, res) {
                 }
             }
         }, transactionOptions);
-
-        // if (!transactionResults) {
-        //     status = 'ERROR';
-        //     statusMessage = 'Collection update transaction aborted';
-        // }
     } catch(err) {
         status = 'ERROR';
         statusMessage = err.message;
