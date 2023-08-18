@@ -37,13 +37,18 @@ async function updateCollection(req, res) {
         const transactionResults = await session.withTransaction(async () => {
             // Change the description, if requested
             if (newDescription?.length > 0) {
-                console.log(`Changing table description to ${newDescription}`);
+                statusMessage = `Description changed to ${newDescription}.  `;
                 await collection.updateOne({name: collectionName}, { $set: { "description" : newDescription } }, { session: session });
             }
 
             // Apply any field changes requested
+            let fieldDeleteCount = 0;
+            let fieldChangeCount = 0;
+            let fieldAddCount = 0;
+
             if (fieldChanges?.length > 0) {
                 const dataCollection = db.collection(collectionName);
+                let resp;
 
                 for (let n = 0; n < fieldChanges.length; n++) {
                     const oldName = fieldChanges[n].oldName;
@@ -51,27 +56,46 @@ async function updateCollection(req, res) {
                     const removed = fieldChanges[n].removed;
                     const added   = fieldChanges[n].added;
 
-                    if (oldName && newName && !removed) {
-                        console.log(`Renaming field ${oldName} -> ${newName}`);
+                    if (oldName && removed) {
+                        await dataCollection.updateMany({}, { $unset: { [oldName]: '' } }, { session: session });
+                        resp = await collection.updateOne({'name': collectionName}, {$pull: {fields: {name: oldName}}}, {session: session});
+                        if (resp?.modifiedCount > 0) {
+                            fieldDeleteCount++;
+                        }
+                    } else if (oldName && newName) {
                         await dataCollection.updateMany({}, { $rename: { [oldName]: newName } }, { session: session });
-                        await collection.updateOne({'name': collectionName, 'fields.name': oldName}, {$set: {"fields.$.name": newName}}, { session: session });
-                    } else if (oldName && removed) {
-                        console.log(`Removing field ${oldName}`);
-                        await dataCollection.updateMany({}, { $unset: { oldName: '' } }, { session: session });
-                        await collection.updateOne({'name': collectionName}, {$pull: {fields: {name: oldName}}}, {session: session});
-                    } else if (newName && added){
-                        console.log(`Adding field ${newName}`);
-                        const resp = await collection.updateOne({'name': collectionName}, {$push: {'fields': {'name': newName, 'type': 'string'}}}, {session: session});
-                        console.log();
+                        resp = await collection.updateOne({'name': collectionName, 'fields.name': oldName}, {$set: {"fields.$.name": newName}}, { session: session });
+                        if (resp?.modifiedCount > 0) {
+                            fieldChangeCount++;
+                        }
+                    }  else if (newName && added){
+                        // Check to see if the field exists before we add it
+                        resp = await collection.count({$and: [{'name': collectionName}, {'fields': {$elemMatch: {'name': newName}}}]});
+                        if (resp === 0) {
+                            resp = await collection.updateOne({'name': collectionName}, {$push: {'fields': {'name': newName, 'type': 'string'}}}, {session: session});
+                            if (resp?.modifiedCount > 0) {
+                                fieldAddCount++;
+                            }
+                        }
                     }
+                }
+            }
+
+            if (fieldAddCount > 0 || fieldChangeCount > 0 || fieldDeleteCount > 0) {
+                statusMessage += `${fieldAddCount} field(s) added, ${fieldChangeCount} field(s) changed, ${fieldDeleteCount} field(s) removed.`
+            } else {
+                if (statusMessage === '') {
+                    statusMessage = 'No changes made.';
+                } else {
+                    statusMessage += 'No field changes.';
                 }
             }
         }, transactionOptions);
 
-        if (!transactionResults) {
-            status = 'ERR';
-            statusMessage = 'Collection update transaction aborted';
-        }
+        // if (!transactionResults) {
+        //     status = 'ERROR';
+        //     statusMessage = 'Collection update transaction aborted';
+        // }
     } catch(err) {
         status = 'ERROR';
         statusMessage = err.message;
