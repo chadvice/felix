@@ -4,8 +4,8 @@ import { Observable, catchError, of } from 'rxjs';
 
 import { environment } from '../environments/environment';
 import { AuthService } from './auth/auth.service';
-import { SylvesterCollection } from './nelnet/sylvester-collection';
-import { CollectionChanges, TableStructureEditorField } from './table-structure-editor-dialog/table-structure-editor-dialog.component';
+import { SylvesterCollection, SylvesterCollectionsDocument } from './nelnet/sylvester-collection';
+import { CollectionChanges } from './table-structure-editor-dialog/table-structure-editor-dialog.component';
 
 interface APIResponse {
   status: string,
@@ -21,11 +21,19 @@ export class SylvesterApiService {
     private auth: AuthService
   ) { }
 
-  getTables():Observable<string[]> {
+  getTables():Observable<SylvesterCollectionsDocument[]> {
     const url: string = `${environment.sylvesterApiUrl}/tables`
 
+    return this.http.get<SylvesterCollectionsDocument[]>(url, this.getHttpOptions()).pipe(
+      catchError(this.handleError<SylvesterCollectionsDocument[]>('getTables')),
+    )
+  }
+
+  getTableNames():Observable<string[]> {
+    const url: string = `${environment.sylvesterApiUrl}/tablenames`
+
     return this.http.get<string[]>(url, this.getHttpOptions()).pipe(
-      catchError(this.handleError<string[]>('getTables')),
+      catchError(this.handleError<string[]>('getTableNames')),
     )
   }
 

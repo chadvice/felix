@@ -24,8 +24,8 @@
             <mat-label *ngIf="importMode === 'APPEND'">Select table to append to</mat-label>
             <mat-label *ngIf="importMode === 'REPLACE'">Select table to overwrite</mat-label>
             <mat-select [(value)]="tableName" name="tableSelection" (selectionChange)="selectedTableChanged()">
-                <mat-option *ngFor="let tableName of data" [value]="tableName">
-                    {{tableName}}
+                <mat-option *ngFor="let table of data" [value]="table.name">
+                    {{table.name}}
                 </mat-option>
             </mat-select>
         </mat-form-field>

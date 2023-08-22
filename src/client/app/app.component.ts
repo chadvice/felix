@@ -4,6 +4,7 @@ import { MatDialogRef, MatDialog } from '@angular/material/dialog';
 import { AuthService } from './auth/auth.service';
 import { SylvesterApiService } from './sylvester-api.service';
 import { ImportDataDialogComponent } from './import-data-dialog/import-data-dialog.component';
+import { SylvesterCollectionsDocument } from './nelnet/sylvester-collection';
 
 @Component({
   selector: 'app-root',
@@ -13,7 +14,7 @@ import { ImportDataDialogComponent } from './import-data-dialog/import-data-dial
 export class AppComponent implements OnInit {
   title = 'Sylvester';
   
-  tableNames!: string[];
+  tables!: SylvesterCollectionsDocument[];
   selectedTableName: string | null = null;
   showSideNav: boolean = false;
 
@@ -32,15 +33,14 @@ export class AppComponent implements OnInit {
 
   ngOnInit(): void {
     this.auth.init().then(_ => {
-      this.apiService.getTables().subscribe(tableNames => {
-        this.tableNames = tableNames;
-        console.log();
+      this.apiService.getTables().subscribe(tables => {
+        this.tables = tables;
       })
     })
   }
 
   import(): void {
-    const dialogData = this.tableNames;
+    const dialogData = this.tables;
     this.importDataDialogRef = this.dialog.open(ImportDataDialogComponent, {data: dialogData, disableClose: true});
   }
 

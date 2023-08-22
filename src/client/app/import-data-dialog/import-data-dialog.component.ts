@@ -2,6 +2,7 @@ import { Component, Inject } from '@angular/core';
 
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { CONFIRM_DIALOG_MODE, ConfirmationDialogComponent } from '../confirmation-dialog/confirmation-dialog.component';
+import { SylvesterCollectionsDocument } from '../nelnet/sylvester-collection';
 
 @Component({
   selector: 'app-import-data-dialog',
@@ -15,7 +16,7 @@ export class ImportDataDialogComponent {
   tableDescription!: string;
 
   constructor(
-    @Inject(MAT_DIALOG_DATA) public data: string[],
+    @Inject(MAT_DIALOG_DATA) public data: SylvesterCollectionsDocument[],
     private dialogRef: MatDialogRef<ImportDataDialogComponent>
   ) {}
 
