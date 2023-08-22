@@ -5,11 +5,15 @@ import { Sort } from '@angular/material/sort';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { Subscription } from 'rxjs';
 
+import { Parser } from '@json2csv/plainjs';
+import { saveAs } from 'file-saver';
+
 import { UtilsService } from '../utils.service';
 import { SylvesterApiService } from '../sylvester-api.service';
 import { TableRowEditorDialogComponent, TableRowEditorDialogData } from '../table-row-editor-dialog/table-row-editor-dialog.component';
 import { CollectionChanges, TableStructureEditorDialogComponent, TableStructureEditorDialogData } from '../table-structure-editor-dialog/table-structure-editor-dialog.component';
 import { SylvesterCollection } from '../nelnet/sylvester-collection';
+import { CONFIRM_DIALOG_MODE, ConfirmationDialogComponent } from '../confirmation-dialog/confirmation-dialog.component';
 
 @Component({
   selector: 'app-table-detail',
@@ -40,6 +44,7 @@ export class TableDetailComponent implements OnInit, OnDestroy {
 
   tableRowEditorDialogRef!: MatDialogRef<TableRowEditorDialogComponent>;
   tableStructureEditorDialogRef!: MatDialogRef<TableStructureEditorDialogComponent>;
+  confirmationDialogRef!: MatDialogRef<ConfirmationDialogComponent>;
 
   constructor (
     private utils: UtilsService,
@@ -224,6 +229,27 @@ export class TableDetailComponent implements OnInit, OnDestroy {
       return 'table-container-filter-active';
     } else {
       return 'table-container';
+    }
+  }
+
+  exportTable(): void {
+    try {
+      const opts = {};
+      const parser = new Parser(opts);
+      const csv = parser.parse(this.dataTable.rows);
+      saveAs(new Blob([csv], {type: 'text/csv'}), `${this.dataTableName}.csv`);
+
+      const dialogData = {
+        mode: CONFIRM_DIALOG_MODE.OK,
+        title: 'Export Complete',
+        messageArray: [`The ${this.dataTableName} table has been exported to a CSV file called "${this.dataTableName}.csv"`],
+        messageCentered: true
+      }
+      this.confirmationDialogRef = this.dialog.open(ConfirmationDialogComponent, {data: dialogData});
+
+    } catch (err) {
+      console.error(err);
+      alert('There was an error exporting the table to a CSV file.');
     }
   }
 
