@@ -12,24 +12,28 @@
                 <input matInput name="tableDescription" [(ngModel)]="data.tableDescription">
             </mat-form-field>
             <br>
-            <mat-form-field *ngFor="let col of cols">
-                <mat-label>Column Name</mat-label>
-                <input matInput name="{{col.name}}" [(ngModel)]="col.name" (input)="colDataChanged()">
-                <button mat-button matSuffix color="warn" (click)="removeColumnClicked(col.name)"><mat-icon>delete</mat-icon></button>
-            </mat-form-field>
+            <ng-container *ngFor="let field of fields">
+                <mat-form-field *ngIf="!field.removed">
+                    <mat-label>Column Name</mat-label>
+                    <input matInput name="{{field.newName}}" [(ngModel)]="field.newName" (keypress)="disallowSpaces($event)">
+                    <button mat-button matSuffix color="warn" (click)="removeFieldClicked(field.newName)"><mat-icon>delete</mat-icon></button>
+                </mat-form-field>
+            </ng-container>
         </div>
     </mat-card>
 
     <table>
         <tr>
             <td style="width: 33%; text-align: left;">
-                <button mat-raised-button color="accent" (click)="addColumn()" [disabled]="addMode">Add Column</button>
+                <button mat-raised-button color="accent" (click)="addField()" [disabled]="formContainsEmptyFields()">Add Column</button>
             </td>
             <td style="width: 34%; text-align: center;">
-                <button mat-raised-button color="accent" mat-dialog-close>Save</button>
-                <button mat-raised-button color="warn" style="margin-left: 10px;" mat-dialog-close>Cancel</button>
+                <button mat-raised-button color="accent" [disabled]="formContainsEmptyFields() || formContainsDuplicateFields() || getChanges().length === 0" (click)="save()">Save</button>
+                <button mat-raised-button color="warn" style="margin-left: 10px;" [disabled]="formContainsEmptyFields()" (click)="cancel()">Cancel</button>
+                <button mat-raised-button color="warn" style="margin-left: 10px;" (click)="test()">TEST</button>
             </td>
             <td style="width: 33%; text-align: right;">
+                <span *ngIf="formContainsDuplicateFields()" style="color: red;">ERROR: There are one or more duplicate field names</span>
             </td>
         </tr>
     </table>

@@ -1,12 +1,21 @@
 import { Component, Inject, OnInit } from '@angular/core';
 
-import { MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { CONFIRM_DIALOG_MODE, ConfirmationDialogComponent } from '../confirmation-dialog/confirmation-dialog.component';
 import { SylvesterDocumentField } from '../nelnet/sylvester-collection';
+import { UtilsService } from '../utils.service';
 
 export interface TableStructureEditorDialogData {
   tableName: string,
   tableDescription: string,
-  cols: SylvesterDocumentField[]
+  fields: SylvesterDocumentField[]
+}
+
+export interface TableStructureEditorField {
+  oldName: string,
+  newName: string,
+  added: boolean,
+  removed: boolean
 }
 
 @Component({
@@ -15,56 +24,132 @@ export interface TableStructureEditorDialogData {
   styleUrls: ['./table-structure-editor-dialog.component.scss']
 })
 export class TableStructureEditorDialogComponent implements OnInit {
-  cols!: SylvesterDocumentField[];
-  addMode: boolean = false;
+  fields!: TableStructureEditorField[];
+  confirmationDialogRef!: MatDialogRef<ConfirmationDialogComponent>;
 
   constructor (
-    @Inject(MAT_DIALOG_DATA) public data: TableStructureEditorDialogData
+    @Inject(MAT_DIALOG_DATA) public data: TableStructureEditorDialogData,
+    private dialogRef: MatDialogRef<TableStructureEditorDialogComponent>,
+    private dialog: MatDialog,
+    private utils: UtilsService
     ) { }
   
   ngOnInit(): void {
-    this.cols = this.data.cols;
-  }
-
-  addColumn(): void {
-    //TODO Scroll to bottom when new column is added
-    this.addMode = true;
-
-    const newCol: SylvesterDocumentField = {
-      name: '',
-      type: 'varchar'
-    }
-
-    this.cols.push(newCol);
-  }
-
-  removeColumnClicked(colName: string): void {
-    if (colName === '') {
-      this.removeColumn(colName);
-    } else {
-      //TODO Repalce this with a more robust dialog
-      if (window.confirm(`Are you sure you want to delete the column "${colName}"?`)) {
-        this.removeColumn(colName);
+    this.fields = this.data.fields.map(field => {
+      const tseField: TableStructureEditorField = {
+        oldName: field.name,
+        newName: field.name,
+        added: false,
+        removed: false
       }
+
+      return tseField;
+    })
+  }
+
+  addField(): void {
+    //TODO Scroll to bottom when new field is added
+    const newCol: TableStructureEditorField = {
+      oldName: '',
+      newName: '',
+      added: true,
+      removed: false
+    }
+
+    this.fields.push(newCol);
+  }
+
+  removeFieldClicked(colName: string): void {
+    if (colName === '') {
+      this.removeField(colName);
+    } else {
+      const dialogData = {
+        mode: CONFIRM_DIALOG_MODE.YES_NO,
+        title: 'Remove Field?',
+        messageArray: ['Are you sure you want to remove this field?'],
+        messageCentered: true
+      }
+      this.confirmationDialogRef = this.dialog.open(ConfirmationDialogComponent, {data: dialogData});
+      this.confirmationDialogRef.afterClosed().subscribe(resp => {
+        if (resp) {
+          this.removeField(colName);
+        }
+      })
     }
   }
 
-  removeColumn(colName: string): void {
-    const index = this.cols.findIndex(col => col.name === colName);
+  removeField(colName: string): void {
+    const index = this.fields.findIndex(col => col.newName === colName);
+
     if (index !== -1) {
-      this.cols.splice(index, 1);
+      if (this.fields[index].added) {
+        this.fields.splice(index, 1);
+      } else {
+        this.fields[index].removed = true;
+      }
     } else {
       //TODO handle errors here more gracefully
       alert ('There was an error removing the selected column.');
     }
   }
-  
 
-  colDataChanged(): void {
-    if (this.cols.find(col => col.name.length === 0)) {
-      this.addMode = true;
-    } else {
-      this.addMode = false;
+  formContainsEmptyFields(): boolean {
+    for (let n = 0; n < this.fields.length; n++) {
+      if (this.utils.ltrim(this.fields[n].newName) === '') {
+        return true;
+      }
     }
+
+    return false;
+  }
+
+  formContainsDuplicateFields(): boolean {
+    return this.utils.checkForDuplicates(
+      this.fields
+      .filter(field => !field.removed)
+      .map(field => this.utils.ltrim(field.newName))
+      );
+  }
+
+  save(): void {
+    this.dialogRef.close(this.getChanges());
+  }
+
+  cancel(): void {
+    const changes = this.getChanges();
+    if (changes.length > 0) {
+      const dialogData = {
+        mode: CONFIRM_DIALOG_MODE.DISCARD_CANCEL,
+        title: 'Discard Changes?',
+        messageArray: ['You have unsaved changes.', 'Are you sure you want to cancel?'],
+        messageCentered: true
+      }
+      this.confirmationDialogRef = this.dialog.open(ConfirmationDialogComponent, {data: dialogData});
+      this.confirmationDialogRef.afterClosed().subscribe(resp => {
+        if (resp) {
+          this.dialogRef.close(null);
+        }
+      })
+    } else {
+      this.dialogRef.close(null);
+    }
+  }
+
+  disallowSpaces(event: KeyboardEvent): boolean {
+    if (event.key === ' ') {
+      return false;
+    } else {
+      return true;
+    }
+  }
+
+  getChanges(): TableStructureEditorField[] {
+    console.log('getChanges() here!');
+    return this.fields.filter(field => (field.removed || field.added || field.oldName !== field.newName))
+  }
+
+  test(): void {
+    const changes = this.getChanges();
+    console.log();
   }
 }

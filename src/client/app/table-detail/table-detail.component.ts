@@ -203,10 +203,13 @@ export class TableDetailComponent implements OnInit, OnDestroy {
     const dialogData: TableStructureEditorDialogData = {
       tableName: this.dataTableName,
       tableDescription: this.dataTableDescription,
-      cols: this.dataTable.columns
+      fields: this.dataTable.columns
     }
 
     this.tableStructureEditorDialogRef = this.dialog.open(TableStructureEditorDialogComponent, {data: dialogData, disableClose: true, height: '90%'});
+    this.tableStructureEditorDialogRef.afterClosed().subscribe(changes => {
+      console.log();
+    })
   }
 
   getTableClass(): string {
