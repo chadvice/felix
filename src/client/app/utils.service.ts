@@ -19,4 +19,8 @@ export class UtilsService {
     if(!str) return str;
     return str.replace(/^\s+/g, '');
   }
+
+  checkForDuplicates(arr: string[]): boolean {
+    return new Set(arr).size !== arr.length
+}
 }
