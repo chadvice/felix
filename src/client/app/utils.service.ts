@@ -14,4 +14,9 @@ export class UtilsService {
   compare(a: any, b: any, isAsc: boolean) {
     return (a < b ? -1 : 1) * (isAsc ? 1 : -1);
   }
+
+  ltrim(str: string): string {
+    if(!str) return str;
+    return str.replace(/^\s+/g, '');
+  }
 }
