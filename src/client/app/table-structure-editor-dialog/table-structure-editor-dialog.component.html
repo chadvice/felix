@@ -9,7 +9,7 @@
         <div class="form-container">
             <mat-form-field style="width: 400px;">
                 <mat-label>Table Description</mat-label>
-                <input matInput name="tableDescription" [(ngModel)]="data.tableDescription">
+                <input matInput name="tableDescription" [(ngModel)]="newDescription">
             </mat-form-field>
             <br>
             <ng-container *ngFor="let field of fields">
@@ -28,9 +28,8 @@
                 <button mat-raised-button color="accent" (click)="addField()" [disabled]="formContainsEmptyFields()">Add Column</button>
             </td>
             <td style="width: 34%; text-align: center;">
-                <button mat-raised-button color="accent" [disabled]="formContainsEmptyFields() || formContainsDuplicateFields() || getChanges().length === 0" (click)="save()">Save</button>
-                <button mat-raised-button color="warn" style="margin-left: 10px;" [disabled]="formContainsEmptyFields()" (click)="cancel()">Cancel</button>
-                <button mat-raised-button color="warn" style="margin-left: 10px;" (click)="test()">TEST</button>
+                <button mat-raised-button color="accent" [disabled]="formContainsEmptyFields() || formContainsDuplicateFields() || !didAnythingChange()" (click)="save()">Save</button>
+                <button mat-raised-button color="warn" style="margin-left: 10px;" (click)="cancel()">Cancel</button>
             </td>
             <td style="width: 33%; text-align: right;">
                 <span *ngIf="formContainsDuplicateFields()" style="color: red;">ERROR: There are one or more duplicate field names</span>

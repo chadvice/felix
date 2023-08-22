@@ -5,6 +5,7 @@ import { Observable, catchError, of } from 'rxjs';
 import { environment } from '../environments/environment';
 import { AuthService } from './auth/auth.service';
 import { SylvesterCollection } from './nelnet/sylvester-collection';
+import { CollectionChanges, TableStructureEditorField } from './table-structure-editor-dialog/table-structure-editor-dialog.component';
 
 interface APIResponse {
   status: string,
@@ -33,6 +34,20 @@ export class SylvesterApiService {
 
     return this.http.get<SylvesterCollection>(url, this.getHttpOptions()).pipe(
       catchError(this.handleError<SylvesterCollection>('getTable')),
+    )
+  }
+
+  alterCollection(collectionName: string, changes: CollectionChanges): Observable<APIResponse> {
+    const url: string = `${environment.sylvesterApiUrl}/collection`
+
+    const body = {
+      collectionName: collectionName,
+      newDescription: changes.newDescription,
+      fieldChanges: changes.fieldChanges
+    }
+
+    return this.http.put<APIResponse>(url, body, this.getHttpOptions()).pipe(
+      catchError(this.handleError<APIResponse>('alterCollection')),
     )
   }
 

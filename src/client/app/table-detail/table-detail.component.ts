@@ -8,7 +8,7 @@ import { Subscription } from 'rxjs';
 import { UtilsService } from '../utils.service';
 import { SylvesterApiService } from '../sylvester-api.service';
 import { TableRowEditorDialogComponent, TableRowEditorDialogData } from '../table-row-editor-dialog/table-row-editor-dialog.component';
-import { TableStructureEditorDialogComponent, TableStructureEditorDialogData } from '../table-structure-editor-dialog/table-structure-editor-dialog.component';
+import { CollectionChanges, TableStructureEditorDialogComponent, TableStructureEditorDialogData } from '../table-structure-editor-dialog/table-structure-editor-dialog.component';
 import { SylvesterCollection } from '../nelnet/sylvester-collection';
 
 @Component({
@@ -207,8 +207,15 @@ export class TableDetailComponent implements OnInit, OnDestroy {
     }
 
     this.tableStructureEditorDialogRef = this.dialog.open(TableStructureEditorDialogComponent, {data: dialogData, disableClose: true, height: '90%'});
-    this.tableStructureEditorDialogRef.afterClosed().subscribe(changes => {
-      console.log();
+    this.tableStructureEditorDialogRef.afterClosed().subscribe(dialogResp => {
+      const changes: CollectionChanges = dialogResp;
+      if (changes.newDescription || changes.fieldChanges.length > 0) {
+        this.apiService.alterCollection(this.dataTableName, changes).subscribe(resp => {
+          if (resp.status === 'OK') {
+            this.getTableData();
+          }
+        })
+      }
     })
   }
 

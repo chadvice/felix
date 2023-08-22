@@ -18,12 +18,18 @@ export interface TableStructureEditorField {
   removed: boolean
 }
 
+export interface CollectionChanges {
+  newDescription: string | null,
+  fieldChanges: TableStructureEditorField[]
+}
+
 @Component({
   selector: 'app-table-structure-editor-dialog',
   templateUrl: './table-structure-editor-dialog.component.html',
   styleUrls: ['./table-structure-editor-dialog.component.scss']
 })
 export class TableStructureEditorDialogComponent implements OnInit {
+  newDescription!: string;
   fields!: TableStructureEditorField[];
   confirmationDialogRef!: MatDialogRef<ConfirmationDialogComponent>;
 
@@ -35,6 +41,8 @@ export class TableStructureEditorDialogComponent implements OnInit {
     ) { }
   
   ngOnInit(): void {
+    this.newDescription = this.data.tableDescription;
+
     this.fields = this.data.fields.map(field => {
       const tseField: TableStructureEditorField = {
         oldName: field.name,
@@ -94,6 +102,10 @@ export class TableStructureEditorDialogComponent implements OnInit {
   }
 
   formContainsEmptyFields(): boolean {
+    if (this.utils.ltrim(this.newDescription) === '') {
+      return true;
+    }
+
     for (let n = 0; n < this.fields.length; n++) {
       if (this.utils.ltrim(this.fields[n].newName) === '') {
         return true;
@@ -116,12 +128,11 @@ export class TableStructureEditorDialogComponent implements OnInit {
   }
 
   cancel(): void {
-    const changes = this.getChanges();
-    if (changes.length > 0) {
+    if (this.didAnythingChange()) {
       const dialogData = {
         mode: CONFIRM_DIALOG_MODE.DISCARD_CANCEL,
         title: 'Discard Changes?',
-        messageArray: ['You have unsaved changes.', 'Are you sure you want to cancel?'],
+        messageArray: ['You have unsaved changes.', 'Are you sure you want to discard them?'],
         messageCentered: true
       }
       this.confirmationDialogRef = this.dialog.open(ConfirmationDialogComponent, {data: dialogData});
@@ -143,13 +154,30 @@ export class TableStructureEditorDialogComponent implements OnInit {
     }
   }
 
-  getChanges(): TableStructureEditorField[] {
-    console.log('getChanges() here!');
-    return this.fields.filter(field => (field.removed || field.added || field.oldName !== field.newName))
+  getChanges(): CollectionChanges {
+    let changes: CollectionChanges = {
+      newDescription: null,
+      fieldChanges: []
+    };
+
+    if (this.utils.ltrim(this.newDescription) !== this.utils.ltrim(this.data.tableDescription)) {
+      changes.newDescription = this.newDescription;
+    }
+    const fieldChanges = this.fields.filter(field => (field.removed || field.added || field.oldName !== field.newName))
+    if (fieldChanges.length > 0) {
+      changes.fieldChanges = fieldChanges;
+    }
+
+    return changes;
   }
 
-  test(): void {
+  didAnythingChange(): boolean {
     const changes = this.getChanges();
-    console.log();
+
+    if (changes.newDescription || changes.fieldChanges.length > 0) {
+      return true;
+    } else {
+      return false;
+    }
   }
 }
