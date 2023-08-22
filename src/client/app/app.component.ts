@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
+import { MatDialogRef, MatDialog } from '@angular/material/dialog';
 
 import { AuthService } from './auth/auth.service';
 import { SylvesterApiService } from './sylvester-api.service';
-import { SylvesterCollectionsDocument } from './nelnet/sylvester-collection';
+import { ImportDataDialogComponent } from './import-data-dialog/import-data-dialog.component';
 
 @Component({
   selector: 'app-root',
@@ -16,6 +17,8 @@ export class AppComponent implements OnInit {
   selectedTableName: string | null = null;
   showSideNav: boolean = false;
 
+  importDataDialogRef!: MatDialogRef<ImportDataDialogComponent>;
+
   navigation = [
     { link: '/usersPage', label: 'Users', disabled: false },
     { link: '/rolesPage', label: 'Roles', disabled: false }
@@ -23,7 +26,8 @@ export class AppComponent implements OnInit {
 
   constructor (
     public auth: AuthService,
-    private apiService: SylvesterApiService
+    private apiService: SylvesterApiService,
+    private dialog: MatDialog
   ) {}
 
   ngOnInit(): void {
@@ -33,6 +37,15 @@ export class AppComponent implements OnInit {
         console.log();
       })
     })
+  }
+
+  import(): void {
+    const dialogData = this.tableNames;
+    this.importDataDialogRef = this.dialog.open(ImportDataDialogComponent, {data: dialogData, disableClose: true});
+  }
+
+  newTable(): void {
+
   }
 
 }

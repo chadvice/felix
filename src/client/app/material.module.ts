@@ -14,6 +14,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule}  from '@angular/material/select';
 import { MatDialogModule } from '@angular/material/dialog';
+import { MatRadioModule } from '@angular/material/radio';
 
 @NgModule({
     exports: [
@@ -30,7 +31,8 @@ import { MatDialogModule } from '@angular/material/dialog';
         MatInputModule,
         MatFormFieldModule,
         MatSelectModule,
-        MatDialogModule
+        MatDialogModule,
+        MatRadioModule
     ]
 })
 

@@ -59,6 +59,7 @@ $light-theme: mat.define-light-theme((
 @include mat.form-field-theme($light-theme);
 @include mat.select-theme($light-theme);
 @include mat.option-theme($light-theme);
+@include mat.radio-theme($light-theme);
 
 // @include mat.checkbox-theme($light-theme);
 // @include mat.icon-button-theme($light-theme);
@@ -70,7 +71,6 @@ $light-theme: mat.define-light-theme((
 // @include mat.option-theme($light-theme);
 // @include mat.slide-toggle-theme($light-theme);
 // @include mat.progress-bar-theme($light-theme);
-// @include mat.radio-theme($light-theme);
 // @include mat.expansion-theme($light-theme);
 // @include mat.tooltip-theme($light-theme);
 // @include mat.tabs-theme($light-theme);
@@ -92,6 +92,7 @@ $light-theme: mat.define-light-theme((
     @include mat.form-field-color($dark-theme);
     @include mat.select-color($dark-theme);
     @include mat.option-color($dark-theme);
+    @include mat.radio-color($dark-theme);
 
     // @include mat.checkbox-color($dark-theme);
     // @include mat.toolbar-color($dark-theme);
@@ -103,7 +104,6 @@ $light-theme: mat.define-light-theme((
     // @include mat.option-color($dark-theme);
     // @include mat.slide-toggle-color($dark-theme);
     // @include mat.progress-bar-color($dark-theme);
-    // @include mat.radio-color($dark-theme);
     // @include mat.expansion-color($dark-theme);
     // @include mat.tooltip-color($dark-theme);
     // @include mat.tabs-color($dark-theme);
