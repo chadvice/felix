@@ -17,7 +17,7 @@
     <div [ngSwitch]="data.mode" style="text-align: center">
       <!-- OK -->
       <div *ngSwitchCase="ConfirmDialogMode.OK">
-        <button mat-raised-button type="button" (click)="closeDialog(true)">OK</button>
+        <button mat-raised-button color="accent" type="button" (click)="closeDialog(true)">OK</button>
       </div>
       <!-- Yes / No -->
       <div *ngSwitchCase="ConfirmDialogMode.YES_NO">
