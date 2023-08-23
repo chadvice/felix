@@ -213,13 +213,15 @@ export class TableDetailComponent implements OnInit, OnDestroy {
 
     this.tableStructureEditorDialogRef = this.dialog.open(TableStructureEditorDialogComponent, {data: dialogData, disableClose: true, height: '90%'});
     this.tableStructureEditorDialogRef.afterClosed().subscribe(dialogResp => {
-      const changes: CollectionChanges = dialogResp;
-      if (changes.newDescription || changes.fieldChanges.length > 0) {
-        this.apiService.alterCollection(this.dataTableName, changes).subscribe(resp => {
-          if (resp.status === 'OK') {
-            this.getTableData();
-          }
-        })
+      if (dialogResp) {
+        const changes: CollectionChanges = dialogResp;
+        if (changes.newDescription || changes.fieldChanges.length > 0) {
+          this.apiService.alterCollection(this.dataTableName, changes).subscribe(resp => {
+            if (resp.status === 'OK') {
+              this.getTableData();
+            }
+          })
+        }
       }
     })
   }
