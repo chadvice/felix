@@ -33,6 +33,8 @@ export class TableStructureEditorDialogComponent implements OnInit {
   fields!: TableStructureEditorField[];
   confirmationDialogRef!: MatDialogRef<ConfirmationDialogComponent>;
 
+  allowedFieldNameCharacters: RegExp = new RegExp('[a-zA-Z0-9_-]');
+
   constructor (
     @Inject(MAT_DIALOG_DATA) public data: TableStructureEditorDialogData,
     private dialogRef: MatDialogRef<TableStructureEditorDialogComponent>,
@@ -146,11 +148,11 @@ export class TableStructureEditorDialogComponent implements OnInit {
     }
   }
 
-  disallowSpaces(event: KeyboardEvent): boolean {
-    if (event.key === ' ' || event.key === ',') {
-      return false;
-    } else {
+  keyFilter(event: KeyboardEvent): boolean {
+    if (this.allowedFieldNameCharacters.test(event.key)) {
       return true;
+    } else {
+      return false;
     }
   }
 

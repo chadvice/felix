@@ -15,7 +15,7 @@
             <ng-container *ngFor="let field of fields">
                 <mat-form-field *ngIf="!field.removed">
                     <mat-label>Column Name</mat-label>
-                    <input matInput name="{{field.newName}}" [(ngModel)]="field.newName" (keypress)="disallowSpaces($event)">
+                    <input matInput name="{{field.newName}}" [(ngModel)]="field.newName" (keypress)="keyFilter($event)">
                     <button mat-button matSuffix color="warn" (click)="removeFieldClicked(field.newName)"><mat-icon>delete</mat-icon></button>
                 </mat-form-field>
             </ng-container>
