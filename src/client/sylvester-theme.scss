@@ -60,8 +60,8 @@ $light-theme: mat.define-light-theme((
 @include mat.select-theme($light-theme);
 @include mat.option-theme($light-theme);
 @include mat.radio-theme($light-theme);
+@include mat.checkbox-theme($light-theme);
 
-// @include mat.checkbox-theme($light-theme);
 // @include mat.icon-button-theme($light-theme);
 // @include mat.fab-theme($light-theme);
 // @include mat.dialog-theme($light-theme);
@@ -93,8 +93,8 @@ $light-theme: mat.define-light-theme((
     @include mat.select-color($dark-theme);
     @include mat.option-color($dark-theme);
     @include mat.radio-color($dark-theme);
+    @include mat.checkbox-color($dark-theme);
 
-    // @include mat.checkbox-color($dark-theme);
     // @include mat.toolbar-color($dark-theme);
     // @include mat.fab-color($dark-theme);
     // @include mat.dialog-color($dark-theme);
