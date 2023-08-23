@@ -147,7 +147,7 @@ export class TableStructureEditorDialogComponent implements OnInit {
   }
 
   disallowSpaces(event: KeyboardEvent): boolean {
-    if (event.key === ' ') {
+    if (event.key === ' ' || event.key === ',') {
       return false;
     } else {
       return true;
