@@ -33,7 +33,7 @@ export class TableStructureEditorDialogComponent implements OnInit {
   fields!: TableStructureEditorField[];
   confirmationDialogRef!: MatDialogRef<ConfirmationDialogComponent>;
 
-  allowedFieldNameCharacters: RegExp = new RegExp('[a-zA-Z0-9_-]');
+  allowedFieldNameCharacters: RegExp = this.utils.getAllowedFieldNameCharacters();
 
   constructor (
     @Inject(MAT_DIALOG_DATA) public data: TableStructureEditorDialogData,
