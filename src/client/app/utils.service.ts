@@ -22,5 +22,5 @@ export class UtilsService {
 
   checkForDuplicates(arr: string[]): boolean {
     return new Set(arr).size !== arr.length
-}
+  }
 }
