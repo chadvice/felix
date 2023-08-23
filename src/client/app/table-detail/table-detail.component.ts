@@ -5,7 +5,6 @@ import { Sort } from '@angular/material/sort';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { Subscription } from 'rxjs';
 
-import { Parser } from '@json2csv/plainjs';
 import { saveAs } from 'file-saver';
 
 import { UtilsService } from '../utils.service';
@@ -14,6 +13,7 @@ import { TableRowEditorDialogComponent, TableRowEditorDialogData } from '../tabl
 import { CollectionChanges, TableStructureEditorDialogComponent, TableStructureEditorDialogData } from '../table-structure-editor-dialog/table-structure-editor-dialog.component';
 import { SylvesterCollection } from '../nelnet/sylvester-collection';
 import { CONFIRM_DIALOG_MODE, ConfirmationDialogComponent } from '../confirmation-dialog/confirmation-dialog.component';
+import { ExportTableFilenameDialogComponent } from './export-table-filename-dialog/export-table-filename-dialog.component';
 
 @Component({
   selector: 'app-table-detail',
@@ -45,6 +45,7 @@ export class TableDetailComponent implements OnInit, OnDestroy {
   tableRowEditorDialogRef!: MatDialogRef<TableRowEditorDialogComponent>;
   tableStructureEditorDialogRef!: MatDialogRef<TableStructureEditorDialogComponent>;
   confirmationDialogRef!: MatDialogRef<ConfirmationDialogComponent>;
+  exportFilenameDialogRef!: MatDialogRef<ExportTableFilenameDialogComponent>;
 
   constructor (
     private utils: UtilsService,
@@ -235,24 +236,40 @@ export class TableDetailComponent implements OnInit, OnDestroy {
   }
 
   exportTable(): void {
-    try {
-      const opts = {};
-      const parser = new Parser(opts);
-      const csv = parser.parse(this.dataTable.rows);
-      saveAs(new Blob([csv], {type: 'text/csv'}), `${this.dataTableName}.csv`);
+    this.exportFilenameDialogRef = this.dialog.open(ExportTableFilenameDialogComponent, {data: this.dataTableName, disableClose: true});
 
-      const dialogData = {
-        mode: CONFIRM_DIALOG_MODE.OK,
-        title: 'Export Complete',
-        messageArray: [`The ${this.dataTableName} table has been exported to a CSV file called "${this.dataTableName}.csv"`],
-        messageCentered: true
+    this.exportFilenameDialogRef.afterClosed().subscribe(fileName => {
+      if (fileName) {
+        try {
+          // Use this replacer to avoid 'null' showing up in the csv
+          const replacer = (key: string, value: any) => value === null ? '' : value
+          const header = this.dataTable.columns.map(col => col.name);
+          const csv = [
+            header.join(','),
+            ...this.dataTable.rows.map(row => {
+              return header.map(fieldName => {
+                const val = JSON.stringify(row[fieldName], replacer)
+                return val === '""' ? '' : val;
+              }).join(',')
+            })
+          ].join('\r\n')
+
+          saveAs(new Blob([csv], {type: 'text/csv'}), `${fileName}.csv`);
+    
+          const dialogData = {
+            mode: CONFIRM_DIALOG_MODE.OK,
+            title: 'Export Complete',
+            messageArray: [`The ${this.dataTableName} table has been exported to a CSV file called "${this.dataTableName}.csv"`],
+            messageCentered: true
+          }
+          this.confirmationDialogRef = this.dialog.open(ConfirmationDialogComponent, {data: dialogData});
+    
+        } catch (err) {
+          console.error(err);
+          alert('There was an error exporting the table to a CSV file.');
+        }
       }
-      this.confirmationDialogRef = this.dialog.open(ConfirmationDialogComponent, {data: dialogData});
-
-    } catch (err) {
-      console.error(err);
-      alert('There was an error exporting the table to a CSV file.');
-    }
+    })
   }
 
   drop(event: CdkDragDrop<string[]>) {

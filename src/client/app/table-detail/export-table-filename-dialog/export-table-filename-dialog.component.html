@@ -1,0 +1,16 @@
+<mat-dialog-content>
+    <h2>Please select a name for the exported file</h2>
+
+    <div class="button-container">
+        <mat-form-field>
+            <!-- <mat-label>File Name</mat-label> -->
+            <input matInput name="fileName" [(ngModel)]="fileName" (keypress)="keyFilter($event)">
+            <span matSuffix>.csv</span>
+        </mat-form-field>
+        <br>
+        <i>The .csv extension will be added automatically</i>
+        <br><br>
+        <button mat-raised-button color="accent" (click)="save()" [disabled]="fileName.length === 0">Save</button>
+        <button mat-raised-button color="warn" style="margin-left: 10px;" (click)="cancel()">Cancel</button>
+    </div>
+</mat-dialog-content>
