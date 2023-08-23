@@ -24,7 +24,6 @@
     "@angular/platform-browser": "^16.1.0",
     "@angular/platform-browser-dynamic": "^16.1.0",
     "@angular/router": "^16.1.0",
-    "@json2csv/plainjs": "^7.0.2",
     "@pingidentity-developers-experience/ping-oidc-client-sdk": "^2.1.0",
     "body-parser": "^1.20.2",
     "cors": "^2.8.5",
