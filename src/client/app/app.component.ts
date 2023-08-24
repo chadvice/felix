@@ -5,6 +5,7 @@ import { AuthService } from './auth/auth.service';
 import { SylvesterApiService } from './sylvester-api.service';
 import { ImportDataDialogComponent } from './import-data-dialog/import-data-dialog.component';
 import { SylvesterCollectionsDocument } from './nelnet/sylvester-collection';
+import { SylvesterMessengerService } from './sylvester-messenger.service';
 
 @Component({
   selector: 'app-root',
@@ -28,7 +29,8 @@ export class AppComponent implements OnInit {
   constructor (
     public auth: AuthService,
     private apiService: SylvesterApiService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private messenger: SylvesterMessengerService
   ) {}
 
   ngOnInit(): void {
@@ -44,7 +46,7 @@ export class AppComponent implements OnInit {
     this.importDataDialogRef = this.dialog.open(ImportDataDialogComponent, {data: dialogData, disableClose: true, height: '80%'});
     this.importDataDialogRef.afterClosed().subscribe(resp => {
       if (resp) {
-        console.log();
+        this.messenger.setTablesUpdated(true);
       }
     })
   }

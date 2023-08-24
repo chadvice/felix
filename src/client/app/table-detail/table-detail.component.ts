@@ -14,6 +14,7 @@ import { CollectionChanges, TableStructureEditorDialogComponent, TableStructureE
 import { SylvesterCollection } from '../nelnet/sylvester-collection';
 import { CONFIRM_DIALOG_MODE, ConfirmationDialogComponent } from '../confirmation-dialog/confirmation-dialog.component';
 import { ExportTableFilenameDialogComponent } from './export-table-filename-dialog/export-table-filename-dialog.component';
+import { SylvesterMessengerService } from '../sylvester-messenger.service';
 
 @Component({
   selector: 'app-table-detail',
@@ -34,6 +35,7 @@ export class TableDetailComponent implements OnInit, OnDestroy {
 
   tableNameSubscription!: Subscription;
   activeRouteSubscription!: Subscription;
+  tablesUpdatedSubscription!: Subscription;
 
   currentSort: Sort = {active: '', direction: ''};
 
@@ -51,7 +53,8 @@ export class TableDetailComponent implements OnInit, OnDestroy {
     private utils: UtilsService,
     private activeRoute: ActivatedRoute,
     private apiService: SylvesterApiService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private messenger: SylvesterMessengerService
   ) {}
 
   ngOnInit(): void {
@@ -69,10 +72,18 @@ export class TableDetailComponent implements OnInit, OnDestroy {
       this.selectedFilterColumn = '';
       this.getTableData();
     })
+
+
+    this.tablesUpdatedSubscription = this.messenger.tablesUpdated.subscribe(updated => {
+      if (updated) {
+        this.getTableData();
+      }
+    })
   }
 
   ngOnDestroy(): void {
     this.activeRouteSubscription.unsubscribe();
+    this.tablesUpdatedSubscription.unsubscribe();
   }
 
   getTableData(): void {
