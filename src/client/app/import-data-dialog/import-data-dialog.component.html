@@ -7,7 +7,7 @@
             <div class="step-container">
                 <div class="button-container">
                     <input type="file" style=" display: none;" (change)="fileSelected($event)" #fileUpload>
-                    <button mat-raised-button color="primary" (click)="fileUpload.click()" style="width: 100%;">Select File</button>
+                    <button mat-raised-button color="primary" (click)="resetReader(); fileUpload.click()" style="width: 100%;">Select File</button>
                 </div>
 
                 <div *ngIf="selectedFileName">
@@ -106,7 +106,7 @@
                 </div>
 
                 <div *ngIf="!validationComplete" class="button-container">
-                    <button mat-raised-button color="primary" (click)="validateFile()" style="width: 100%;" [disabled]="!readyToValidate()">Validate File</button>
+                    <button mat-raised-button color="primary" (click)="validateFile().subscribe()" style="width: 100%;" [disabled]="!readyToValidate()">Validate File</button>
                 </div>
 
                 <div *ngIf="validationComplete" class="centered-content-container">
@@ -122,12 +122,24 @@
         </mat-step>
 
         <mat-step>
-          <ng-template matStepLabel>Done</ng-template>
-          <p>You are now done.</p>
-          <div>
-            <button mat-button matStepperPrevious>Back</button>
-            <button mat-button (click)="stepper.reset()">Reset</button>
-          </div>
+            <ng-template matStepLabel>Import</ng-template>
+            <div class="step-container">
+                <div class="button-container">
+                    <button mat-raised-button color="primary" (click)="import()" style="width: 100%;" [disabled]="importComplete">Import File</button>
+                </div>
+
+                <br>
+
+                <div *ngIf="importMessage.length > 0" class="centered-content-container">
+                    {{importMessage}}
+                </div>
+            </div>
+
+            <div class="button-container">
+                <button mat-raised-button color="primary" matStepperPrevious [disabled]="importComplete">Back</button>
+                <button mat-raised-button color="warn" (click)="cancel()" [disabled]="importComplete">Cancel</button>
+                <button mat-raised-button color="primary" (click)="done()" [disabled]="!importComplete">Done</button>
+            </div>
         </mat-step>
     </mat-stepper>
 </mat-dialog-content>

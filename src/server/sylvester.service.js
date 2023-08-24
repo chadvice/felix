@@ -176,6 +176,27 @@ async function deleteDocument(req, res) {
     }
 }
 
+async function bulkInsert(req, res) {
+    try {
+        const db = mongo.getDB();
+        const collectionName = req.body.collection;
+        const documents = req.body.documents;
+        const collection = db.collection(collectionName);
+
+        let bulkOperations = [];
+        for (let n = 0; n < documents.length; n++) {
+            bulkOperations.push({ "insertOne": { "document": documents[n] } });
+        }
+
+        const resp = await collection.bulkWrite(bulkOperations);
+        const message = `${resp.insertedCount} records were inserted.`
+
+        res.status(200).json({status: 'OK', message: message});
+    } catch(err) {
+        res.status(200).json({status: 'ERROR', message: err.message});
+    }
+}
+
 module.exports = {
     getTables,
     getTableNames,
@@ -183,5 +204,6 @@ module.exports = {
     getTable,
     updateDocument,
     insertDocument,
-    deleteDocument
+    deleteDocument,
+    bulkInsert
 }

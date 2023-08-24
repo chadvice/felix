@@ -42,6 +42,11 @@ export class AppComponent implements OnInit {
   import(): void {
     const dialogData = this.tables;
     this.importDataDialogRef = this.dialog.open(ImportDataDialogComponent, {data: dialogData, disableClose: true, height: '80%'});
+    this.importDataDialogRef.afterClosed().subscribe(resp => {
+      if (resp) {
+        console.log();
+      }
+    })
   }
 
   newTable(): void {

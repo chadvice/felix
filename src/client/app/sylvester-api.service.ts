@@ -93,6 +93,19 @@ export class SylvesterApiService {
     )
   }
 
+  bulkInsert(collection: string, documents: Object[]):Observable<APIResponse> {
+    const url: string = `${environment.sylvesterApiUrl}/bulkinsert`
+
+    const body = {
+      collection: collection,
+      documents: documents
+    }
+
+    return this.http.post<APIResponse>(url, body, this.getHttpOptions()).pipe(
+      catchError(this.handleError<APIResponse>('bulkInsert')),
+    )
+  }
+
   getHttpOptions() {
     const x = this.auth.getToken();
     const httpOptions = {
