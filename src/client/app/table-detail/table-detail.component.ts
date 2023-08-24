@@ -259,7 +259,7 @@ export class TableDetailComponent implements OnInit, OnDestroy {
           const dialogData = {
             mode: CONFIRM_DIALOG_MODE.OK,
             title: 'Export Complete',
-            messageArray: [`The ${this.dataTableName} table has been exported to a CSV file called "${this.dataTableName}.csv"`],
+            messageArray: [`The ${this.dataTableName} table has been exported to a CSV file called "${fileName}.csv"`],
             messageCentered: true
           }
           this.confirmationDialogRef = this.dialog.open(ConfirmationDialogComponent, {data: dialogData});

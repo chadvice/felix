@@ -18,6 +18,7 @@ import { TableRowEditorDialogComponent } from './table-row-editor-dialog/table-r
 import { TableStructureEditorDialogComponent } from './table-structure-editor-dialog/table-structure-editor-dialog.component';
 import { ConfirmationDialogComponent } from './confirmation-dialog/confirmation-dialog.component';
 import { ImportDataDialogComponent } from './import-data-dialog/import-data-dialog.component';
+import { ExportTableFilenameDialogComponent } from './table-detail/export-table-filename-dialog/export-table-filename-dialog.component';
 
 @NgModule({
   declarations: [
@@ -30,7 +31,8 @@ import { ImportDataDialogComponent } from './import-data-dialog/import-data-dial
     TableRowEditorDialogComponent,
     TableStructureEditorDialogComponent,
     ConfirmationDialogComponent,
-    ImportDataDialogComponent
+    ImportDataDialogComponent,
+    ExportTableFilenameDialogComponent
   ],
   imports: [
     BrowserModule,

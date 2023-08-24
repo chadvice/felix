@@ -1,15 +1,28 @@
 .mat-mdc-dialog-content { max-height: unset; }
 
-// .form-container {
-//     width: 100%;
-//     height: calc(90vh - 180px);
-//     margin: 10px;
-//     overflow: auto;
-// }
+.step-container {
+    // width: 100%;
+    height: calc(90vh - 350px);
+    margin: 10px;
+    // overflow: auto;
+}
+
+.list-container {
+    // width: 100%;
+    height: calc(90vh - 510px);
+    margin: 10px;
+    overflow: auto;
+}
 
 .button-container {
-    text-align: center;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     padding-top: 10px;
+}
+
+.centered-content-container {
+    text-align: center;
 }
 
 .mat-mdc-form-field {
@@ -19,4 +32,14 @@
 .data-fields {
     padding: 10px;
     text-align: center;
+}
+
+.mat-mdc-raised-button {
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+ul {
+  list-style-type: none;
+  margin-top: 4px;
 }
