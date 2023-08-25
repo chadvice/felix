@@ -358,6 +358,24 @@ export class ImportDataDialogComponent {
         }
         break;
       case IMPORT_MODE.REPLACE:
+        if (this.selectedTable) {
+          this.apiService.bulkReplace(this.selectedTable?.name, importDocuments).subscribe(resp => {
+            if (resp.status === 'OK') {
+              this.importComplete = true;
+
+              this.importMessage = 'Import Complete!'
+              if (resp.message) {
+                this.importMessage += ' ' + resp.message;
+              }
+            } else {
+              let errorMessage: string[] = ['There was an error replacing the table in the database:'];
+              if (resp.message) {
+                errorMessage.push(resp.message);
+              }
+              this.displayErrorDialog('Error Uploading Data', errorMessage);
+            }
+          })
+        }
         break;
     }
   }

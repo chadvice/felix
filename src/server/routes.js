@@ -34,4 +34,12 @@ router.post('/bulkinsert', (req, res) => {
     sylvesterService.bulkInsert(req, res);
 })
 
+router.post('/bulkreplace', (req, res) => {
+    sylvesterService.bulkReplace(req, res);
+})
+
+router.post('/bulkcreate', (req, res) => {
+    sylvesterService.bulkCreate(req, res);
+})
+
 module.exports=router;

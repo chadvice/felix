@@ -179,7 +179,7 @@ async function deleteDocument(req, res) {
 async function bulkInsert(req, res) {
     try {
         const db = mongo.getDB();
-        const collectionName = req.body.collection;
+        const collectionName = req.body.collectionName;
         const documents = req.body.documents;
         const collection = db.collection(collectionName);
 
@@ -197,6 +197,46 @@ async function bulkInsert(req, res) {
     }
 }
 
+async function bulkReplace(req, res) {
+    const db = mongo.getDB();
+    const client = mongo.getClient();
+    const collectionName = req.body.collectionName;
+    const documents = req.body.documents;
+    const collection = db.collection(collectionName);
+    const session = client.startSession();
+
+    const transactionOptions = {
+        readPreference: 'primary',
+        readConcern: { level: 'local' },
+        writeConcern: { w: 'majority' }
+    };
+
+    let status = 'OK';
+    let statusMessage = '';
+    try {
+        const transactionResults = await session.withTransaction(async () => {
+            await collection.deleteMany({}, {session: session});
+    
+            let bulkOperations = [];
+            for (let n = 0; n < documents.length; n++) {
+                bulkOperations.push({ "insertOne": { "document": documents[n] } });
+            }
+    
+            const resp = await collection.bulkWrite(bulkOperations);
+            statusMessage = `${resp.insertedCount} records were inserted.`
+        }, transactionOptions);
+    } catch (err) {
+        status = 'ERROR';
+        statusMessage = err.message;
+    } finally {
+        res.status(200).json({status: status, message: statusMessage});
+    }
+}
+
+async function bulkCreate(req, res) {
+
+}
+
 module.exports = {
     getTables,
     getTableNames,
@@ -205,5 +245,7 @@ module.exports = {
     updateDocument,
     insertDocument,
     deleteDocument,
-    bulkInsert
+    bulkInsert,
+    bulkReplace,
+    bulkCreate
 }

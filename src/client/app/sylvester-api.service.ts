@@ -93,16 +93,43 @@ export class SylvesterApiService {
     )
   }
 
-  bulkInsert(collection: string, documents: Object[]):Observable<APIResponse> {
+  bulkInsert(collectionName: string, documents: Object[]):Observable<APIResponse> {
     const url: string = `${environment.sylvesterApiUrl}/bulkinsert`
 
     const body = {
-      collection: collection,
+      collectionName: collectionName,
       documents: documents
     }
 
     return this.http.post<APIResponse>(url, body, this.getHttpOptions()).pipe(
       catchError(this.handleError<APIResponse>('bulkInsert')),
+    )
+  }
+
+  bulkReplace(collectionName: string, documents: Object[]):Observable<APIResponse> {
+    const url: string = `${environment.sylvesterApiUrl}/bulkreplace`
+
+    const body = {
+      collectionName: collectionName,
+      documents: documents
+    }
+
+    return this.http.post<APIResponse>(url, body, this.getHttpOptions()).pipe(
+      catchError(this.handleError<APIResponse>('bulkReplace')),
+    )
+  }
+
+  bulkCreate(collectionName: string, description: string, documents: Object[]):Observable<APIResponse> {
+    const url: string = `${environment.sylvesterApiUrl}/bulkcreate`
+
+    const body = {
+      collectionName: collectionName,
+      description: description,
+      documents: documents
+    }
+
+    return this.http.post<APIResponse>(url, body, this.getHttpOptions()).pipe(
+      catchError(this.handleError<APIResponse>('bulkCreate')),
     )
   }
 
