@@ -4,7 +4,7 @@ import { Observable, catchError, of } from 'rxjs';
 
 import { environment } from '../environments/environment';
 import { AuthService } from './auth/auth.service';
-import { SylvesterCollection, SylvesterCollectionsDocument } from './nelnet/sylvester-collection';
+import { SylvesterCollection, SylvesterCollectionsDocument, SylvesterDocumentField } from './nelnet/sylvester-collection';
 import { CollectionChanges } from './table-structure-editor-dialog/table-structure-editor-dialog.component';
 
 interface APIResponse {
@@ -119,12 +119,13 @@ export class SylvesterApiService {
     )
   }
 
-  bulkCreate(collectionName: string, description: string, documents: Object[]):Observable<APIResponse> {
+  bulkCreate(collectionName: string, description: string, fields: SylvesterDocumentField[], documents: Object[]):Observable<APIResponse> {
     const url: string = `${environment.sylvesterApiUrl}/bulkcreate`
 
     const body = {
       collectionName: collectionName,
       description: description,
+      fields: fields,
       documents: documents
     }
 

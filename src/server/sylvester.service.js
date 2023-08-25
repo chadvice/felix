@@ -234,7 +234,50 @@ async function bulkReplace(req, res) {
 }
 
 async function bulkCreate(req, res) {
+    const db = mongo.getDB();
+    const client = mongo.getClient();
+    const collectionName = req.body.collectionName;
+    const description = req.body.description;
+    const documents = req.body.documents;
+    const fields = req.body.fields;
+    const collection = db.collection('Collections');
+    const session = client.startSession();
 
+    const transactionOptions = {
+        readPreference: 'primary',
+        readConcern: { level: 'local' },
+        writeConcern: { w: 'majority' }
+    };
+
+    let status = 'OK';
+    let statusMessage = '';
+    try {
+        const transactionResults = await session.withTransaction(async () => {
+            const now = new Date();
+            const doc = {
+                created: now.toISOString,
+                name: collectionName,
+                description: description,
+                fields: fields
+            }
+
+            await collection.insertOne(doc, {session: session});
+    
+            let bulkOperations = [];
+            for (let n = 0; n < documents.length; n++) {
+                bulkOperations.push({ "insertOne": { "document": documents[n] } });
+            }
+    
+            const dataCollection = db.collection(collectionName);
+            const resp = await dataCollection.bulkWrite(bulkOperations);
+            statusMessage = `${resp.insertedCount} records were inserted.`
+        }, transactionOptions);
+    } catch (err) {
+        status = 'ERROR';
+        statusMessage = err.message;
+    } finally {
+        res.status(200).json({status: status, message: statusMessage});
+    }
 }
 
 module.exports = {

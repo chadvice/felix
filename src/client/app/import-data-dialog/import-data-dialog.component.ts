@@ -2,7 +2,7 @@ import { Component, Inject } from '@angular/core';
 
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { CONFIRM_DIALOG_MODE, ConfirmationDialogComponent } from '../confirmation-dialog/confirmation-dialog.component';
-import { SylvesterCollectionsDocument } from '../nelnet/sylvester-collection';
+import { SylvesterCollectionsDocument, SylvesterDocumentField } from '../nelnet/sylvester-collection';
 import { SylvesterApiService } from '../sylvester-api.service';
 import { UtilsService } from '../utils.service';
 import { Observable } from 'rxjs';
@@ -336,6 +336,25 @@ export class ImportDataDialogComponent {
 
     switch (this.importMode) {
       case IMPORT_MODE.NEW:
+        const fields:SylvesterDocumentField[] = this.fileHeaders.map(header => {
+          return {name: header, type: 'string'}
+        })
+        this.apiService.bulkCreate(this.tableName, this.tableDescription, fields, importDocuments).subscribe(resp => {
+          if (resp.status === 'OK') {
+            this.importComplete = true;
+
+            this.importMessage = 'Table Creation and Import Complete!'
+            if (resp.message) {
+              this.importMessage += ' ' + resp.message;
+            }
+          } else {
+            let errorMessage: string[] = ['There was an error creating and populating the new table:'];
+            if (resp.message) {
+              errorMessage.push(resp.message);
+            }
+            this.displayErrorDialog('Error Creating Table', errorMessage);
+          }
+          })
         break;
       case IMPORT_MODE.APPEND:
         if (this.selectedTable) {
@@ -363,7 +382,7 @@ export class ImportDataDialogComponent {
             if (resp.status === 'OK') {
               this.importComplete = true;
 
-              this.importMessage = 'Import Complete!'
+              this.importMessage = 'Data Replacement Complete!'
               if (resp.message) {
                 this.importMessage += ' ' + resp.message;
               }
@@ -372,7 +391,7 @@ export class ImportDataDialogComponent {
               if (resp.message) {
                 errorMessage.push(resp.message);
               }
-              this.displayErrorDialog('Error Uploading Data', errorMessage);
+              this.displayErrorDialog('Error Replacing Data', errorMessage);
             }
           })
         }

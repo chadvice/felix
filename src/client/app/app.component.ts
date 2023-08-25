@@ -35,9 +35,13 @@ export class AppComponent implements OnInit {
 
   ngOnInit(): void {
     this.auth.init().then(_ => {
-      this.apiService.getTables().subscribe(tables => {
-        this.tables = tables;
-      })
+      this.getTables();
+    })
+  }
+
+  getTables(): void {
+    this.apiService.getTables().subscribe(tables => {
+      this.tables = tables;
     })
   }
 
@@ -46,6 +50,7 @@ export class AppComponent implements OnInit {
     this.importDataDialogRef = this.dialog.open(ImportDataDialogComponent, {data: dialogData, disableClose: true, height: '80%'});
     this.importDataDialogRef.afterClosed().subscribe(resp => {
       if (resp) {
+        this.getTables();
         this.messenger.setTablesUpdated(true);
       }
     })
