@@ -1,12 +1,12 @@
 <mat-dialog-content>
     <h2>Import Data <span *ngIf="selectedFileName">from {{selectedFileName}}</span></h2>
 
-    <mat-stepper orientation="horizontal" linear #stepper>
+    <mat-stepper orientation="horizontal" linear #stepper (selectionChange)="stepChanged($event)">
         <mat-step [completed]="fileSelectionComplete">
             <ng-template matStepLabel>Select File</ng-template>
             <div class="step-container">
                 <div class="button-container">
-                    <input type="file" style=" display: none;" (change)="fileSelected($event)" #fileUpload>
+                    <input type="file" accept=".csv" style="display: none;" (change)="fileSelected($event)" #fileUpload>
                     <button mat-raised-button color="primary" (click)="resetReader(); fileUpload.click()" style="width: 100%;">Select File</button>
                 </div>
 

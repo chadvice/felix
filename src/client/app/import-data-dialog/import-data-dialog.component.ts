@@ -1,11 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 
-import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { CONFIRM_DIALOG_MODE, ConfirmationDialogComponent } from '../confirmation-dialog/confirmation-dialog.component';
 import { SylvesterCollectionsDocument, SylvesterDocumentField } from '../nelnet/sylvester-collection';
 import { SylvesterApiService } from '../sylvester-api.service';
 import { UtilsService } from '../utils.service';
 import { Observable } from 'rxjs';
+import { parse } from 'papaparse';
+import { StepperSelectionEvent } from '@angular/cdk/stepper';
 
 export enum IMPORT_MODE {
   NEW = 0,
@@ -37,7 +39,9 @@ export class ImportDataDialogComponent implements OnInit {
 
   target!: HTMLInputElement;
   fileHeaders: string[] = [];
-  fileRows: string[][] = [];
+  fileRows: any[] = [];
+  // fileTextHeaders: string[] = [];
+  fileTextRows: string[][] = [];
 
   confirmationDialogRef!: MatDialogRef<ConfirmationDialogComponent>;
 
@@ -103,6 +107,14 @@ export class ImportDataDialogComponent implements OnInit {
     this.dialogRef.close(true);
   }
 
+  stepChanged(event: StepperSelectionEvent) {
+    if (event.previouslySelectedIndex === 2) {
+      for (let n = 0; n < this.keyFields.length; n++) {
+        this.keyFields[n].selected = false;
+      }
+    }
+  }
+
   readyToSelectFile(): boolean {
     if (this.importMode === IMPORT_MODE.NEW) {
       if (this.utils.ltrim(this.tableName) === '' || this.utils.ltrim(this.tableDescription) === '') {
@@ -126,13 +138,14 @@ export class ImportDataDialogComponent implements OnInit {
     var self = this; 
 
     reader.onload = function() {
-      let errorMessage: string[] = [];
-      const lines = (<string>reader.result).split(/\r\n|\n/);
-
-      const allRows = self.utils.csv2arr((<string>reader.result));
-      self.fileHeaders = allRows[0];
-      self.fileRows = allRows.slice(1).filter(row => row.length === self.fileHeaders.length);
-
+      const results = parse<string[]>((<string>reader.result), {header: true, skipEmptyLines: true});
+      if (results.meta.fields) {
+        self.fileHeaders = results.meta.fields;
+      } else {
+        self.displayErrorDialog('Error Reading File', ['Unable to read column names from first row of selected file.']);
+        return;
+      }
+      self.fileRows = results.data;
       self.keyFields = self.fileHeaders.map(header => {
         return {
           name: header,
@@ -241,7 +254,7 @@ export class ImportDataDialogComponent implements OnInit {
         let nullKeyFields:number[] = [];
         for (let row = 0; row < this.fileRows.length; row++) {
           for (let fieldIndex = 0; fieldIndex < testFields.length; fieldIndex++) {
-            if (this.fileRows[row][testFields[fieldIndex].index] === '') {
+            if (this.fileRows[row][testFields[fieldIndex].fieldName] === '') {
               nullKeyFields.push(row);
             }
           }
@@ -250,7 +263,7 @@ export class ImportDataDialogComponent implements OnInit {
         if (nullKeyFields.length > 0) {
           let nullKeyFieldErrors: string[] = ['The following records had null values in a key field:'];
           for (let n = 0; n < nullKeyFields.length; n++) {
-            nullKeyFieldErrors.push(this.fileRows[n].toString());
+            nullKeyFieldErrors.push(JSON.stringify(this.fileRows[n]));
           }
           this.displayErrorDialog('Null Key Fields in File', nullKeyFieldErrors);
           fileOK = false;
@@ -267,7 +280,7 @@ export class ImportDataDialogComponent implements OnInit {
             for (let testField = 0; testField < testFields.length; testField++) {
               const currentRow:any = this.fileRows[rowIndex];
               const testRow:any = this.fileRows[testRowIndex];
-              if (currentRow[testFields[testField].index] !== testRow[testFields[testField].index]) {
+              if (currentRow[testFields[testField].fieldName] !== testRow[testFields[testField].fieldName]) {
                 match = false;
                 break;
               }
@@ -283,7 +296,7 @@ export class ImportDataDialogComponent implements OnInit {
         if (duplicates.length > 0) {
           let duplicateErrors: string[] = ['The following records were duplicated in the file:'];
           for (let n = 0; n < duplicates.length; n++) {
-            duplicateErrors.push(this.fileRows[n].toString());
+            duplicateErrors.push(JSON.stringify(this.fileRows[n]));
           }
           this.displayErrorDialog('Duplicate Rows in File', duplicateErrors);
           fileOK = false;
@@ -299,7 +312,7 @@ export class ImportDataDialogComponent implements OnInit {
               let match = true;
               for (let testFieldIndex = 0; testFieldIndex < testFields.length; testFieldIndex++) {
                 const testField = testFields[testFieldIndex];
-                if (table.rows[tableIndex][testField.fieldName] !== this.fileRows[fileIndex][testField.index]) {
+                if (table.rows[tableIndex][testField.fieldName] !== this.fileRows[fileIndex][testField.fieldName]) {
                   match = false;
                   break;
                 }
@@ -316,7 +329,7 @@ export class ImportDataDialogComponent implements OnInit {
           if (duplicateRows.length > 0) {
             let duplicateErrors: string[] = ['The following records already exist in the table:'];
             for (let n = 0; n < duplicateRows.length; n++) {
-              duplicateErrors.push(this.fileRows[duplicateRows[n]].toString());
+              duplicateErrors.push(JSON.stringify(this.fileRows[duplicateRows[n]]));
             }
             this.displayErrorDialog('Duplicates in Table', duplicateErrors);
             fileOK = false;
@@ -337,24 +350,12 @@ export class ImportDataDialogComponent implements OnInit {
   }
 
   import(): void {
-    let importDocuments: any[] = [];
-
-    for (let rowIndex = 0; rowIndex < this.fileRows.length; rowIndex++) {
-      let doc:any = {};
-
-      for (let fieldIndex = 0; fieldIndex < this.fileHeaders.length; fieldIndex++) {
-        doc[this.fileHeaders[fieldIndex]] = this.fileRows[rowIndex][fieldIndex];
-      }
-
-      importDocuments.push(doc);
-    }
-
     switch (this.importMode) {
       case IMPORT_MODE.NEW:
         const fields:SylvesterDocumentField[] = this.fileHeaders.map(header => {
           return {name: header, type: 'string'}
         })
-        this.apiService.bulkCreate(this.tableName, this.tableDescription, fields, importDocuments).subscribe(resp => {
+        this.apiService.bulkCreate(this.tableName, this.tableDescription, fields, this.fileRows).subscribe(resp => {
           if (resp.status === 'OK') {
             this.importComplete = true;
 
@@ -373,7 +374,7 @@ export class ImportDataDialogComponent implements OnInit {
         break;
       case IMPORT_MODE.APPEND:
         if (this.selectedTable) {
-          this.apiService.bulkInsert(this.selectedTable?.name, importDocuments).subscribe(resp => {
+          this.apiService.bulkInsert(this.selectedTable?.name, this.fileRows).subscribe(resp => {
             if (resp.status === 'OK') {
               this.importComplete = true;
 
@@ -393,7 +394,7 @@ export class ImportDataDialogComponent implements OnInit {
         break;
       case IMPORT_MODE.REPLACE:
         if (this.selectedTable) {
-          this.apiService.bulkReplace(this.selectedTable?.name, importDocuments).subscribe(resp => {
+          this.apiService.bulkReplace(this.selectedTable?.name, this.fileRows).subscribe(resp => {
             if (resp.status === 'OK') {
               this.importComplete = true;
 
