@@ -32,6 +32,7 @@ export class ImportDataDialogComponent implements OnInit {
   tables!: SylvesterCollectionsDocument[];
   tableName: string = '';
   tableDescription: string = '';
+  tableNameInUse: boolean = false;
   keyFields: keyField[] = [];
 
   target!: HTMLInputElement;
@@ -70,7 +71,11 @@ export class ImportDataDialogComponent implements OnInit {
   }
 
   tableNameChanged(): void {
-    
+    if (this.tables.findIndex(table => table.name.toLowerCase() === this.tableName.toLowerCase()) !== -1) {
+      this.tableNameInUse = true;
+    } else {
+      this.tableNameInUse = false;
+    }
   }
 
   modeChanged(): void  {
@@ -151,7 +156,7 @@ export class ImportDataDialogComponent implements OnInit {
 
   tableSelectionComplete(): boolean {
     if (this.importMode === IMPORT_MODE.NEW) {
-      if (this.tableName.length === 0 || this.tableDescription.length === 0) {
+      if (this.tableName.length === 0 || this.tableDescription.length === 0 || this.tableNameInUse) {
         return false;
       }
     } else {

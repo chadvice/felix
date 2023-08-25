@@ -73,6 +73,11 @@
                         </mat-select>
                     </mat-form-field>
                 </div>
+
+
+                <div *ngIf="tableNameInUse" class="centered-content-container">
+                    The table name "{{tableName}}" is already in use.
+                </div>
             </div>
 
             <div class="button-container">
