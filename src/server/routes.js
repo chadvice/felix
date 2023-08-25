@@ -32,14 +32,18 @@ router.delete('/document/:collection/:id', (req, res) => {
 
 router.post('/bulkinsert', (req, res) => {
     sylvesterService.bulkInsert(req, res);
-})
+});
 
 router.post('/bulkreplace', (req, res) => {
     sylvesterService.bulkReplace(req, res);
-})
+});
 
 router.post('/bulkcreate', (req, res) => {
     sylvesterService.bulkCreate(req, res);
-})
+});
+
+router.delete('/collection/:collectionName', (req, res) => {
+    sylvesterService.deleteCollection(req, res);
+});
 
 module.exports=router;

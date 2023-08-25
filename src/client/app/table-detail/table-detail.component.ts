@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { MatDialogRef, MatDialog } from '@angular/material/dialog';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Sort } from '@angular/material/sort';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { Subscription } from 'rxjs';
@@ -50,6 +50,7 @@ export class TableDetailComponent implements OnInit, OnDestroy {
   exportFilenameDialogRef!: MatDialogRef<ExportTableFilenameDialogComponent>;
 
   constructor (
+    private router: Router,
     private utils: UtilsService,
     private activeRoute: ActivatedRoute,
     private apiService: SylvesterApiService,
@@ -279,6 +280,37 @@ export class TableDetailComponent implements OnInit, OnDestroy {
           console.error(err);
           alert('There was an error exporting the table to a CSV file.');
         }
+      }
+    })
+  }
+
+  deleteTable(): void {
+    const dialogData = {
+      mode: CONFIRM_DIALOG_MODE.DELETE_CANCEL,
+      title: 'Delete Table',
+      messageArray: [`You are about to DELETE the ${this.dataTableName} table.`, 'This action can not be undone.', 'Are you sure you want to continue?'],
+      messageCentered: true
+    }
+    this.confirmationDialogRef = this.dialog.open(ConfirmationDialogComponent, {data: dialogData});
+    this.confirmationDialogRef.afterClosed().subscribe(dialogResp => {
+      if (dialogResp) {
+        this.apiService.deleteCollection(this.dataTableName).subscribe(resp => {
+          if (resp.status === 'OK') {
+            const dialogData = {
+              mode: CONFIRM_DIALOG_MODE.OK,
+              title: 'Table Deleted',
+              messageArray: [`The ${this.dataTableName} table has been deleted.`],
+              messageCentered: true
+            }
+            this.confirmationDialogRef = this.dialog.open(ConfirmationDialogComponent, {data: dialogData});
+            this.confirmationDialogRef.afterClosed().subscribe(_ => {
+              this.messenger.setTableDeleted(true);
+              this.router.navigate(['/homePage']);
+            })
+          } else {
+            alert(`There was an error deleting the ${this.dataTableName} table: ${resp.message}`);
+          }
+        })
       }
     })
   }

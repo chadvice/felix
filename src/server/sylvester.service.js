@@ -255,7 +255,7 @@ async function bulkCreate(req, res) {
         const transactionResults = await session.withTransaction(async () => {
             const now = new Date();
             const doc = {
-                created: now.toISOString,
+                created: now.toISOString(),
                 name: collectionName,
                 description: description,
                 fields: fields
@@ -280,6 +280,23 @@ async function bulkCreate(req, res) {
     }
 }
 
+async function deleteCollection(req, res) {
+    try {
+        const db = mongo.getDB();
+        const collectionName = req.params.collectionName;
+        const collection = db.collection('Collections');
+        
+        await collection.findOneAndDelete({name: collectionName});
+
+        const dataCollection = db.collection(collectionName);
+        await dataCollection.drop();
+
+        res.status(200).json({status: 'OK'});
+    } catch(err) {
+        res.status(200).json({status: 'ERROR', message: err.message});
+    }
+}
+
 module.exports = {
     getTables,
     getTableNames,
@@ -290,5 +307,6 @@ module.exports = {
     deleteDocument,
     bulkInsert,
     bulkReplace,
-    bulkCreate
+    bulkCreate,
+    deleteCollection
 }

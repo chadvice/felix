@@ -1,5 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { MatDialogRef, MatDialog } from '@angular/material/dialog';
+import { Subscription } from 'rxjs';
 
 import { AuthService } from './auth/auth.service';
 import { SylvesterApiService } from './sylvester-api.service';
@@ -12,7 +13,7 @@ import { SylvesterMessengerService } from './sylvester-messenger.service';
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })
-export class AppComponent implements OnInit {
+export class AppComponent implements OnInit, OnDestroy {
   title = 'Sylvester';
   
   tables!: SylvesterCollectionsDocument[];
@@ -20,6 +21,8 @@ export class AppComponent implements OnInit {
   showSideNav: boolean = false;
 
   importDataDialogRef!: MatDialogRef<ImportDataDialogComponent>;
+
+  tableDeletedSubscription!: Subscription;
 
   navigation = [
     { link: '/usersPage', label: 'Users', disabled: false },
@@ -34,9 +37,19 @@ export class AppComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.tableDeletedSubscription = this.messenger.tableDeleted.subscribe(deleted => {
+      if (deleted) {
+        this.getTables();
+      }
+    });
+
     this.auth.init().then(_ => {
       this.getTables();
     })
+  }
+
+  ngOnDestroy(): void {
+    this.tableDeletedSubscription.unsubscribe();
   }
 
   getTables(): void {

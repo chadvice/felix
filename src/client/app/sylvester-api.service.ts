@@ -134,6 +134,14 @@ export class SylvesterApiService {
     )
   }
 
+  deleteCollection(collection: string):Observable<APIResponse> {
+    const url: string = `${environment.sylvesterApiUrl}/collection/${collection}`
+
+    return this.http.delete<APIResponse>(url, this.getHttpOptions()).pipe(
+      catchError(this.handleError<APIResponse>('deleteCollection')),
+    )
+  }
+
   getHttpOptions() {
     const x = this.auth.getToken();
     const httpOptions = {
