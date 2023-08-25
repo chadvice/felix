@@ -53,7 +53,7 @@
                 <div *ngIf="importMode === ImportMode.NEW" class="data-fields">
                     <mat-form-field>
                         <mat-label>Table Name</mat-label>
-                        <input matInput name="tableName" [(ngModel)]="tableName" (keypress)="disallowSpaces($event)">
+                        <input matInput name="tableName" [(ngModel)]="tableName" (keypress)="disallowSpaces($event)" (ngModelChange)="tableNameChanged()">
                     </mat-form-field>
             
                     <mat-form-field>
@@ -67,7 +67,7 @@
                         <mat-label *ngIf="importMode === ImportMode.APPEND">Select table to append to</mat-label>
                         <mat-label *ngIf="importMode === ImportMode.REPLACE">Select table to overwrite</mat-label>
                         <mat-select [(value)]="selectedTable" name="tableSelection" (selectionChange)="selectedTableChanged()">
-                            <mat-option *ngFor="let table of data" [value]="table">
+                            <mat-option *ngFor="let table of tables" [value]="table">
                                 {{table.name}}
                             </mat-option>
                         </mat-select>

@@ -59,8 +59,7 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   import(): void {
-    const dialogData = this.tables;
-    this.importDataDialogRef = this.dialog.open(ImportDataDialogComponent, {data: dialogData, disableClose: true, height: '80%'});
+    this.importDataDialogRef = this.dialog.open(ImportDataDialogComponent, {disableClose: true, height: '80%'});
     this.importDataDialogRef.afterClosed().subscribe(resp => {
       if (resp) {
         this.getTables();

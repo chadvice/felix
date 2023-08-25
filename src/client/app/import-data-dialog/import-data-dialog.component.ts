@@ -1,4 +1,4 @@
-import { Component, Inject } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { CONFIRM_DIALOG_MODE, ConfirmationDialogComponent } from '../confirmation-dialog/confirmation-dialog.component';
@@ -23,12 +23,13 @@ interface keyField {
   templateUrl: './import-data-dialog.component.html',
   styleUrls: ['./import-data-dialog.component.scss']
 })
-export class ImportDataDialogComponent {
+export class ImportDataDialogComponent implements OnInit {
   ImportMode: any = IMPORT_MODE; // This is so we can use the ENUM in the HTML template
   importMode: IMPORT_MODE = IMPORT_MODE.NEW;
 
   selectedFileName: string | null = null;
   selectedTable: SylvesterCollectionsDocument | null = null;
+  tables!: SylvesterCollectionsDocument[];
   tableName: string = '';
   tableDescription: string = '';
   keyFields: keyField[] = [];
@@ -46,7 +47,6 @@ export class ImportDataDialogComponent {
   importMessage: string = '';
 
   constructor(
-    @Inject(MAT_DIALOG_DATA) public data: SylvesterCollectionsDocument[],
     private dialogRef: MatDialogRef<ImportDataDialogComponent>,
     private utils: UtilsService,
     private apiService: SylvesterApiService,
@@ -55,12 +55,22 @@ export class ImportDataDialogComponent {
     this.importMode = IMPORT_MODE.NEW;
   }
 
+  ngOnInit(): void {
+    this.apiService.getTables().subscribe(tables => {
+      this.tables = tables;
+    })
+  }
+
   disallowSpaces(event: KeyboardEvent): boolean {
     if (event.key === ' ') {
       return false;
     } else {
       return true;
     }
+  }
+
+  tableNameChanged(): void {
+    
   }
 
   modeChanged(): void  {
