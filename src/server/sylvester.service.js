@@ -1,5 +1,5 @@
 const mongo = require('./mongo');
-const {ObjectId} = require('mongodb');
+const { ObjectId } = require('mongodb');
 mongo.connect();
 
 async function getTables(req, res) {
@@ -16,7 +16,7 @@ async function getTableNames(req, res) {
     const collection = db.collection('Collections');
 
     const options = {
-      projection: { _id: 0, 'name': 1 }
+        projection: { _id: 0, 'name': 1 }
     };
 
     const resp = await collection.find({}, options).toArray();
@@ -32,7 +32,7 @@ async function updateCollection(req, res) {
 
     const collectionName = req.body.collectionName;
     const newDescription = req.body.newDescription;
-    const fieldChanges   = req.body.fieldChanges;
+    const fieldChanges = req.body.fieldChanges;
 
     const transactionOptions = {
         readPreference: 'primary',
@@ -47,7 +47,7 @@ async function updateCollection(req, res) {
             // Change the description, if requested
             if (newDescription?.length > 0) {
                 statusMessage = `Description changed to ${newDescription}.  `;
-                await collection.updateOne({name: collectionName}, { $set: { "description" : newDescription } }, { session: session });
+                await collection.updateOne({ name: collectionName }, { $set: { "description": newDescription } }, { session: session });
             }
 
             // Apply any field changes requested
@@ -63,25 +63,25 @@ async function updateCollection(req, res) {
                     const oldName = fieldChanges[n].oldName;
                     const newName = fieldChanges[n].newName;
                     const removed = fieldChanges[n].removed;
-                    const added   = fieldChanges[n].added;
+                    const added = fieldChanges[n].added;
 
                     if (oldName && removed) {
                         await dataCollection.updateMany({}, { $unset: { [oldName]: '' } }, { session: session });
-                        resp = await collection.updateOne({'name': collectionName}, {$pull: {fields: {name: oldName}}}, {session: session});
+                        resp = await collection.updateOne({ 'name': collectionName }, { $pull: { fields: { name: oldName } } }, { session: session });
                         if (resp?.modifiedCount > 0) {
                             fieldDeleteCount++;
                         }
                     } else if (oldName && newName) {
                         await dataCollection.updateMany({}, { $rename: { [oldName]: newName } }, { session: session });
-                        resp = await collection.updateOne({'name': collectionName, 'fields.name': oldName}, {$set: {"fields.$.name": newName}}, { session: session });
+                        resp = await collection.updateOne({ 'name': collectionName, 'fields.name': oldName }, { $set: { "fields.$.name": newName } }, { session: session });
                         if (resp?.modifiedCount > 0) {
                             fieldChangeCount++;
                         }
-                    }  else if (newName && added){
+                    } else if (newName && added) {
                         // Check to see if the field exists before we add it
-                        resp = await collection.count({$and: [{'name': collectionName}, {'fields': {$elemMatch: {'name': newName}}}]});
+                        resp = await collection.count({ $and: [{ 'name': collectionName }, { 'fields': { $elemMatch: { 'name': newName } } }] });
                         if (resp === 0) {
-                            resp = await collection.updateOne({'name': collectionName}, {$push: {'fields': {'name': newName, 'type': 'string'}}}, {session: session});
+                            resp = await collection.updateOne({ 'name': collectionName }, { $push: { 'fields': { 'name': newName, 'type': 'string' } } }, { session: session });
                             if (resp?.modifiedCount > 0) {
                                 fieldAddCount++;
                             }
@@ -100,22 +100,22 @@ async function updateCollection(req, res) {
                 }
             }
         }, transactionOptions);
-    } catch(err) {
+    } catch (err) {
         status = 'ERROR';
         statusMessage = err.message;
     } finally {
-        res.status(200).json({status: status, message: statusMessage});
+        res.status(200).json({ status: status, message: statusMessage });
     }
 }
 
 async function getTable(req, res) {
     const tableName = req.params.tableName;
     const db = mongo.getDB();
-    
+
     const colsCollection = db.collection('Collections');
     const query = { 'name': tableName };
     const options = {
-      projection: { _id: 0, 'description': 1, 'fields': 1 }
+        projection: { _id: 0, 'description': 1, 'fields': 1 }
     };
     const cols = await colsCollection.findOne(query, options);
 
@@ -141,9 +141,9 @@ async function updateDocument(req, res) {
         delete document._id;
 
         const resp = await collection.replaceOne(query, document);
-        res.status(200).json({status: 'OK'});
-    } catch(err) {
-        res.status(200).json({status: 'ERROR', message: err.message});
+        res.status(200).json({ status: 'OK' });
+    } catch (err) {
+        res.status(200).json({ status: 'ERROR', message: err.message });
     }
 }
 
@@ -155,9 +155,9 @@ async function insertDocument(req, res) {
         const collection = db.collection(collectionName);
 
         const resp = await collection.insertOne(document);
-        res.status(200).json({status: 'OK'});
-    } catch(err) {
-        res.status(200).json({status: 'ERROR', message: err.message});
+        res.status(200).json({ status: 'OK' });
+    } catch (err) {
+        res.status(200).json({ status: 'ERROR', message: err.message });
     }
 }
 
@@ -170,9 +170,9 @@ async function deleteDocument(req, res) {
         const query = { _id: new ObjectId(id) };
 
         const resp = await collection.deleteOne(query);
-        res.status(200).json({status: 'OK'});
-    } catch(err) {
-        res.status(200).json({status: 'ERROR', message: err.message});
+        res.status(200).json({ status: 'OK' });
+    } catch (err) {
+        res.status(200).json({ status: 'ERROR', message: err.message });
     }
 }
 
@@ -191,9 +191,9 @@ async function bulkInsert(req, res) {
         const resp = await collection.bulkWrite(bulkOperations);
         const message = `${resp.insertedCount} records were inserted.`
 
-        res.status(200).json({status: 'OK', message: message});
-    } catch(err) {
-        res.status(200).json({status: 'ERROR', message: err.message});
+        res.status(200).json({ status: 'OK', message: message });
+    } catch (err) {
+        res.status(200).json({ status: 'ERROR', message: err.message });
     }
 }
 
@@ -215,13 +215,13 @@ async function bulkReplace(req, res) {
     let statusMessage = '';
     try {
         const transactionResults = await session.withTransaction(async () => {
-            await collection.deleteMany({}, {session: session});
-    
+            await collection.deleteMany({}, { session: session });
+
             let bulkOperations = [];
             for (let n = 0; n < documents.length; n++) {
                 bulkOperations.push({ "insertOne": { "document": documents[n] } });
             }
-    
+
             const resp = await collection.bulkWrite(bulkOperations);
             statusMessage = `${resp.insertedCount} records were inserted.`
         }, transactionOptions);
@@ -229,7 +229,7 @@ async function bulkReplace(req, res) {
         status = 'ERROR';
         statusMessage = err.message;
     } finally {
-        res.status(200).json({status: status, message: statusMessage});
+        res.status(200).json({ status: status, message: statusMessage });
     }
 }
 
@@ -261,13 +261,13 @@ async function bulkCreate(req, res) {
                 fields: fields
             }
 
-            await collection.insertOne(doc, {session: session});
-    
+            await collection.insertOne(doc, { session: session });
+
             let bulkOperations = [];
             for (let n = 0; n < documents.length; n++) {
                 bulkOperations.push({ "insertOne": { "document": documents[n] } });
             }
-    
+
             const dataCollection = db.collection(collectionName);
             const resp = await dataCollection.bulkWrite(bulkOperations);
             statusMessage = `${resp.insertedCount} records were inserted.`
@@ -276,7 +276,7 @@ async function bulkCreate(req, res) {
         status = 'ERROR';
         statusMessage = err.message;
     } finally {
-        res.status(200).json({status: status, message: statusMessage});
+        res.status(200).json({ status: status, message: statusMessage });
     }
 }
 
@@ -285,17 +285,117 @@ async function deleteCollection(req, res) {
         const db = mongo.getDB();
         const collectionName = req.params.collectionName;
         const collection = db.collection('Collections');
-        
-        await collection.findOneAndDelete({name: collectionName});
+
+        await collection.findOneAndDelete({ name: collectionName });
 
         const dataCollection = db.collection(collectionName);
         await dataCollection.drop();
 
-        res.status(200).json({status: 'OK'});
-    } catch(err) {
-        res.status(200).json({status: 'ERROR', message: err.message});
+        res.status(200).json({ status: 'OK' });
+    } catch (err) {
+        res.status(200).json({ status: 'ERROR', message: err.message });
     }
 }
+
+/* #region  Users */
+async function getUsers(req, res) {
+    const db = mongo.getDB();
+    const collection = db.collection('Users');
+
+    const resp = await collection.find({}).toArray();
+
+    res.status(200).json(resp);
+}
+
+async function getUser(req, res) {
+    const db = mongo.getDB();
+    const userName = req.params.userName;
+    const colsCollection = db.collection('Users');
+
+    const resp = await colsCollection.findOne({ 'userName': userName });
+
+    res.status(200).json(resp);
+}
+
+async function updateUser(req, res) {
+    try {
+        const db = mongo.getDB();
+        const document = req.body;
+        const collection = db.collection('Users');
+
+        const resp = await collection.findOneAndReplace({ userName: document.userName }, document, { upsert: true });
+        res.status(200).json({ status: 'OK' });
+    } catch (err) {
+        res.status(200).json({ status: 'ERROR', message: err.message });
+    }
+}
+
+async function deleteUser(req, res) {
+    try {
+        const db = mongo.getDB();
+        const userName = req.params.userName;
+        const collection = db.collection('Users');
+
+        const resp = await collection.findOneAndDelete({ userName: userName });
+        res.status(200).json({ status: 'OK' });
+    } catch (err) {
+        res.status(200).json({ status: 'ERROR', message: err.message });
+    }
+}
+/* #endregion */
+
+/* #region  Roles */
+async function getRoles(req, res) {
+    const db = mongo.getDB();
+    const collection = db.collection('Roles');
+
+    const resp = await collection.find({}).toArray();
+
+    res.status(200).json(resp);
+}
+
+async function getRole(req, res) {
+    const db = mongo.getDB();
+    const roleID = req.params.roleID;
+    const colsCollection = db.collection('Roles');
+
+    const resp = await colsCollection.findOne({ '_id': new ObjectId(roleID) });
+
+    res.status(200).json(resp);
+}
+
+async function updateRole(req, res) {
+    try {
+        const db = mongo.getDB();
+        const document = req.body;
+        const collection = db.collection('Roles');
+
+        let resp;
+        if (document._id) {
+            resp = await collection.findOneAndReplace({ _id: new ObjectId(roleID) }, document, { upsert: true });
+        } else {
+            resp = await collection.insertOne(document);
+        }
+
+        res.status(200).json({ status: 'OK' });
+    } catch (err) {
+        res.status(200).json({ status: 'ERROR', message: err.message });
+    }
+}
+
+async function deleteRole(req, res) {
+    try {
+        const db = mongo.getDB();
+        const roleID = req.params.roleID;
+        const collection = db.collection('Roles');
+
+        const resp = await collection.findOneAndDelete({ _id: new ObjectId(roleID) });
+        res.status(200).json({ status: 'OK' });
+    } catch (err) {
+        res.status(200).json({ status: 'ERROR', message: err.message });
+    }
+}
+/* #endregion */
 
 module.exports = {
     getTables,
@@ -308,5 +408,13 @@ module.exports = {
     bulkInsert,
     bulkReplace,
     bulkCreate,
-    deleteCollection
+    deleteCollection,
+    getUsers,
+    getUser,
+    updateUser,
+    deleteUser,
+    getRoles,
+    getRole,
+    updateRole,
+    deleteRole
 }

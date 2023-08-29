@@ -46,4 +46,40 @@ router.delete('/collection/:collectionName', (req, res) => {
     sylvesterService.deleteCollection(req, res);
 });
 
-module.exports=router;
+/* #region  Users */
+router.get('/users', (req, res) => {
+    sylvesterService.getUsers(req, res);
+});
+
+router.get('/user/:userName', (req, res) => {
+    sylvesterService.getUser(req, res);
+});
+
+router.put('/user/', (req, res) => {
+    sylvesterService.updateUser(req, res);
+});
+
+router.delete('/user/:userName', (req, res) => {
+    sylvesterService.deleteUser(req, res);
+});
+/* #endregion */
+
+/* #region  Roles */
+router.get('/roles', (req, res) => {
+    sylvesterService.getRoles(req, res);
+});
+
+router.get('/role/:roleID', (req, res) => {
+    sylvesterService.getRole(req, res);
+});
+
+router.put('/role/', (req, res) => {
+    sylvesterService.updateRole(req, res);
+});
+
+router.delete('/role/:roleID', (req, res) => {
+    sylvesterService.deleteRole(req, res);
+});
+/* #endregion */
+
+module.exports = router;

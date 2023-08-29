@@ -6,6 +6,8 @@ import { environment } from '../environments/environment';
 import { AuthService } from './auth/auth.service';
 import { SylvesterCollection, SylvesterCollectionsDocument, SylvesterDocumentField } from './nelnet/sylvester-collection';
 import { CollectionChanges } from './table-structure-editor-dialog/table-structure-editor-dialog.component';
+import { SylvesterUser } from './nelnet/sylvester-user';
+import { SylvesterRole } from './nelnet/sylvester-role';
 
 interface APIResponse {
   status: string,
@@ -21,7 +23,7 @@ export class SylvesterApiService {
     private auth: AuthService
   ) { }
 
-  getTables():Observable<SylvesterCollectionsDocument[]> {
+  getTables(): Observable<SylvesterCollectionsDocument[]> {
     const url: string = `${environment.sylvesterApiUrl}/tables`
 
     return this.http.get<SylvesterCollectionsDocument[]>(url, this.getHttpOptions()).pipe(
@@ -29,7 +31,7 @@ export class SylvesterApiService {
     )
   }
 
-  getTableNames():Observable<string[]> {
+  getTableNames(): Observable<string[]> {
     const url: string = `${environment.sylvesterApiUrl}/tablenames`
 
     return this.http.get<string[]>(url, this.getHttpOptions()).pipe(
@@ -37,7 +39,7 @@ export class SylvesterApiService {
     )
   }
 
-  getTable(tableName: string):Observable<SylvesterCollection> {
+  getTable(tableName: string): Observable<SylvesterCollection> {
     const url: string = `${environment.sylvesterApiUrl}/table/${tableName}`
 
     return this.http.get<SylvesterCollection>(url, this.getHttpOptions()).pipe(
@@ -59,7 +61,7 @@ export class SylvesterApiService {
     )
   }
 
-  updateDocument(collection: string, document: Object):Observable<APIResponse> {
+  updateDocument(collection: string, document: Object): Observable<APIResponse> {
     const url: string = `${environment.sylvesterApiUrl}/document`
 
     const body = {
@@ -72,7 +74,7 @@ export class SylvesterApiService {
     )
   }
 
-  insertDocument(collection: string, document: Object):Observable<APIResponse> {
+  insertDocument(collection: string, document: Object): Observable<APIResponse> {
     const url: string = `${environment.sylvesterApiUrl}/document`
 
     const body = {
@@ -85,7 +87,7 @@ export class SylvesterApiService {
     )
   }
 
-  deleteDocument(collection: string, id: string):Observable<APIResponse> {
+  deleteDocument(collection: string, id: string): Observable<APIResponse> {
     const url: string = `${environment.sylvesterApiUrl}/document/${collection}/${id}`
 
     return this.http.delete<APIResponse>(url, this.getHttpOptions()).pipe(
@@ -93,7 +95,7 @@ export class SylvesterApiService {
     )
   }
 
-  bulkInsert(collectionName: string, documents: Object[]):Observable<APIResponse> {
+  bulkInsert(collectionName: string, documents: Object[]): Observable<APIResponse> {
     const url: string = `${environment.sylvesterApiUrl}/bulkinsert`
 
     const body = {
@@ -106,7 +108,7 @@ export class SylvesterApiService {
     )
   }
 
-  bulkReplace(collectionName: string, documents: Object[]):Observable<APIResponse> {
+  bulkReplace(collectionName: string, documents: Object[]): Observable<APIResponse> {
     const url: string = `${environment.sylvesterApiUrl}/bulkreplace`
 
     const body = {
@@ -119,7 +121,7 @@ export class SylvesterApiService {
     )
   }
 
-  bulkCreate(collectionName: string, description: string, fields: SylvesterDocumentField[], documents: Object[]):Observable<APIResponse> {
+  bulkCreate(collectionName: string, description: string, fields: SylvesterDocumentField[], documents: Object[]): Observable<APIResponse> {
     const url: string = `${environment.sylvesterApiUrl}/bulkcreate`
 
     const body = {
@@ -134,13 +136,81 @@ export class SylvesterApiService {
     )
   }
 
-  deleteCollection(collection: string):Observable<APIResponse> {
+  deleteCollection(collection: string): Observable<APIResponse> {
     const url: string = `${environment.sylvesterApiUrl}/collection/${collection}`
 
     return this.http.delete<APIResponse>(url, this.getHttpOptions()).pipe(
       catchError(this.handleError<APIResponse>('deleteCollection')),
     )
   }
+
+  /* #region Users */
+  getUsers(): Observable<SylvesterUser[]> {
+    const url: string = `${environment.sylvesterApiUrl}/users`;
+
+    return this.http.get<SylvesterUser[]>(url, this.getHttpOptions()).pipe(
+      catchError(this.handleError<SylvesterUser[]>('getUsers')),
+    )
+  }
+
+  getUser(userName: string): Observable<SylvesterUser> {
+    const url: string = `${environment.sylvesterApiUrl}/user/${userName}`;
+
+    return this.http.get<SylvesterUser>(url, this.getHttpOptions()).pipe(
+      catchError(this.handleError<SylvesterUser>('getUser')),
+    )
+  }
+
+  updateUser(user: SylvesterUser): Observable<APIResponse> {
+    const url: string = `${environment.sylvesterApiUrl}/user`;
+
+    return this.http.put<APIResponse>(url, user, this.getHttpOptions()).pipe(
+      catchError(this.handleError<APIResponse>('updateUser')),
+    )
+  }
+
+  deleteUser(userName: string): Observable<SylvesterUser> {
+    const url: string = `${environment.sylvesterApiUrl}/user/${userName}`;
+
+    return this.http.delete<SylvesterUser>(url, this.getHttpOptions()).pipe(
+      catchError(this.handleError<SylvesterUser>('deleteUser')),
+    )
+  }
+  /* #endregion */
+
+  /* #region Roles */
+  getRoles(): Observable<SylvesterRole[]> {
+    const url: string = `${environment.sylvesterApiUrl}/users`;
+
+    return this.http.get<SylvesterRole[]>(url, this.getHttpOptions()).pipe(
+      catchError(this.handleError<SylvesterRole[]>('getRoles')),
+    )
+  }
+
+  getRole(roleID: string): Observable<SylvesterRole> {
+    const url: string = `${environment.sylvesterApiUrl}/role/${roleID}`;
+
+    return this.http.get<SylvesterRole>(url, this.getHttpOptions()).pipe(
+      catchError(this.handleError<SylvesterRole>('getRole')),
+    )
+  }
+
+  updateRole(role: SylvesterRole): Observable<APIResponse> {
+    const url: string = `${environment.sylvesterApiUrl}/role`;
+
+    return this.http.put<APIResponse>(url, role, this.getHttpOptions()).pipe(
+      catchError(this.handleError<APIResponse>('updateRole')),
+    )
+  }
+
+  deleteRole(roleID: string): Observable<SylvesterRole> {
+    const url: string = `${environment.sylvesterApiUrl}/role/${roleID}`;
+
+    return this.http.delete<SylvesterRole>(url, this.getHttpOptions()).pipe(
+      catchError(this.handleError<SylvesterRole>('deleteRole')),
+    )
+  }
+  /* #endregion */
 
   getHttpOptions() {
     const httpOptions = {
