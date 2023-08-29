@@ -1,10 +1,12 @@
+import { ObjectId } from "mongodb"
+
 export interface SylvesterDocumentField {
     name: string,
     type: string
 }
 
 export interface SylvesterCollectionsDocument {
-    _id: string,
+    _id: ObjectId,
     created: Date,
     name: string,
     description: string,

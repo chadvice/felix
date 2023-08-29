@@ -3,6 +3,7 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { SylvesterUser } from '../../nelnet/sylvester-user';
 import { SylvesterRole } from '../../nelnet/sylvester-role';
+import { ObjectId } from 'mongodb';
 
 export interface UserEditorDialogData {
   user: SylvesterUser,
@@ -10,7 +11,7 @@ export interface UserEditorDialogData {
 }
 
 interface RoleSelectionElement {
-  roleID: string,
+  roleID: ObjectId,
   name: string,
   description?: string,
   selected: boolean
@@ -48,7 +49,7 @@ export class UserEditorDialogComponent implements OnInit {
       this.originalSelectedRoles.push(roleIndex === -1 ? false : true);
     })
 
-    const userRoleIDs: string[] = [];
+    const userRoleIDs: ObjectId[] = [];
     this.data.user.roleIDs.forEach(roleID => {
       userRoleIDs.push(roleID);
     })

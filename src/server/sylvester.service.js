@@ -368,11 +368,13 @@ async function updateRole(req, res) {
     try {
         const db = mongo.getDB();
         const document = req.body;
+        const documentID = req.body._id;
+        delete document._id;
         const collection = db.collection('Roles');
 
         let resp;
-        if (document._id) {
-            resp = await collection.findOneAndReplace({ _id: new ObjectId(roleID) }, document, { upsert: true });
+        if (documentID) {
+            resp = await collection.findOneAndReplace({ _id: new ObjectId(documentID) }, document, { upsert: true });
         } else {
             resp = await collection.insertOne(document);
         }

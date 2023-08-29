@@ -1,9 +1,13 @@
+import { ObjectId } from "mongodb"
+
+export interface SylvesterRoleCollectionElement {
+    id: ObjectId,
+    canEdit: boolean
+}
+
 export interface SylvesterRole {
-    _id: string,
+    _id: ObjectId,
     name: string,
     description?: string,
-    collections: {
-        name: string,
-        canEdit: boolean
-    } []
+    collections: SylvesterRoleCollectionElement []
 }

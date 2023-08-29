@@ -3,7 +3,7 @@ import { forkJoin } from 'rxjs';
 import { MatDialogRef, MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
-import { SylvesterApiService } from '../sylvester-api.service'
+import { SylvesterApiService } from '../sylvester-api.service';
 import { UtilsService } from '../utils.service';
 import { SylvesterUser } from '../nelnet/sylvester-user';
 import { SylvesterRole } from '../nelnet/sylvester-role';

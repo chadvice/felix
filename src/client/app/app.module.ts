@@ -20,6 +20,7 @@ import { ConfirmationDialogComponent } from './confirmation-dialog/confirmation-
 import { ImportDataDialogComponent } from './import-data-dialog/import-data-dialog.component';
 import { ExportTableFilenameDialogComponent } from './table-detail/export-table-filename-dialog/export-table-filename-dialog.component';
 import { UserEditorDialogComponent } from './users-page/user-editor-dialog/user-editor-dialog.component';
+import { RoleEditorDialogComponent } from './roles-page/role-editor-dialog/role-editor-dialog.component';
 
 @NgModule({
   declarations: [
@@ -34,7 +35,8 @@ import { UserEditorDialogComponent } from './users-page/user-editor-dialog/user-
     ConfirmationDialogComponent,
     ImportDataDialogComponent,
     ExportTableFilenameDialogComponent,
-    UserEditorDialogComponent
+    UserEditorDialogComponent,
+    RoleEditorDialogComponent
   ],
   imports: [
     BrowserModule,

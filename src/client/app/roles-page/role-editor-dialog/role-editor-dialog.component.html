@@ -1,0 +1,55 @@
+<mat-dialog-content>
+    <h2>Role Editor</h2>
+
+    <form  #userForm="ngForm">
+        <mat-form-field>
+            <mat-label>Name</mat-label>
+            <input matInput name="name" [(ngModel)]="name">
+        </mat-form-field>
+
+        <mat-form-field>
+            <mat-label>Description</mat-label>
+            <input matInput name="description" [(ngModel)]="description">
+        </mat-form-field>
+    </form>
+    
+    <h3>Selected Tables</h3>
+    <div class="collections-container">
+        <table mat-table [dataSource]="selectedCollections">
+
+            <ng-container matColumnDef="selected">
+              <th mat-header-cell *matHeaderCellDef> <mat-icon>done</mat-icon> </th>
+              <td mat-cell *matCellDef="let coll"> <mat-checkbox [(ngModel)]="coll.selected"></mat-checkbox> </td>
+            </ng-container>
+
+            <ng-container matColumnDef="name">
+              <th mat-header-cell *matHeaderCellDef> Name </th>
+              <td mat-cell *matCellDef="let coll"> {{coll.name}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="description">
+              <th mat-header-cell *matHeaderCellDef> Description </th>
+              <td mat-cell *matCellDef="let coll"> {{coll.description}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="canEdit">
+              <th mat-header-cell *matHeaderCellDef> Access Level </th>
+              <td mat-cell *matCellDef="let coll">
+                <mat-button-toggle-group [(ngModel)]="coll.canEdit" style="margin-top: 5px; margin-bottom: 5px;" [disabled]="!coll.selected">
+                    <mat-button-toggle [value]="false">View</mat-button-toggle>
+                    <mat-button-toggle [value]="true">Edit</mat-button-toggle>
+                </mat-button-toggle-group>
+              </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true;"></tr>
+            <tr mat-row *matRowDef="let row; let i=index; columns: displayedColumns;" class="table-row"></tr>
+        </table>
+    </div>
+
+    <div class="button-container">
+        <button mat-raised-button color="accent" (click)="save()" [disabled]="!canSave()">Save</button>
+        <button mat-raised-button color="warn" style="margin-left: 10px;" (click)="cancel()">Cancel</button>
+        <button mat-raised-button color="warn" style="margin-left: 10px;" (click)="delete()">Delete Role</button>
+    </div>
+</mat-dialog-content>
