@@ -51,7 +51,7 @@ router.get('/users', (req, res) => {
     sylvesterService.getUsers(req, res);
 });
 
-router.get('/user/:userName', (req, res) => {
+router.get('/user/:userID', (req, res) => {
     sylvesterService.getUser(req, res);
 });
 
@@ -59,7 +59,7 @@ router.put('/user/', (req, res) => {
     sylvesterService.updateUser(req, res);
 });
 
-router.delete('/user/:userName', (req, res) => {
+router.delete('/user/:userID', (req, res) => {
     sylvesterService.deleteUser(req, res);
 });
 /* #endregion */

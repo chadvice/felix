@@ -309,10 +309,10 @@ async function getUsers(req, res) {
 
 async function getUser(req, res) {
     const db = mongo.getDB();
-    const userName = req.params.userName;
+    const userID = req.params.userID;
     const colsCollection = db.collection('Users');
 
-    const resp = await colsCollection.findOne({ 'userName': userName });
+    const resp = await colsCollection.findOne({ 'userID': userID });
 
     res.status(200).json(resp);
 }
@@ -323,7 +323,7 @@ async function updateUser(req, res) {
         const document = req.body;
         const collection = db.collection('Users');
 
-        const resp = await collection.findOneAndReplace({ userName: document.userName }, document, { upsert: true });
+        const resp = await collection.findOneAndReplace({ userID: document.userID }, document, { upsert: true });
         res.status(200).json({ status: 'OK' });
     } catch (err) {
         res.status(200).json({ status: 'ERROR', message: err.message });
@@ -333,10 +333,10 @@ async function updateUser(req, res) {
 async function deleteUser(req, res) {
     try {
         const db = mongo.getDB();
-        const userName = req.params.userName;
+        const userID = req.params.userID;
         const collection = db.collection('Users');
 
-        const resp = await collection.findOneAndDelete({ userName: userName });
+        const resp = await collection.findOneAndDelete({ userID: userID });
         res.status(200).json({ status: 'OK' });
     } catch (err) {
         res.status(200).json({ status: 'ERROR', message: err.message });

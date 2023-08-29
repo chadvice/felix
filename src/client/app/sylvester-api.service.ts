@@ -153,8 +153,8 @@ export class SylvesterApiService {
     )
   }
 
-  getUser(userName: string): Observable<SylvesterUser> {
-    const url: string = `${environment.sylvesterApiUrl}/user/${userName}`;
+  getUser(userID: string): Observable<SylvesterUser> {
+    const url: string = `${environment.sylvesterApiUrl}/user/${userID}`;
 
     return this.http.get<SylvesterUser>(url, this.getHttpOptions()).pipe(
       catchError(this.handleError<SylvesterUser>('getUser')),
@@ -169,8 +169,8 @@ export class SylvesterApiService {
     )
   }
 
-  deleteUser(userName: string): Observable<SylvesterUser> {
-    const url: string = `${environment.sylvesterApiUrl}/user/${userName}`;
+  deleteUser(userID: string): Observable<SylvesterUser> {
+    const url: string = `${environment.sylvesterApiUrl}/user/${userID}`;
 
     return this.http.delete<SylvesterUser>(url, this.getHttpOptions()).pipe(
       catchError(this.handleError<SylvesterUser>('deleteUser')),
@@ -180,7 +180,7 @@ export class SylvesterApiService {
 
   /* #region Roles */
   getRoles(): Observable<SylvesterRole[]> {
-    const url: string = `${environment.sylvesterApiUrl}/users`;
+    const url: string = `${environment.sylvesterApiUrl}/roles`;
 
     return this.http.get<SylvesterRole[]>(url, this.getHttpOptions()).pipe(
       catchError(this.handleError<SylvesterRole[]>('getRoles')),

@@ -1,4 +1,6 @@
 export interface SylvesterUser {
-    userName: string,
+    userID: string,
+    firstName?: string,
+    lastName?: string,
     roleIDs: string[]
 }
