@@ -113,6 +113,10 @@ export class ImportDataDialogComponent implements OnInit {
         this.keyFields[n].selected = false;
       }
     }
+
+    if (event.previouslySelectedIndex === 3) {
+      this.importComplete = false;
+    }
   }
 
   readyToSelectFile(): boolean {
