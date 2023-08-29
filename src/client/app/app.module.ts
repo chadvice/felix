@@ -19,6 +19,7 @@ import { TableStructureEditorDialogComponent } from './table-structure-editor-di
 import { ConfirmationDialogComponent } from './confirmation-dialog/confirmation-dialog.component';
 import { ImportDataDialogComponent } from './import-data-dialog/import-data-dialog.component';
 import { ExportTableFilenameDialogComponent } from './table-detail/export-table-filename-dialog/export-table-filename-dialog.component';
+import { UserEditorDialogComponent } from './users-page/user-editor-dialog/user-editor-dialog.component';
 
 @NgModule({
   declarations: [
@@ -32,7 +33,8 @@ import { ExportTableFilenameDialogComponent } from './table-detail/export-table-
     TableStructureEditorDialogComponent,
     ConfirmationDialogComponent,
     ImportDataDialogComponent,
-    ExportTableFilenameDialogComponent
+    ExportTableFilenameDialogComponent,
+    UserEditorDialogComponent
   ],
   imports: [
     BrowserModule,

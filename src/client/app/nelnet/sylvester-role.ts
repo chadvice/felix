@@ -1,6 +1,7 @@
 export interface SylvesterRole {
     _id: string,
-    roleName: string,
+    name: string,
+    description?: string,
     collections: {
         name: string,
         canEdit: boolean

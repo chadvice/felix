@@ -16,7 +16,8 @@ import { MatSelectModule}  from '@angular/material/select';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatCheckboxModule } from '@angular/material/checkbox';
-import { MatStepperModule } from '@angular/material/stepper';;
+import { MatStepperModule } from '@angular/material/stepper';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 
 @NgModule({
     exports: [
@@ -36,7 +37,8 @@ import { MatStepperModule } from '@angular/material/stepper';;
         MatDialogModule,
         MatRadioModule,
         MatCheckboxModule,
-        MatStepperModule
+        MatStepperModule,
+        MatSnackBarModule
     ]
 })
 

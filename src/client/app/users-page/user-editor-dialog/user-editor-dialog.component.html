@@ -1,0 +1,28 @@
+<mat-dialog-content>
+    <h2>Editing User {{user.userID}}</h2>
+
+    <form  #userForm="ngForm">
+        <mat-form-field>
+            <mat-label>First Name</mat-label>
+            <input matInput name="firstName" [(ngModel)]="user.firstName">
+        </mat-form-field>
+
+        <mat-form-field>
+            <mat-label>Last Name</mat-label>
+            <input matInput name="lastName" [(ngModel)]="user.lastName">
+        </mat-form-field>
+    </form>
+    
+    <h3>Selected Roles</h3>
+    <div *ngFor="let role of selectedRoles">
+    <mat-checkbox [(ngModel)]="role.selected">
+        {{role.name}} <i>({{role.description}})</i>
+    </mat-checkbox>
+    </div>
+
+    <div class="button-container">
+        <button mat-raised-button color="accent" (click)="save()" [disabled]="!canSave()">Save</button>
+        <button mat-raised-button color="warn" style="margin-left: 10px;" (click)="cancel()">Cancel</button>
+        <button mat-raised-button color="warn" style="margin-left: 10px;" (click)="delete()">Delete User</button>
+    </div>
+</mat-dialog-content>
