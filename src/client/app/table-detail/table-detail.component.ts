@@ -9,7 +9,7 @@ import { saveAs } from 'file-saver';
 
 import { UtilsService } from '../utils.service';
 import { SylvesterApiService } from '../sylvester-api.service';
-import { TableRowEditorDialogComponent, TableRowEditorDialogData } from '../table-row-editor-dialog/table-row-editor-dialog.component';
+import { TableRowEditorDialogComponent, TableRowEditorDialogData } from './table-row-editor-dialog/table-row-editor-dialog.component';
 import { CollectionChanges, TableStructureEditorDialogComponent, TableStructureEditorDialogData } from '../table-structure-editor-dialog/table-structure-editor-dialog.component';
 import { SylvesterCollection } from '../nelnet/sylvester-collection';
 import { CONFIRM_DIALOG_MODE, ConfirmationDialogComponent } from '../confirmation-dialog/confirmation-dialog.component';
