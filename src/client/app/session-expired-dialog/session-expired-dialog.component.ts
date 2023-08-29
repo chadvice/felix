@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatDialogRef } from '@angular/material/dialog';
 
 import { AuthService } from '../auth/auth.service';
 
@@ -15,7 +15,7 @@ export class SessionExpiredDialogComponent {
     private router: Router,
     private auth: AuthService,
     private dialogRef: MatDialogRef<SessionExpiredDialogComponent>
-  ) {}
+  ) { }
 
   login(): void {
     this.router.navigate(['/homePage']).then(_ => {
@@ -24,5 +24,9 @@ export class SessionExpiredDialogComponent {
         this.auth.login();
       })
     })
+  }
+
+  cancel(): void {
+    this.dialogRef.close();
   }
 }
