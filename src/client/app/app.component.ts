@@ -1,6 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { MatDialogRef, MatDialog } from '@angular/material/dialog';
 import { Subscription } from 'rxjs';
+import { Router } from '@angular/router';
 
 import { AuthService } from './auth/auth.service';
 import { SylvesterApiService } from './sylvester-api.service';
@@ -33,7 +34,8 @@ export class AppComponent implements OnInit, OnDestroy {
     public auth: AuthService,
     private apiService: SylvesterApiService,
     private dialog: MatDialog,
-    private messenger: SylvesterMessengerService
+    private messenger: SylvesterMessengerService,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -50,6 +52,14 @@ export class AppComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.tableDeletedSubscription.unsubscribe();
+  }
+
+  login(): void {
+    this.router.navigate(['/homePage']).then(_ => {
+      this.auth.init().then(_ => {
+        this.auth.login();
+      })
+    })
   }
 
   getTables(): void {
