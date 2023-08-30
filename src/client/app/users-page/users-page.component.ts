@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { forkJoin } from 'rxjs';
+import { forkJoin, throwError } from 'rxjs';
 import { MatDialogRef, MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
@@ -48,7 +48,7 @@ export class UsersPageComponent implements OnInit {
       users.forEach(user => {
         let roleList: string = '';
         
-        user.roleIDs.forEach(roleID => {
+        user.roleIDs?.forEach(roleID => {
           const role = roles.find(role => role._id === roleID);
           if (role) {
             if (roleList.length > 0) {
@@ -67,7 +67,7 @@ export class UsersPageComponent implements OnInit {
       })
 
       this.sortedUsers = userRows.sort((a, b) => {
-        return this.utils.compare(a.user.userID, b.user.userID, true);
+        return this.utils.compare(a.user.lastName, b.user.lastName, true);
       })
 
       this.isLoading = false;
@@ -76,9 +76,18 @@ export class UsersPageComponent implements OnInit {
   }
 
   rowClicked(index: number): void {
+    this.editUser(false, this.roles, this.sortedUsers[index].user);
+  }
+
+  addUser(): void {
+    this.editUser(true, this.roles);
+  }
+
+  editUser(newUser: boolean, roles: SylvesterRole[], user?: SylvesterUser): void {
     const dialogData: UserEditorDialogData = {
-      user: this.sortedUsers[index].user,
-      roles: this.roles
+      newUser: newUser,
+      user: user ? user : {},
+      roles: roles ? roles : []
     }
 
     this.userEditorDialogRef = this.dialog.open(UserEditorDialogComponent, {data: dialogData, disableClose: true});
@@ -94,9 +103,5 @@ export class UsersPageComponent implements OnInit {
         })
       }
     })
-  }
-
-  addUser(): void {
-
   }
 }

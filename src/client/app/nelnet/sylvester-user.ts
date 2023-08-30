@@ -1,8 +1,8 @@
 import { ObjectId } from "mongodb";
 
 export interface SylvesterUser {
-    userID: string,
+    userID?: string,
     firstName?: string,
     lastName?: string,
-    roleIDs: ObjectId[]
+    roleIDs?: ObjectId[]
 }

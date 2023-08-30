@@ -1,15 +1,20 @@
 <mat-dialog-content>
-    <h2>Editing User {{user.userID}}</h2>
+    <h2 style="text-align: center;">User Editor</h2>
 
     <form  #userForm="ngForm">
+        <mat-form-field style="width: 440px;">
+            <mat-label>User ID</mat-label>
+            <input matInput name="userID" [(ngModel)]="user.userID" [disabled]="!newUser" required>
+        </mat-form-field>
+        <br>
         <mat-form-field>
             <mat-label>First Name</mat-label>
-            <input matInput name="firstName" [(ngModel)]="user.firstName">
+            <input matInput name="firstName" [(ngModel)]="user.firstName" required>
         </mat-form-field>
 
         <mat-form-field>
             <mat-label>Last Name</mat-label>
-            <input matInput name="lastName" [(ngModel)]="user.lastName">
+            <input matInput name="lastName" [(ngModel)]="user.lastName" required>
         </mat-form-field>
     </form>
     

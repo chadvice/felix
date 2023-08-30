@@ -6,6 +6,7 @@ import { SylvesterRole } from '../../nelnet/sylvester-role';
 import { ObjectId } from 'mongodb';
 
 export interface UserEditorDialogData {
+  newUser: boolean,
   user: SylvesterUser,
   roles:SylvesterRole[]
 }
@@ -23,6 +24,7 @@ interface RoleSelectionElement {
   styleUrls: ['./user-editor-dialog.component.scss']
 })
 export class UserEditorDialogComponent implements OnInit {
+  newUser!: boolean;
   user!: SylvesterUser;
   originalSelectedRoles!: boolean[];
   selectedRoles!: RoleSelectionElement[];
@@ -34,10 +36,15 @@ export class UserEditorDialogComponent implements OnInit {
     ) { }
 
   ngOnInit(): void {
+    this.newUser = this.data.newUser;
     this.selectedRoles = [];
     this.originalSelectedRoles = [];
     this.data.roles.forEach(role => {
-      const roleIndex = this.data.user.roleIDs.findIndex(roleID => roleID === role._id);
+      let roleIndex = -1;
+      if (this.data.user.roleIDs && this.data.user.roleIDs.length > 0) {
+        roleIndex = this.data.user.roleIDs.findIndex(roleID => roleID === role._id);
+      }
+
       let rse: RoleSelectionElement = {
         roleID: role._id,
         name: role.name,
@@ -50,7 +57,7 @@ export class UserEditorDialogComponent implements OnInit {
     })
 
     const userRoleIDs: ObjectId[] = [];
-    this.data.user.roleIDs.forEach(roleID => {
+    this.data.user.roleIDs?.forEach(roleID => {
       userRoleIDs.push(roleID);
     })
 
@@ -63,6 +70,10 @@ export class UserEditorDialogComponent implements OnInit {
   }
 
   canSave(): boolean {
+    if (!this.user.userID || this.user.userID.length === 0) {
+      return false;
+    }
+
     if (this.user.lastName?.length === 0) {
       return false;
     }
