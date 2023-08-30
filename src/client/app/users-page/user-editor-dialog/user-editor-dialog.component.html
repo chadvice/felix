@@ -4,7 +4,7 @@
     <form  #userForm="ngForm">
         <mat-form-field style="width: 440px;">
             <mat-label>User ID</mat-label>
-            <input matInput name="userID" [(ngModel)]="user.userID" [disabled]="!newUser" required>
+            <input matInput name="userID" [(ngModel)]="user.userID" [disabled]="!newUser" required (ngModelChange)="userIDChanged()">
         </mat-form-field>
         <br>
         <mat-form-field>
@@ -26,7 +26,7 @@
     </div>
 
     <br>
-    <p style="text-align: center;">{{errorMessage}}</p>
+    <p style="text-align: center;">&nbsp;{{errorMessage}}</p>
 
     <div class="button-container">
         <button mat-raised-button color="accent" (click)="save()" [disabled]="!canSave()">Save</button>

@@ -37,6 +37,7 @@ export class UserEditorDialogComponent implements OnInit {
   selectedRoles!: RoleSelectionElement[];
   confirmationDialogRef!: MatDialogRef<ConfirmationDialogComponent>;
   errorMessage: string = '';
+  userIDValid: boolean = true;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: UserEditorDialogData,
@@ -78,15 +79,22 @@ export class UserEditorDialogComponent implements OnInit {
     }
   }
 
-  canSave(): boolean {
-    this.errorMessage = '';
+  userIDChanged(): void {
+    if (this.data.userIDs.findIndex(userID => userID === this.user.userID) !== -1) {
+      this.errorMessage = 'UserID is already in use';
+      this.userIDValid = false;
+    } else {
+      this.errorMessage = '';
+      this.userIDValid = true;
+    }
+  }
 
-    if (!this.user.userID || this.user.userID.length === 0) {
+  canSave(): boolean {
+    if (!this.userIDValid) {
       return false;
     }
 
-    if (this.newUser && this.data.userIDs.findIndex(userID => userID === this.user.userID) !== -1) {
-      this.errorMessage = 'UserID is already in use'
+    if (!this.user.userID || this.user.userID.length === 0) {
       return false;
     }
 
