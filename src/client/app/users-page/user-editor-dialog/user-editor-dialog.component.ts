@@ -1,6 +1,7 @@
 import { Component, Inject, OnInit } from '@angular/core';
 
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { ConfirmationDialogComponent, CONFIRM_DIALOG_MODE } from '../../confirmation-dialog/confirmation-dialog.component';
 import { SylvesterUser } from '../../nelnet/sylvester-user';
 import { SylvesterRole } from '../../nelnet/sylvester-role';
 import { ObjectId } from 'mongodb';
@@ -9,6 +10,11 @@ export interface UserEditorDialogData {
   newUser: boolean,
   user: SylvesterUser,
   roles:SylvesterRole[]
+}
+
+export interface UserEditorDialogResponse {
+  status: string,
+  user?: SylvesterUser
 }
 
 interface RoleSelectionElement {
@@ -28,6 +34,7 @@ export class UserEditorDialogComponent implements OnInit {
   user!: SylvesterUser;
   originalSelectedRoles!: boolean[];
   selectedRoles!: RoleSelectionElement[];
+  confirmationDialogRef!: MatDialogRef<ConfirmationDialogComponent>;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: UserEditorDialogData,
@@ -100,15 +107,40 @@ export class UserEditorDialogComponent implements OnInit {
   }
 
   delete(): void {
-    console.log();
+    const dialogData = {
+      mode: CONFIRM_DIALOG_MODE.DELETE_CANCEL,
+      title: 'Delete User',
+      messageArray: ['You are about to permanently DELETE this user.', 'This action can not be undone.', 'Are you sure you want continue?'],
+      messageCentered: true
+    }
+    this.confirmationDialogRef = this.dialog.open(ConfirmationDialogComponent, {data: dialogData});
+    this.confirmationDialogRef.afterClosed().subscribe(dialogResp => {
+      if (dialogResp) {
+        const resp: UserEditorDialogResponse = {
+          status: 'delete',
+          user: this.user
+        }
+
+        this.dialogRef.close(resp);
+      }
+    })
   }
 
   cancel(): void {
-    this.dialogRef.close();
+    const resp: UserEditorDialogResponse = {
+      status: 'cancel'
+    }
+
+    this.dialogRef.close(resp);
   }
 
   save(): void {
     this.user.roleIDs = this.selectedRoles.filter(role => role.selected).map(role => role.roleID);
-    this.dialogRef.close(this.user);
+    const resp: UserEditorDialogResponse = {
+      status: 'save',
+      user: this.user
+    }
+
+    this.dialogRef.close(resp);
   }
 }

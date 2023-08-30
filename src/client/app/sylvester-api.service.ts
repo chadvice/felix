@@ -169,11 +169,11 @@ export class SylvesterApiService {
     )
   }
 
-  deleteUser(userID: string): Observable<SylvesterUser> {
+  deleteUser(userID: string): Observable<APIResponse> {
     const url: string = `${environment.sylvesterApiUrl}/user/${userID}`;
 
-    return this.http.delete<SylvesterUser>(url, this.getHttpOptions()).pipe(
-      catchError(this.handleError<SylvesterUser>('deleteUser')),
+    return this.http.delete<APIResponse>(url, this.getHttpOptions()).pipe(
+      catchError(this.handleError<APIResponse>('deleteUser')),
     )
   }
   /* #endregion */

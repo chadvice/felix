@@ -7,7 +7,7 @@ import { SylvesterApiService } from '../sylvester-api.service';
 import { UtilsService } from '../utils.service';
 import { SylvesterUser } from '../nelnet/sylvester-user';
 import { SylvesterRole } from '../nelnet/sylvester-role';
-import { UserEditorDialogComponent, UserEditorDialogData } from './user-editor-dialog/user-editor-dialog.component';
+import { UserEditorDialogComponent, UserEditorDialogData, UserEditorDialogResponse } from './user-editor-dialog/user-editor-dialog.component';
 
 interface UserRow {
   user: SylvesterUser,
@@ -91,16 +91,39 @@ export class UsersPageComponent implements OnInit {
     }
 
     this.userEditorDialogRef = this.dialog.open(UserEditorDialogComponent, {data: dialogData, disableClose: true});
-    this.userEditorDialogRef.afterClosed().subscribe(user => {
-      if (user) {
-        this.apiService.updateUser(user).subscribe(resp => {
-          if (resp.status === 'OK') {
-            this.getUsers();
-            this.snackBar.open('User record saved', 'OK', { horizontalPosition: 'center', verticalPosition: 'bottom', duration: 1500 });
-          } else {
-            alert(`There was an error saving the user record: ${resp.message}`);
+    this.userEditorDialogRef.afterClosed().subscribe(dialogResp => {
+      const userDialogResp: UserEditorDialogResponse = dialogResp;
+
+      switch (userDialogResp.status) {
+        case 'save':
+          if (userDialogResp.user) {
+            this.apiService.updateUser(userDialogResp.user).subscribe(resp => {
+              if (resp.status === 'OK') {
+                this.getUsers();
+                this.snackBar.open('User record saved', 'OK', { horizontalPosition: 'center', verticalPosition: 'bottom', duration: 1500 });
+              } else {
+                alert(`There was an error saving the user record: ${resp.message}`);
+              }
+            })
           }
-        })
+          break;
+        case 'delete':
+          if (userDialogResp.user && userDialogResp.user.userID) {
+            this.apiService.deleteUser(userDialogResp.user.userID).subscribe(resp => {
+              if (resp.status === 'OK') {
+                this.getUsers();
+                this.snackBar.open('User record deleted', 'OK', { horizontalPosition: 'center', verticalPosition: 'bottom', duration: 1500 });
+              } else {
+                alert(`There was an error saving the user record: ${resp.message}`);
+              }
+            })
+          }
+          break;
+        case 'cancel':
+          break;
+      }
+
+      if (userDialogResp.status === '') {
       }
     })
   }
