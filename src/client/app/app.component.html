@@ -7,7 +7,7 @@
     &nbsp;&nbsp;
     <div *ngIf="auth.isAuthenticated()">
       <button mat-button style="font-size: 18px; padding-right: 10px; padding-left: 10px;" *ngFor="let item of navigation"
-        [routerLink]="[item.link]" routerLinkActive="mat-accent" color="white" [disabled]=item.disabled>
+        [routerLink]="[item.link]" routerLinkActive="mat-accent" color="white" [disabled]=item.disabled (click)="showSideNav = false">
         {{item.label}}
       </button>
       <button mat-button style="font-size: 18px; padding-right: 10px; padding-left: 10px;" color="white" (click)="showSideNav = !showSideNav">
