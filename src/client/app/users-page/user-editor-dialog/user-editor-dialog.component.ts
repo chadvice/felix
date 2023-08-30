@@ -9,7 +9,8 @@ import { ObjectId } from 'mongodb';
 export interface UserEditorDialogData {
   newUser: boolean,
   user: SylvesterUser,
-  roles:SylvesterRole[]
+  roles:SylvesterRole[],
+  userIDs: string[]
 }
 
 export interface UserEditorDialogResponse {
@@ -35,6 +36,7 @@ export class UserEditorDialogComponent implements OnInit {
   originalSelectedRoles!: boolean[];
   selectedRoles!: RoleSelectionElement[];
   confirmationDialogRef!: MatDialogRef<ConfirmationDialogComponent>;
+  errorMessage: string = '';
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: UserEditorDialogData,
@@ -77,7 +79,14 @@ export class UserEditorDialogComponent implements OnInit {
   }
 
   canSave(): boolean {
+    this.errorMessage = '';
+
     if (!this.user.userID || this.user.userID.length === 0) {
+      return false;
+    }
+
+    if (this.newUser && this.data.userIDs.findIndex(userID => userID === this.user.userID) !== -1) {
+      this.errorMessage = 'UserID is already in use'
       return false;
     }
 

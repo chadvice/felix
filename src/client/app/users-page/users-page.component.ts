@@ -84,10 +84,18 @@ export class UsersPageComponent implements OnInit {
   }
 
   editUser(newUser: boolean, roles: SylvesterRole[], user?: SylvesterUser): void {
+    let userIDs: string[] = [];
+    this.sortedUsers.forEach(user => {
+      if (user.user.userID) {
+        userIDs.push(user.user.userID);
+      }
+    })
+    
     const dialogData: UserEditorDialogData = {
       newUser: newUser,
       user: user ? user : {},
-      roles: roles ? roles : []
+      roles: roles ? roles : [],
+      userIDs: userIDs
     }
 
     this.userEditorDialogRef = this.dialog.open(UserEditorDialogComponent, {data: dialogData, disableClose: true});
@@ -121,9 +129,6 @@ export class UsersPageComponent implements OnInit {
           break;
         case 'cancel':
           break;
-      }
-
-      if (userDialogResp.status === '') {
       }
     })
   }

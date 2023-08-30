@@ -25,6 +25,9 @@
     </mat-checkbox>
     </div>
 
+    <br>
+    <p style="text-align: center;">{{errorMessage}}</p>
+
     <div class="button-container">
         <button mat-raised-button color="accent" (click)="save()" [disabled]="!canSave()">Save</button>
         <button mat-raised-button color="warn" style="margin-left: 10px;" (click)="cancel()">Cancel</button>
