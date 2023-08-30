@@ -8,6 +8,7 @@ import { SylvesterCollection, SylvesterCollectionsDocument, SylvesterDocumentFie
 import { CollectionChanges } from './table-structure-editor-dialog/table-structure-editor-dialog.component';
 import { SylvesterUser } from './nelnet/sylvester-user';
 import { SylvesterRole } from './nelnet/sylvester-role';
+import { ObjectId } from 'mongodb';
 
 interface APIResponse {
   status: string,
@@ -203,11 +204,11 @@ export class SylvesterApiService {
     )
   }
 
-  deleteRole(roleID: string): Observable<SylvesterRole> {
+  deleteRole(roleID: ObjectId): Observable<APIResponse> {
     const url: string = `${environment.sylvesterApiUrl}/role/${roleID}`;
 
-    return this.http.delete<SylvesterRole>(url, this.getHttpOptions()).pipe(
-      catchError(this.handleError<SylvesterRole>('deleteRole')),
+    return this.http.delete<APIResponse>(url, this.getHttpOptions()).pipe(
+      catchError(this.handleError<APIResponse>('deleteRole')),
     )
   }
   /* #endregion */

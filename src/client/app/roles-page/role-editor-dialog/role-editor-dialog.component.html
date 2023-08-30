@@ -7,7 +7,7 @@
             <input matInput name="name" [(ngModel)]="name">
         </mat-form-field>
 
-        <mat-form-field>
+        <mat-form-field style="width: 400px;">
             <mat-label>Description</mat-label>
             <input matInput name="description" [(ngModel)]="description">
         </mat-form-field>
@@ -50,6 +50,6 @@
     <div class="button-container">
         <button mat-raised-button color="accent" (click)="save()" [disabled]="!canSave()">Save</button>
         <button mat-raised-button color="warn" style="margin-left: 10px;" (click)="cancel()">Cancel</button>
-        <button mat-raised-button color="warn" style="margin-left: 10px;" (click)="delete()">Delete Role</button>
+        <button mat-raised-button color="warn" style="margin-left: 10px;" (click)="delete()" [disabled]="!data._id">Delete Role</button>
     </div>
 </mat-dialog-content>

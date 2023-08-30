@@ -122,7 +122,7 @@ export class UsersPageComponent implements OnInit {
                 this.getUsers();
                 this.snackBar.open('User record deleted', 'OK', { horizontalPosition: 'center', verticalPosition: 'bottom', duration: 1500 });
               } else {
-                alert(`There was an error saving the user record: ${resp.message}`);
+                alert(`There was an error deleting the user record: ${resp.message}`);
               }
             })
           }

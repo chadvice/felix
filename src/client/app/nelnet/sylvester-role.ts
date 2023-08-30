@@ -6,8 +6,8 @@ export interface SylvesterRoleCollectionElement {
 }
 
 export interface SylvesterRole {
-    _id: ObjectId,
-    name: string,
+    _id?: ObjectId,
+    name?: string,
     description?: string,
-    collections: SylvesterRoleCollectionElement []
+    collections?: SylvesterRoleCollectionElement []
 }

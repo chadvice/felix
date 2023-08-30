@@ -55,15 +55,18 @@ export class UserEditorDialogComponent implements OnInit {
         roleIndex = this.data.user.roleIDs.findIndex(roleID => roleID === role._id);
       }
 
-      let rse: RoleSelectionElement = {
-        roleID: role._id,
-        name: role.name,
-        description: role.description,
-        selected: roleIndex === -1 ? false : true
+      if (role._id && role.name) {
+        let rse: RoleSelectionElement = {
+          roleID: role._id,
+          name: role.name,
+          description: role.description,
+          selected: roleIndex === -1 ? false : true
+        }
+        
+        this.selectedRoles.push(rse);
+        this.originalSelectedRoles.push(roleIndex === -1 ? false : true);
       }
 
-      this.selectedRoles.push(rse);
-      this.originalSelectedRoles.push(roleIndex === -1 ? false : true);
     })
 
     const userRoleIDs: ObjectId[] = [];

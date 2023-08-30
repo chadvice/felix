@@ -3,7 +3,7 @@ import { MatDialogRef, MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
 import { SylvesterApiService } from '../sylvester-api.service'
-import { RoleEditorDialogComponent } from './role-editor-dialog/role-editor-dialog.component';
+import { RoleEditorDialogComponent, RoleEditorResponse } from './role-editor-dialog/role-editor-dialog.component';
 import { SylvesterRole } from '../nelnet/sylvester-role';
 import { forkJoin } from 'rxjs';
 
@@ -42,16 +42,18 @@ export class RolesPageComponent implements OnInit {
 
       rolesData.forEach(role => {
         let collections: string = '';
-        role.collections.forEach(coll => {
-          const collection = tablesData.find(table => table._id === coll.id);
-          if (collection) {
-            if (collections.length > 0) {
-              collections += ', ';
+        if (role.collections) {
+          role.collections.forEach(coll => {
+            const collection = tablesData.find(table => table._id === coll.id);
+            if (collection) {
+              if (collections.length > 0) {
+                collections += ', ';
+              }
+  
+              collections += collection.name;
             }
-
-            collections += collection.name;
-          }
-        });
+          });
+        }
 
         const rr: RoleRow = {
           role: role,
@@ -66,21 +68,49 @@ export class RolesPageComponent implements OnInit {
   }
 
   addRole(): void {
-
+    this.editRole();
   }
 
   rowClicked(index: number): void {
-    this.roleEditorDialogRef = this.dialog.open(RoleEditorDialogComponent, {data: this.roles[index].role, disableClose: true});
-    this.roleEditorDialogRef.afterClosed().subscribe(newRole => {
-      if(newRole) {
-        this.apiService.updateRole(newRole).subscribe(resp => {
-          if (resp.status === 'OK') {
-            this.getRoles();
-            this.snackBar.open('Updated role saved', 'OK', { horizontalPosition: 'center', verticalPosition: 'bottom', duration: 1500 });
-          } else {
-            alert(`There was an error saving the role record: ${resp.message}`);
+    this.editRole(this.roles[index].role);
+  }
+
+  editRole(role?: SylvesterRole): void {
+    let theRole: SylvesterRole = {};
+    if (role) {
+      theRole = role;
+    } 
+
+    this.roleEditorDialogRef = this.dialog.open(RoleEditorDialogComponent, {data: theRole, disableClose: true});
+    this.roleEditorDialogRef.afterClosed().subscribe(editorResp => {
+      const dialogResp: RoleEditorResponse = editorResp;
+      switch (dialogResp.status) {
+        case 'save':
+          if (dialogResp.role) {
+            this.apiService.updateRole(dialogResp.role).subscribe(resp => {
+              if (resp.status === 'OK') {
+                this.getRoles();
+                this.snackBar.open(`${dialogResp.role?.name} role saved`, 'OK', { horizontalPosition: 'center', verticalPosition: 'bottom', duration: 1500 });
+              } else {
+                alert(`There was an error saving the role record: ${resp.message}`);
+              }
+            })  
           }
-        })
+          break;
+        case 'delete':
+          if (dialogResp.role?._id) {
+            this.apiService.deleteRole(dialogResp.role._id).subscribe(resp => {
+              if (resp.status === 'OK') {
+                this.getRoles();
+                this.snackBar.open(`${dialogResp.role?.name} role deleted`, 'OK', { horizontalPosition: 'center', verticalPosition: 'bottom', duration: 1500 });
+              } else {
+                alert(`There was an error deleting the role record: ${resp.message}`);
+              }
+            })
+          }
+          break;
+        case 'cancel':
+          break
       }
     })
   }

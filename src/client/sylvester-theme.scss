@@ -66,6 +66,7 @@ $light-theme: mat.define-light-theme((
 @include mat.dialog-theme($light-theme);
 @include mat.slide-toggle-theme($light-theme);
 @include mat.button-toggle-theme($light-theme);
+@include mat.tooltip-theme($light-theme);
 
 // @include mat.icon-button-theme($light-theme);
 // @include mat.fab-theme($light-theme);
@@ -74,7 +75,6 @@ $light-theme: mat.define-light-theme((
 // @include mat.option-theme($light-theme);
 // @include mat.progress-bar-theme($light-theme);
 // @include mat.expansion-theme($light-theme);
-// @include mat.tooltip-theme($light-theme);
 // @include mat.tabs-theme($light-theme);
 // @include mat.slider-theme($light-theme);
 // @include mat.datepicker-theme($light-theme);
@@ -101,6 +101,7 @@ $light-theme: mat.define-light-theme((
     @include mat.dialog-color($dark-theme);
     @include mat.slide-toggle-color($dark-theme);
     @include mat.button-toggle-color($dark-theme);
+    @include mat.tooltip-color($dark-theme);
 
 
     // @include mat.toolbar-color($dark-theme);
@@ -110,7 +111,6 @@ $light-theme: mat.define-light-theme((
     // @include mat.option-color($dark-theme);
     // @include mat.progress-bar-color($dark-theme);
     // @include mat.expansion-color($dark-theme);
-    // @include mat.tooltip-color($dark-theme);
     // @include mat.tabs-color($dark-theme);
     // @include mat.slider-color($dark-theme);
     // @include mat.datepicker-color($dark-theme);
