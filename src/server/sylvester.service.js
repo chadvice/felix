@@ -323,6 +323,10 @@ async function updateUser(req, res) {
         const document = req.body;
         const collection = db.collection('Users');
 
+        for(let n = 0; n < document.roleIDs.length; n++) {
+            document.roleIDs[n] = new ObjectId(document.roleIDs[n]);
+        }
+
         const resp = await collection.findOneAndReplace({ userID: document.userID }, document, { upsert: true });
         res.status(200).json({ status: 'OK' });
     } catch (err) {
@@ -371,6 +375,10 @@ async function updateRole(req, res) {
         const documentID = req.body._id;
         delete document._id;
         const collection = db.collection('Roles');
+
+        for (let n = 0; n < document.collections.length; n++) {
+            document.collections[n].id = new ObjectId(document.collections[n].id);
+        }
 
         let resp;
         if (documentID) {
