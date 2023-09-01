@@ -74,10 +74,11 @@ export class SylvesterApiService {
     )
   }
 
-  alterCollection(collectionName: string, changes: CollectionChanges): Observable<APIResponse> {
+  alterCollection(userID: string, collectionName: string, changes: CollectionChanges): Observable<APIResponse> {
     const url: string = `${environment.sylvesterApiUrl}/collection`
 
     const body = {
+      userID: userID,
       collectionName: collectionName,
       newDescription: changes.newDescription,
       fieldChanges: changes.fieldChanges

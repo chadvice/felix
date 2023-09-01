@@ -74,6 +74,7 @@ async function updateCollection(req, res) {
     const collection = db.collection('Collections');
     const session = client.startSession();
 
+    const userID = req.body.userID;
     const collectionName = req.body.collectionName;
     const newDescription = req.body.newDescription;
     const fieldChanges = req.body.fieldChanges;
@@ -86,11 +87,13 @@ async function updateCollection(req, res) {
 
     let status = 'OK';
     let statusMessage = '';
+    let logMessage = '';
     try {
         const transactionResults = await session.withTransaction(async () => {
             // Change the description, if requested
             if (newDescription?.length > 0) {
                 statusMessage = `Description changed to ${newDescription}.  `;
+                logMessage = `Description changed to ${newDescription}.  `;
                 await collection.updateOne({ name: collectionName }, { $set: { "description": newDescription } }, { session: session });
             }
 
@@ -113,12 +116,14 @@ async function updateCollection(req, res) {
                         await dataCollection.updateMany({}, { $unset: { [oldName]: '' } }, { session: session });
                         resp = await collection.updateOne({ 'name': collectionName }, { $pull: { fields: { name: oldName } } }, { session: session });
                         if (resp?.modifiedCount > 0) {
+                            logMessage += `Removed field ${oldName}. `;
                             fieldDeleteCount++;
                         }
                     } else if (oldName && newName) {
                         await dataCollection.updateMany({}, { $rename: { [oldName]: newName } }, { session: session });
                         resp = await collection.updateOne({ 'name': collectionName, 'fields.name': oldName }, { $set: { "fields.$.name": newName } }, { session: session });
                         if (resp?.modifiedCount > 0) {
+                            logMessage += `Renamed field ${oldName} to ${newName}. `;
                             fieldChangeCount++;
                         }
                     } else if (newName && added) {
@@ -127,6 +132,7 @@ async function updateCollection(req, res) {
                         if (resp === 0) {
                             resp = await collection.updateOne({ 'name': collectionName }, { $push: { 'fields': { 'name': newName, 'type': 'string' } } }, { session: session });
                             if (resp?.modifiedCount > 0) {
+                                logMessage += `Added field ${newName}. `;
                                 fieldAddCount++;
                             }
                         }
@@ -148,6 +154,10 @@ async function updateCollection(req, res) {
         status = 'ERROR';
         statusMessage = err.message;
     } finally {
+        if (logMessage.length > 0) {
+            const auditLogMessage = `Updated table ${collectionName}: ${logMessage}`;
+            await writeToAuditLog(userID, auditLogMessage);
+        }
         res.status(200).json({ status: status, message: statusMessage });
     }
 }
@@ -487,6 +497,34 @@ async function deleteRole(req, res) {
     }
 }
 /* #endregion */
+
+async function writeToAuditLog(userID, logMessage) {
+    try {
+        const db = mongo.getDB();
+        const userCollection = db.collection('Users');
+        const auditLogCollection = db.collection('AuditLog');
+
+        const user = await userCollection.findOne({userID: userID});
+        let firstName = '';
+        let lastName = ''; 
+        if (user) {
+            firstName = user.firstName
+            lastName = user.lastName;
+        }
+
+        const document = {
+            timeStamp: new Date(),
+            userID: userID,
+            firstName: firstName,
+            lastName: lastName,
+            message: logMessage
+        }
+
+        await auditLogCollection.insertOne(document);
+    } catch (err) {
+        console.log(`Error writing to AuditLog for user ${userID}: ${err.message}`);
+    }
+}
 
 module.exports = {
     getTables,

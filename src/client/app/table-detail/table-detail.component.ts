@@ -4,6 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Sort } from '@angular/material/sort';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { Subscription, forkJoin } from 'rxjs';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 import { saveAs } from 'file-saver';
 
@@ -16,7 +17,6 @@ import { SylvesterCollection } from '../nelnet/sylvester-collection';
 import { CONFIRM_DIALOG_MODE, ConfirmationDialogComponent } from '../confirmation-dialog/confirmation-dialog.component';
 import { ExportTableFilenameDialogComponent } from './export-table-filename-dialog/export-table-filename-dialog.component';
 import { SylvesterMessengerService } from '../sylvester-messenger.service';
-import { SylvesterTablePermission } from '../nelnet/sylvester-role';
 
 @Component({
   selector: 'app-table-detail',
@@ -59,7 +59,8 @@ export class TableDetailComponent implements OnInit, OnDestroy {
     private activeRoute: ActivatedRoute,
     private apiService: SylvesterApiService,
     private dialog: MatDialog,
-    private messenger: SylvesterMessengerService
+    private messenger: SylvesterMessengerService,
+    private snackBar: MatSnackBar
   ) {}
 
   ngOnInit(): void {
@@ -242,9 +243,16 @@ export class TableDetailComponent implements OnInit, OnDestroy {
       if (dialogResp) {
         const changes: CollectionChanges = dialogResp;
         if (changes.newDescription || changes.fieldChanges.length > 0) {
-          this.apiService.alterCollection(this.dataTableName, changes).subscribe(resp => {
+          let userID = this.auth.getUserID();
+          if (!userID) {
+            userID = 'UNKNOWN';
+          } 
+          this.apiService.alterCollection(userID, this.dataTableName, changes).subscribe(resp => {
             if (resp.status === 'OK') {
+              this.snackBar.open('Table structure changes saved', 'OK', { horizontalPosition: 'center', verticalPosition: 'bottom', duration: 1500 });
               this.getTableData();
+            } else {
+              alert(`There was an error updating the table structure: ${resp.message}`);
             }
           })
         }
