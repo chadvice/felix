@@ -157,13 +157,15 @@ async function updateCollection(req, res) {
         let auditLogMessage;
         if (status === 'OK') {
             if (logMessage.length > 0) {
-                auditLogMessage = `Updated table ${collectionName}: ${logMessage}`;
+                auditLogMessage = `Updated table ${collectionName} structure`;
+                auditLogDescription = logMessage;
             }
         } else {
-            auditLogMessage = `Error attmpting to update table ${collectionName}: ${err.message}`;
+            auditLogMessage = `Error attmpting to update table ${collectionName}`;
+            auditLogDescription = `Error message: ${err.message}`;
         }
 
-        await writeToAuditLog(userID, auditLogMessage);
+        await writeToAuditLog(userID, auditLogMessage, auditLogDescription);
 
         res.status(200).json({ status: status, message: statusMessage });
     }
@@ -202,10 +204,15 @@ async function updateDocument(req, res) {
         const query = { _id: new ObjectId(req.body.document._id) };
         delete document._id;
 
-        const resp = await collection.replaceOne(query, document);
+        const oldDoc = await collection.findOne(query);
+        await collection.replaceOne(query, document);
+        const auditLogMessage = `Changed record in table ${collectionName}.`;
 
-        const auditLogMessage = `Updated table ${collectionName}`;
-        await writeToAuditLog(userID, auditLogMessage, document);
+        if (oldDoc) {
+            await writeToAuditLog(userID, auditLogMessage, auditLogMessage, oldDoc, document);
+        } else {
+            await writeToAuditLog(userID, auditLogMessage, auditLogMessage, null, document);
+        }
 
         res.status(200).json({ status: 'OK' });
     } catch (err) {
@@ -510,7 +517,7 @@ async function deleteRole(req, res) {
 }
 /* #endregion */
 
-async function writeToAuditLog(userID, logMessage, oldData, newData) {
+async function writeToAuditLog(userID, logMessage, logDescription, oldData, newData) {
     try {
         const db = mongo.getDB();
         const userCollection = db.collection('Users');
@@ -529,7 +536,8 @@ async function writeToAuditLog(userID, logMessage, oldData, newData) {
             userID: userID,
             firstName: firstName,
             lastName: lastName,
-            message: logMessage
+            message: logMessage,
+            description: logDescription
         }
 
         if (oldData) {
