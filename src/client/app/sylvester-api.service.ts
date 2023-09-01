@@ -74,9 +74,10 @@ export class SylvesterApiService {
     )
   }
 
-  alterCollection(userID: string, collectionName: string, changes: CollectionChanges): Observable<APIResponse> {
+  alterCollection(collectionName: string, changes: CollectionChanges): Observable<APIResponse> {
     const url: string = `${environment.sylvesterApiUrl}/collection`
 
+    const userID = this.getUserID();
     const body = {
       userID: userID,
       collectionName: collectionName,
@@ -92,7 +93,10 @@ export class SylvesterApiService {
   updateDocument(collection: string, document: Object): Observable<APIResponse> {
     const url: string = `${environment.sylvesterApiUrl}/document`
 
+    const userID = this.getUserID();
+
     const body = {
+      userID: userID,
       collection: collection,
       document: document
     }
@@ -317,6 +321,15 @@ export class SylvesterApiService {
         }
       })
     })
+  }
+
+  private getUserID(): string {
+    let userID = this.auth.getUserID();
+    if (!userID) {
+      userID = 'UNKOWN';
+    }
+
+    return userID;
   }
 
   getHttpOptions() {

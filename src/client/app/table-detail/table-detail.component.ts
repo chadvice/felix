@@ -112,6 +112,8 @@ export class TableDetailComponent implements OnInit, OnDestroy {
   
         this.isLoading = false;
       })
+    } else {
+      this.router.navigate(['/homePage']);;
     }
   }
 
@@ -188,17 +190,19 @@ export class TableDetailComponent implements OnInit, OnDestroy {
         if (dialogResp.action === 'save') {
           this.apiService.updateDocument(this.dataTableName, dialogResp.document).subscribe(resp => {
             if (resp.status === 'OK') {
+              this.snackBar.open('Table changes saved', 'OK', { horizontalPosition: 'center', verticalPosition: 'bottom', duration: 1500 });
               this.getTableData();
             } else {
-              //TODO: handle errors here
+              alert(`There were errors saving your changes: ${resp.message}`);
             }
           })
         } else if (dialogResp.action === 'delete') {
           this.apiService.deleteDocument(this.dataTableName, this.dataTable.rows[index]._id).subscribe(resp => {
             if (resp.status === 'OK') {
+              this.snackBar.open('Record deleted', 'OK', { horizontalPosition: 'center', verticalPosition: 'bottom', duration: 1500 });
               this.getTableData();
             } else {
-              //TODO: handle errors here
+              alert(`There were errors deleting the record: ${resp.message}`);
             }
           })
         }
@@ -222,9 +226,10 @@ export class TableDetailComponent implements OnInit, OnDestroy {
       if (dialogResp && dialogResp.action === 'save') {
         this.apiService.insertDocument(this.dataTableName, dialogResp.document).subscribe(resp => {
           if (resp.status === 'OK') {
+            this.snackBar.open('New record added', 'OK', { horizontalPosition: 'center', verticalPosition: 'bottom', duration: 1500 });
             this.getTableData();
           } else {
-            //TODO: handle errors here
+            alert(`There was an error adding the new record: ${resp.message}`);
           }
         })
       }
@@ -243,11 +248,7 @@ export class TableDetailComponent implements OnInit, OnDestroy {
       if (dialogResp) {
         const changes: CollectionChanges = dialogResp;
         if (changes.newDescription || changes.fieldChanges.length > 0) {
-          let userID = this.auth.getUserID();
-          if (!userID) {
-            userID = 'UNKNOWN';
-          } 
-          this.apiService.alterCollection(userID, this.dataTableName, changes).subscribe(resp => {
+          this.apiService.alterCollection(this.dataTableName, changes).subscribe(resp => {
             if (resp.status === 'OK') {
               this.snackBar.open('Table structure changes saved', 'OK', { horizontalPosition: 'center', verticalPosition: 'bottom', duration: 1500 });
               this.getTableData();

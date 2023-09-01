@@ -154,10 +154,17 @@ async function updateCollection(req, res) {
         status = 'ERROR';
         statusMessage = err.message;
     } finally {
-        if (logMessage.length > 0) {
-            const auditLogMessage = `Updated table ${collectionName}: ${logMessage}`;
-            await writeToAuditLog(userID, auditLogMessage);
+        let auditLogMessage;
+        if (status === 'OK') {
+            if (logMessage.length > 0) {
+                auditLogMessage = `Updated table ${collectionName}: ${logMessage}`;
+            }
+        } else {
+            auditLogMessage = `Error attmpting to update table ${collectionName}: ${err.message}`;
         }
+
+        await writeToAuditLog(userID, auditLogMessage);
+
         res.status(200).json({ status: status, message: statusMessage });
     }
 }
@@ -188,6 +195,7 @@ async function getTable(req, res) {
 async function updateDocument(req, res) {
     try {
         const db = mongo.getDB();
+        const userID = req.body.userID;
         const collectionName = req.body.collection;
         const document = req.body.document;
         const collection = db.collection(collectionName);
@@ -195,6 +203,10 @@ async function updateDocument(req, res) {
         delete document._id;
 
         const resp = await collection.replaceOne(query, document);
+
+        const auditLogMessage = `Updated table ${collectionName}`;
+        await writeToAuditLog(userID, auditLogMessage, document);
+
         res.status(200).json({ status: 'OK' });
     } catch (err) {
         res.status(200).json({ status: 'ERROR', message: err.message });
@@ -498,7 +510,7 @@ async function deleteRole(req, res) {
 }
 /* #endregion */
 
-async function writeToAuditLog(userID, logMessage) {
+async function writeToAuditLog(userID, logMessage, oldData, newData) {
     try {
         const db = mongo.getDB();
         const userCollection = db.collection('Users');
@@ -518,6 +530,14 @@ async function writeToAuditLog(userID, logMessage) {
             firstName: firstName,
             lastName: lastName,
             message: logMessage
+        }
+
+        if (oldData) {
+            document.oldData = oldData;
+        }
+
+        if (newData) {
+            document.newData = newData;
         }
 
         await auditLogCollection.insertOne(document);
