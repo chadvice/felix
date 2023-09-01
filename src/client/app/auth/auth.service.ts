@@ -30,7 +30,7 @@ export class AuthService {
 
       if (await this.oidcClient.hasToken()) {
         const token = await this.oidcClient.getToken();
-        this.tokenAvailable(token);
+        await this.tokenAvailable(token);
       }
     } catch (err) {
       console.log('Error initializing OidcClient', err);
@@ -80,6 +80,10 @@ export class AuthService {
 
   getToken(): string | undefined {
     return this.token?.access_token;
+  }
+
+  getUserID(): string | undefined {
+    return this.userInfo?.preferred_username;
   }
 
   getTokenResponse(): TokenResponse | undefined {

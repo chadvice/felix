@@ -42,9 +42,9 @@ export class RolesPageComponent implements OnInit {
 
       rolesData.forEach(role => {
         let collections: string = '';
-        if (role.collections) {
-          role.collections.forEach(coll => {
-            const collection = tablesData.find(table => table._id === coll.id);
+        if (role.tablePermissions) {
+          role.tablePermissions.forEach(coll => {
+            const collection = tablesData.find(table => table._id === coll.tableID);
             if (collection) {
               if (collections.length > 0) {
                 collections += ', ';

@@ -1,7 +1,7 @@
 import { ObjectId } from "mongodb"
 
-export interface SylvesterRoleCollectionElement {
-    id: ObjectId,
+export interface SylvesterTablePermission {
+    tableID: ObjectId,
     canEdit: boolean
 }
 
@@ -9,5 +9,5 @@ export interface SylvesterRole {
     _id?: ObjectId,
     name?: string,
     description?: string,
-    collections?: SylvesterRoleCollectionElement []
+    tablePermissions?: SylvesterTablePermission []
 }

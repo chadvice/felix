@@ -9,7 +9,8 @@ export interface TableRowEditorDialogData {
   tableDescription: string,
   cols: SylvesterDocumentField[],
   record: any,
-  new: boolean
+  new: boolean,
+  canEdit: boolean
 }
 
 @Component({

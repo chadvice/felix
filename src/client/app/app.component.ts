@@ -63,9 +63,15 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   getTables(): void {
-    this.apiService.getTables().subscribe(tables => {
-      this.tables = tables;
-    })
+    const userID = this.auth.getUserID();
+    if (userID) {
+      this.apiService.getTablesForUser(userID).subscribe(tables => {
+        this.tables = tables;
+      })
+    }
+    // this.apiService.getTables().subscribe(tables => {
+    //   this.tables = tables;
+    // })
   }
 
   import(): void {
@@ -79,7 +85,7 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   newTable(): void {
-
+    console.log();
   }
 
 }

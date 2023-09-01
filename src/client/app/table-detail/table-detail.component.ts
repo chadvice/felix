@@ -3,10 +3,11 @@ import { MatDialogRef, MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Sort } from '@angular/material/sort';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
-import { Subscription } from 'rxjs';
+import { Subscription, forkJoin } from 'rxjs';
 
 import { saveAs } from 'file-saver';
 
+import { AuthService } from '../auth/auth.service';
 import { UtilsService } from '../utils.service';
 import { SylvesterApiService } from '../sylvester-api.service';
 import { TableRowEditorDialogComponent, TableRowEditorDialogData } from './table-row-editor-dialog/table-row-editor-dialog.component';
@@ -15,6 +16,7 @@ import { SylvesterCollection } from '../nelnet/sylvester-collection';
 import { CONFIRM_DIALOG_MODE, ConfirmationDialogComponent } from '../confirmation-dialog/confirmation-dialog.component';
 import { ExportTableFilenameDialogComponent } from './export-table-filename-dialog/export-table-filename-dialog.component';
 import { SylvesterMessengerService } from '../sylvester-messenger.service';
+import { SylvesterTablePermission } from '../nelnet/sylvester-role';
 
 @Component({
   selector: 'app-table-detail',
@@ -28,6 +30,7 @@ export class TableDetailComponent implements OnInit, OnDestroy {
   dataTableDescription!: string;
   showControlButtons: boolean = true;
   dataTable!: SylvesterCollection;
+  canEdit!: boolean;
 
   displayData!: any[];
   sortedData!: any[];
@@ -50,6 +53,7 @@ export class TableDetailComponent implements OnInit, OnDestroy {
   exportFilenameDialogRef!: MatDialogRef<ExportTableFilenameDialogComponent>;
 
   constructor (
+    private auth: AuthService,
     private router: Router,
     private utils: UtilsService,
     private activeRoute: ActivatedRoute,
@@ -90,17 +94,24 @@ export class TableDetailComponent implements OnInit, OnDestroy {
   getTableData(): void {
     this.isLoading = true;
 
-    this.apiService.getTable(this.dataTableName).subscribe(table => {
-      this.dataTable = table;
-      this.displayData = table.rows.slice();
-      this.sortData(this.currentSort);
+    const userID = this.auth.getUserID();
+    if (userID) {
+      const tableData = this.apiService.getTable(this.dataTableName);
+      const permissions = this.apiService.getTablePermissionsForTableName(userID, this.dataTableName);
 
-      this.dataTableDescription = table.description;
-      this.displayedColumns = table.columns.map(col => col.name);
-      this.filterColumns = table.columns.map(col => col.name);
-
-      this.isLoading = false;
-    })
+      forkJoin([tableData, permissions]).subscribe(([table, permissions]) => {
+        this.canEdit = permissions;
+        this.dataTable = table;
+        this.displayData = table.rows.slice();
+        this.sortData(this.currentSort);
+  
+        this.dataTableDescription = table.description;
+        this.displayedColumns = table.columns.map(col => col.name);
+        this.filterColumns = table.columns.map(col => col.name);
+  
+        this.isLoading = false;
+      })
+    }
   }
 
   sortData(sort: Sort): void {
@@ -165,7 +176,8 @@ export class TableDetailComponent implements OnInit, OnDestroy {
       tableDescription: this.dataTableDescription,
       cols: this.dataTable.columns,
       record: {...this.dataTable.rows[index]},
-      new: false
+      new: false,
+      canEdit: this.canEdit
     }
 
     this.tableRowEditorDialogRef = this.dialog.open(TableRowEditorDialogComponent, {data: dialogData, disableClose: true, height: '90%'});
@@ -199,7 +211,8 @@ export class TableDetailComponent implements OnInit, OnDestroy {
       tableDescription: this.dataTableDescription,
       cols: this.dataTable.columns,
       record: {},
-      new: true
+      new: true,
+      canEdit: this.canEdit
     }
 
     this.tableRowEditorDialogRef = this.dialog.open(TableRowEditorDialogComponent, {data: dialogData, disableClose: true, height: '90%'});

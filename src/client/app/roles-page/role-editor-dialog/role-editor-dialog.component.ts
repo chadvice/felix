@@ -2,7 +2,7 @@ import { Component, Inject, OnInit } from '@angular/core';
 
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { SylvesterApiService } from '../../sylvester-api.service'
-import { SylvesterRole, SylvesterRoleCollectionElement } from '../../nelnet/sylvester-role';
+import { SylvesterRole, SylvesterTablePermission } from '../../nelnet/sylvester-role';
 import { ConfirmationDialogComponent, CONFIRM_DIALOG_MODE } from '../../confirmation-dialog/confirmation-dialog.component';
 import { ObjectId } from 'mongodb';
 import { SylvesterUser } from '../../nelnet/sylvester-user';
@@ -59,13 +59,13 @@ export class RoleEditorDialogComponent implements OnInit {
       tables.forEach(table => {
 
         let collIndex = -1;
-        if (this.data.collections) {
-          collIndex = this.data.collections.findIndex(coll => coll.id === table._id);
+        if (this.data.tablePermissions) {
+          collIndex = this.data.tablePermissions.findIndex(coll => coll.tableID === table._id);
         }
 
         let canEdit: boolean = false;
-        if (collIndex !== -1 && this.data.collections) {
-          canEdit = this.data.collections[collIndex].canEdit;
+        if (collIndex !== -1 && this.data.tablePermissions) {
+          canEdit = this.data.tablePermissions[collIndex].canEdit;
         }
 
         const cse: CollectionSelectionElement = {
@@ -176,9 +176,9 @@ export class RoleEditorDialogComponent implements OnInit {
   }
 
   save(): void {
-    const collections: SylvesterRoleCollectionElement[] = this.selectedCollections.filter(coll => coll.selected).map(coll => {
+    const tablePermissions: SylvesterTablePermission[] = this.selectedCollections.filter(coll => coll.selected).map(coll => {
       return {
-        id: coll.id,
+        tableID: coll.id,
         canEdit: coll.canEdit
       }
     })
@@ -187,7 +187,7 @@ export class RoleEditorDialogComponent implements OnInit {
       _id: this.data._id,
       name: this.name,
       description: this.description,
-      collections: collections
+      tablePermissions: tablePermissions
     }
 
     const resp: RoleEditorResponse = {

@@ -6,6 +6,10 @@ router.get('/tables', (req, res) => {
     sylvesterService.getTables(req, res);
 });
 
+router.get('/tables/:userID', (req, res) => {
+    sylvesterService.getTablesForUserID(req, res);
+});
+
 router.get('/tablenames', (req, res) => {
     sylvesterService.getTableNames(req, res);
 });
@@ -67,6 +71,10 @@ router.delete('/user/:userID', (req, res) => {
 /* #region  Roles */
 router.get('/roles', (req, res) => {
     sylvesterService.getRoles(req, res);
+});
+
+router.get('/roles/:userID', (req, res) => {
+    sylvesterService.getRolesForUserID(req, res);
 });
 
 router.get('/role/:roleID', (req, res) => {

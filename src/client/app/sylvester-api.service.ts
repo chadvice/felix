@@ -1,13 +1,13 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable, catchError, of } from 'rxjs';
+import { Observable, catchError, of, shareReplay } from 'rxjs';
 
 import { environment } from '../environments/environment';
 import { AuthService } from './auth/auth.service';
 import { SylvesterCollection, SylvesterCollectionsDocument, SylvesterDocumentField } from './nelnet/sylvester-collection';
 import { CollectionChanges } from './table-structure-editor-dialog/table-structure-editor-dialog.component';
 import { SylvesterUser } from './nelnet/sylvester-user';
-import { SylvesterRole } from './nelnet/sylvester-role';
+import { SylvesterRole, SylvesterTablePermission } from './nelnet/sylvester-role';
 import { ObjectId } from 'mongodb';
 
 interface APIResponse {
@@ -19,16 +19,42 @@ interface APIResponse {
   providedIn: 'root'
 })
 export class SylvesterApiService {
+  private CACHE_DEPTH: number = 1;
+  private tablesCache: Observable<SylvesterCollectionsDocument[]> | null = null;
+  private tablePermissionsCache: Observable<SylvesterTablePermission[]> | null = null;
+
   constructor(
     private http: HttpClient,
     private auth: AuthService
   ) { }
 
   getTables(): Observable<SylvesterCollectionsDocument[]> {
+    if (!this.tablesCache) {
+      this.tablesCache = this.requestTables().pipe(
+        shareReplay(this.CACHE_DEPTH)
+      )
+    }
+
+    return this. tablesCache;
+  }
+
+  private requestTables(): Observable<SylvesterCollectionsDocument[]> {
     const url: string = `${environment.sylvesterApiUrl}/tables`
 
     return this.http.get<SylvesterCollectionsDocument[]>(url, this.getHttpOptions()).pipe(
       catchError(this.handleError<SylvesterCollectionsDocument[]>('getTables')),
+    )
+  }
+
+  clearTablesCache(): void {
+    this.tablesCache = null;
+  }
+
+  getTablesForUser(userID: string): Observable<SylvesterCollectionsDocument[]> {
+    const url: string = `${environment.sylvesterApiUrl}/tables/${userID}`
+
+    return this.http.get<SylvesterCollectionsDocument[]>(url, this.getHttpOptions()).pipe(
+      catchError(this.handleError<SylvesterCollectionsDocument[]>('getTablesForUser')),
     )
   }
 
@@ -188,6 +214,14 @@ export class SylvesterApiService {
     )
   }
 
+  getRolesForUser(userID: string): Observable<SylvesterRole[]> {
+    const url: string = `${environment.sylvesterApiUrl}/roles/${userID}`;
+
+    return this.http.get<SylvesterRole[]>(url, this.getHttpOptions()).pipe(
+      catchError(this.handleError<SylvesterRole[]>('getRolesForUser')),
+    )
+  }
+
   getRole(roleID: string): Observable<SylvesterRole> {
     const url: string = `${environment.sylvesterApiUrl}/role/${roleID}`;
 
@@ -212,6 +246,77 @@ export class SylvesterApiService {
     )
   }
   /* #endregion */
+
+  getTablePermissionsForUser(userID: string): Observable<SylvesterTablePermission[]> {
+    if (!this.tablePermissionsCache) {
+      this.tablePermissionsCache = this.requestTablePermissionsForUser(userID).pipe(
+        shareReplay(this.CACHE_DEPTH)
+      )
+    }
+
+    return this.tablePermissionsCache;
+  }
+
+  private requestTablePermissionsForUser(userID: string): Observable<SylvesterTablePermission[]> {
+    return new Observable(obs => {
+      this.getRolesForUser(userID).subscribe(roles => {
+        let userPermissions: SylvesterTablePermission[] = [];
+
+        for (let roleIndex = 0; roleIndex < roles.length; roleIndex++) {
+          const tablePermissions = roles[roleIndex].tablePermissions;
+          if (tablePermissions) {
+            for (let permIndex = 0; permIndex < tablePermissions.length; permIndex++) {
+              const idx = userPermissions.findIndex(up => up.tableID === tablePermissions[permIndex].tableID);
+              if (idx === -1) {
+                userPermissions.push(tablePermissions[permIndex]);
+              } else {
+                // Keep most restrictive permmission if the table exists in more than one role
+                if (tablePermissions[permIndex].canEdit === false) {
+                  userPermissions[idx].canEdit = false;
+                }
+              }
+            }
+          }
+        }
+
+        obs.next(userPermissions);
+        obs.complete();
+      })
+    })
+  }
+
+  getTablePermissionsForTableID(userID: string, tableID: ObjectId): Observable<boolean> {
+    return new Observable(obs => {
+      this.getTablePermissionsForUser(userID).subscribe(tablePermissions => {
+        let permission: boolean = false;
+        const tablePermission = tablePermissions.find(perm => perm.tableID === tableID);
+
+        if (tablePermission) {
+          permission = tablePermission.canEdit;
+        }
+
+        obs.next(permission);
+        obs.complete();
+      })
+    })
+  }
+
+  getTablePermissionsForTableName(userID: string, tableName: string): Observable<boolean> {
+    return new Observable(obs => {
+      this.getTables().subscribe(tables => {
+        const table = tables.find(table => table.name === tableName);
+        if (table) {
+          this.getTablePermissionsForTableID(userID, table._id).subscribe(permissions => {
+            obs.next(permissions);
+            obs.complete();
+          })
+        } else {
+          obs.next(false);
+          obs.complete();
+        }
+      })
+    })
+  }
 
   getHttpOptions() {
     const httpOptions = {

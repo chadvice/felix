@@ -1,3 +1,4 @@
+const { pipe } = require('rxjs');
 const mongo = require('./mongo');
 const { ObjectId } = require('mongodb');
 mongo.connect();
@@ -9,6 +10,49 @@ async function getTables(req, res) {
     const resp = await collection.find({}).toArray();
 
     res.status(200).json(resp);
+}
+
+async function getTablesForUserID(req, res) {
+    const userID = req.params.userID;
+    const db = mongo.getDB();
+    const collection = db.collection('Users');
+
+    const pipeline = [
+        {
+            $match: {
+                userID: userID
+            }
+        },
+        {
+            $lookup: {
+              from: 'Roles',
+              localField: 'roleIDs',
+              foreignField: '_id',
+              as: 'roles'
+            }
+        },
+        {
+            $lookup: {
+              from: 'Collections',
+              localField: 'roles.tablePermissions.tableID',
+              foreignField: '_id',
+              as: 'tablePermissions'
+            }
+        },
+        {
+            $project: {
+                '_id': 0,
+                'tablePermissions': 1
+            }
+        }
+    ];
+
+    try {
+        const resp = await collection.aggregate(pipeline).toArray();
+        res.status(200).json(resp[0].tablePermissions);
+    } catch (err) {
+        res.status(200).json({ status: 'ERROR', message: err.message });
+    }
 }
 
 async function getTableNames(req, res) {
@@ -358,6 +402,43 @@ async function getRoles(req, res) {
     res.status(200).json(resp);
 }
 
+async function getRolesForUserID(req, res) {
+    const userID = req.params.userID;
+    const db = mongo.getDB();
+    const collection = db.collection('Users');
+
+    const pipeline = 
+    [
+        {
+            $match: {
+              'userID': userID
+            }
+        },
+        {
+            $lookup: {
+              from: 'Roles',
+              localField: 'roleIDs',
+              foreignField: '_id',
+              as: 'roles'
+            }
+        },
+        {
+            $project: {
+                '_id': 0,
+                'roles.name': 1,
+                'roles.tablePermissions': 1
+            }
+        }
+    ];
+
+    try {
+        const resp = await collection.aggregate(pipeline).toArray();
+        res.status(200).json(resp[0].roles);
+    } catch (err) {
+        res.status(200).json({ status: 'ERROR', message: err.message });
+    }
+}
+
 async function getRole(req, res) {
     const db = mongo.getDB();
     const roleID = req.params.roleID;
@@ -376,8 +457,8 @@ async function updateRole(req, res) {
         delete document._id;
         const collection = db.collection('Roles');
 
-        for (let n = 0; n < document.collections.length; n++) {
-            document.collections[n].id = new ObjectId(document.collections[n].id);
+        for (let n = 0; n < document.tablePermissions.length; n++) {
+            document.tablePermissions[n].tableID = new ObjectId(document.tablePermissions[n].tableID);
         }
 
         let resp;
@@ -409,6 +490,7 @@ async function deleteRole(req, res) {
 
 module.exports = {
     getTables,
+    getTablesForUserID,
     getTableNames,
     updateCollection,
     getTable,
@@ -424,6 +506,7 @@ module.exports = {
     updateUser,
     deleteUser,
     getRoles,
+    getRolesForUserID,
     getRole,
     updateRole,
     deleteRole
