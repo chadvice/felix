@@ -1,0 +1,53 @@
+<div *ngIf="isLoading" class="loading-overlay">
+    <mat-spinner *ngIf="isLoading"></mat-spinner>
+</div>
+
+<div style="padding: 10px;">
+    <div style="padding: 10px; margin-bottom: 10px; text-align: left;">
+        <span style="font-size: x-large; font-weight: bold;">Audit Logs</span>
+
+        <!-- <span style="float:right;">
+            <button mat-raised-button color="primary" style="margin-left: 10px;" (click)="addUser()">New User</button>
+        </span> -->
+    </div>
+
+    <mat-card appearance="outlined" class="mat-mdc-elevation-specific mat-elevation-z8" style="width: 100%;">
+        <div class="table-container">
+            <table mat-table
+                    matSort
+                    [dataSource]="sortedLogs"  
+                    [matSortActive]="currentSort.active"
+                    [matSortDirection]="currentSort.direction"
+                    (matSortChange)="sortLogs($event)">
+
+                    <ng-container matColumnDef="timeStamp">
+                      <th mat-header-cell *matHeaderCellDef mat-sort-header> Timestamp </th>
+                      <td mat-cell *matCellDef="let log"> {{log.timeStamp | date:'short'}} </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="userID">
+                      <th mat-header-cell *matHeaderCellDef mat-sort-header> User ID </th>
+                      <td mat-cell *matCellDef="let log"> {{log.userID}} </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="lastName">
+                      <th mat-header-cell *matHeaderCellDef mat-sort-header> Last Name </th>
+                      <td mat-cell *matCellDef="let log"> {{log.lastName}} </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="firstName">
+                      <th mat-header-cell *matHeaderCellDef mat-sort-header> First Name </th>
+                      <td mat-cell *matCellDef="let log"> {{log.firstName}} </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="message">
+                      <th mat-header-cell *matHeaderCellDef> Message </th>
+                      <td mat-cell *matCellDef="let log"> {{log.message}} </td>
+                    </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true;"></tr>
+                <tr mat-row *matRowDef="let row; let i=index; columns: displayedColumns;" class="table-row" (click)="rowClicked(i)"></tr>
+            </table>
+        </div>
+    </mat-card>
+</div>

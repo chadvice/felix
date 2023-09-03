@@ -25,18 +25,18 @@ async function getTablesForUserID(req, res) {
         },
         {
             $lookup: {
-              from: 'Roles',
-              localField: 'roleIDs',
-              foreignField: '_id',
-              as: 'roles'
+                from: 'Roles',
+                localField: 'roleIDs',
+                foreignField: '_id',
+                as: 'roles'
             }
         },
         {
             $lookup: {
-              from: 'Collections',
-              localField: 'roles.tablePermissions.tableID',
-              foreignField: '_id',
-              as: 'tablePermissions'
+                from: 'Collections',
+                localField: 'roles.tablePermissions.tableID',
+                foreignField: '_id',
+                as: 'tablePermissions'
             }
         },
         {
@@ -446,7 +446,7 @@ async function updateUser(req, res) {
         const document = req.body;
         const collection = db.collection('Users');
 
-        for(let n = 0; n < document.roleIDs.length; n++) {
+        for (let n = 0; n < document.roleIDs.length; n++) {
             document.roleIDs[n] = new ObjectId(document.roleIDs[n]);
         }
 
@@ -486,29 +486,29 @@ async function getRolesForUserID(req, res) {
     const db = mongo.getDB();
     const collection = db.collection('Users');
 
-    const pipeline = 
-    [
-        {
-            $match: {
-              'userID': userID
+    const pipeline =
+        [
+            {
+                $match: {
+                    'userID': userID
+                }
+            },
+            {
+                $lookup: {
+                    from: 'Roles',
+                    localField: 'roleIDs',
+                    foreignField: '_id',
+                    as: 'roles'
+                }
+            },
+            {
+                $project: {
+                    '_id': 0,
+                    'roles.name': 1,
+                    'roles.tablePermissions': 1
+                }
             }
-        },
-        {
-            $lookup: {
-              from: 'Roles',
-              localField: 'roleIDs',
-              foreignField: '_id',
-              as: 'roles'
-            }
-        },
-        {
-            $project: {
-                '_id': 0,
-                'roles.name': 1,
-                'roles.tablePermissions': 1
-            }
-        }
-    ];
+        ];
 
     try {
         const resp = await collection.aggregate(pipeline).toArray();
@@ -567,15 +567,16 @@ async function deleteRole(req, res) {
 }
 /* #endregion */
 
+/* #region  Audit Log */
 async function writeToAuditLog(userID, logMessage, logDescription, oldData, newData) {
     try {
         const db = mongo.getDB();
         const userCollection = db.collection('Users');
         const auditLogCollection = db.collection('AuditLog');
 
-        const user = await userCollection.findOne({userID: userID});
+        const user = await userCollection.findOne({ userID: userID });
         let firstName = '';
-        let lastName = ''; 
+        let lastName = '';
         if (user) {
             firstName = user.firstName
             lastName = user.lastName;
@@ -604,6 +605,33 @@ async function writeToAuditLog(userID, logMessage, logDescription, oldData, newD
     }
 }
 
+async function getAuditLogs(req, res) {
+    const db = mongo.getDB();
+    const collection = db.collection('AuditLog');
+    const projection = {
+        userID: 1,
+        timeStamp: 1,
+        firstName: 1,
+        lastName: 1,
+        message: 1
+    }
+
+    const resp = await collection.find({}).project(projection).toArray();
+
+    res.status(200).json(resp);
+}
+
+async function getAuditLog(req, res) {
+    const db = mongo.getDB();
+    const colsCollection = db.collection('AuditLog');
+
+    const query = { _id: new ObjectId(req.params.id) };
+    const resp = await colsCollection.findOne(query);
+
+    res.status(200).json(resp);
+}
+/* #endregion */
+
 module.exports = {
     getTables,
     getTablesForUserID,
@@ -625,5 +653,7 @@ module.exports = {
     getRolesForUserID,
     getRole,
     updateRole,
-    deleteRole
+    deleteRole,
+    getAuditLogs,
+    getAuditLog
 }

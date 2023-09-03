@@ -90,4 +90,14 @@ router.delete('/role/:roleID', (req, res) => {
 });
 /* #endregion */
 
+/* #region  Audit Log */
+router.get('/auditlogs', (req, res) => {
+    sylvesterService.getAuditLogs(req, res);
+});
+
+router.get('/auditlog/:id', (req, res) => {
+    sylvesterService.getAuditLog(req, res);
+});
+/* #endregion */
+
 module.exports = router;

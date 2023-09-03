@@ -9,6 +9,7 @@ import { CollectionChanges } from './table-structure-editor-dialog/table-structu
 import { SylvesterUser } from './nelnet/sylvester-user';
 import { SylvesterRole, SylvesterTablePermission } from './nelnet/sylvester-role';
 import { ObjectId } from 'mongodb';
+import { SylvesterAuditLog, SylvesterAuditLogDetail } from './nelnet/sylvester-audit-log';
 
 interface APIResponse {
   status: string,
@@ -35,7 +36,7 @@ export class SylvesterApiService {
       )
     }
 
-    return this. tablesCache;
+    return this.tablesCache;
   }
 
   private requestTables(): Observable<SylvesterCollectionsDocument[]> {
@@ -262,6 +263,25 @@ export class SylvesterApiService {
 
     return this.http.delete<APIResponse>(url, this.getHttpOptions()).pipe(
       catchError(this.handleError<APIResponse>('deleteRole')),
+    )
+  }
+  /* #endregion */
+
+
+  /* #region Audit Logs */
+  getAuditLogs(): Observable<SylvesterAuditLog[]> {
+    const url: string = `${environment.sylvesterApiUrl}/auditlogs`;
+
+    return this.http.get<SylvesterAuditLog[]>(url, this.getHttpOptions()).pipe(
+      catchError(this.handleError<SylvesterAuditLog[]>('getAuditLogs')),
+    )
+  }
+
+  getAuditLog(id: ObjectId): Observable<SylvesterAuditLogDetail> {
+    const url: string = `${environment.sylvesterApiUrl}/auditlog/${id}`;
+
+    return this.http.get<SylvesterAuditLogDetail>(url, this.getHttpOptions()).pipe(
+      catchError(this.handleError<SylvesterAuditLogDetail>('getAuditLog')),
     )
   }
   /* #endregion */

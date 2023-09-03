@@ -27,7 +27,8 @@ export class AppComponent implements OnInit, OnDestroy {
 
   navigation = [
     { link: '/usersPage', label: 'Users', disabled: false },
-    { link: '/rolesPage', label: 'Roles', disabled: false }
+    { link: '/rolesPage', label: 'Roles', disabled: false },
+    { link: '/auditLogsPage', label: 'Audit Logs', disabled: false }
   ];
 
   constructor (

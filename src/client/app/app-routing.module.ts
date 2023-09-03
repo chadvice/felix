@@ -4,6 +4,7 @@ import { HomePageComponent } from './home-page/home-page.component';
 import { TableDetailComponent } from './table-detail/table-detail.component';
 import { UsersPageComponent } from './users-page/users-page.component';
 import { RolesPageComponent } from './roles-page/roles-page.component';
+import { AuditLogPageComponent } from './audit-log-page/audit-log-page.component';
 
 const routes: Routes = [
   {
@@ -21,6 +22,10 @@ const routes: Routes = [
   {
     path: 'tableDetail/:dataTableName',
     component: TableDetailComponent
+  },
+  {
+    path: 'auditLogsPage',
+    component: AuditLogPageComponent
   },
   {
     path: '',
