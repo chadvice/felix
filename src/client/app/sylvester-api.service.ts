@@ -109,7 +109,10 @@ export class SylvesterApiService {
   insertDocument(collection: string, document: Object): Observable<APIResponse> {
     const url: string = `${environment.sylvesterApiUrl}/document`
 
+    const userID = this.getUserID();
+
     const body = {
+      userID: userID,
       collection: collection,
       document: document
     }
@@ -120,7 +123,8 @@ export class SylvesterApiService {
   }
 
   deleteDocument(collection: string, id: string): Observable<APIResponse> {
-    const url: string = `${environment.sylvesterApiUrl}/document/${collection}/${id}`
+    const userID = this.getUserID();
+    const url: string = `${environment.sylvesterApiUrl}/document/${collection}/${userID}/${id}`
 
     return this.http.delete<APIResponse>(url, this.getHttpOptions()).pipe(
       catchError(this.handleError<APIResponse>('deleteDocument')),
@@ -128,9 +132,12 @@ export class SylvesterApiService {
   }
 
   bulkInsert(collectionName: string, documents: Object[]): Observable<APIResponse> {
-    const url: string = `${environment.sylvesterApiUrl}/bulkinsert`
+    const url: string = `${environment.sylvesterApiUrl}/bulkinsert`;
+
+    const userID = this.getUserID();
 
     const body = {
+      userID: userID,
       collectionName: collectionName,
       documents: documents
     }
@@ -141,9 +148,12 @@ export class SylvesterApiService {
   }
 
   bulkReplace(collectionName: string, documents: Object[]): Observable<APIResponse> {
-    const url: string = `${environment.sylvesterApiUrl}/bulkreplace`
+    const url: string = `${environment.sylvesterApiUrl}/bulkreplace`;
+
+    const userID = this.getUserID();
 
     const body = {
+      userID: userID,
       collectionName: collectionName,
       documents: documents
     }
@@ -156,7 +166,10 @@ export class SylvesterApiService {
   bulkCreate(collectionName: string, description: string, fields: SylvesterDocumentField[], documents: Object[]): Observable<APIResponse> {
     const url: string = `${environment.sylvesterApiUrl}/bulkcreate`
 
+    const userID = this.getUserID();
+
     const body = {
+      userID: userID,
       collectionName: collectionName,
       description: description,
       fields: fields,
@@ -169,7 +182,8 @@ export class SylvesterApiService {
   }
 
   deleteCollection(collection: string): Observable<APIResponse> {
-    const url: string = `${environment.sylvesterApiUrl}/collection/${collection}`
+    const userID = this.getUserID();
+    const url: string = `${environment.sylvesterApiUrl}/collection/${userID}/${collection}`
 
     return this.http.delete<APIResponse>(url, this.getHttpOptions()).pipe(
       catchError(this.handleError<APIResponse>('deleteCollection')),

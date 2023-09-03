@@ -30,7 +30,7 @@ router.post('/document', (req, res) => {
     sylvesterService.insertDocument(req, res);
 });
 
-router.delete('/document/:collection/:id', (req, res) => {
+router.delete('/document/:collection/:userID/:id', (req, res) => {
     sylvesterService.deleteDocument(req, res);
 });
 
@@ -46,7 +46,7 @@ router.post('/bulkcreate', (req, res) => {
     sylvesterService.bulkCreate(req, res);
 });
 
-router.delete('/collection/:collectionName', (req, res) => {
+router.delete('/collection/:userID/:collectionName', (req, res) => {
     sylvesterService.deleteCollection(req, res);
 });
 

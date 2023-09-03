@@ -207,53 +207,78 @@ async function updateDocument(req, res) {
         const oldDoc = await collection.findOne(query);
         await collection.replaceOne(query, document);
         const auditLogMessage = `Changed record in table ${collectionName}.`;
+        const auditLogDescription = `A record was updated in the ${collectionName} table.`
 
         if (oldDoc) {
-            await writeToAuditLog(userID, auditLogMessage, auditLogMessage, oldDoc, document);
+            await writeToAuditLog(userID, auditLogMessage, auditLogDescription, oldDoc, document);
         } else {
-            await writeToAuditLog(userID, auditLogMessage, auditLogMessage, null, document);
+            await writeToAuditLog(userID, auditLogMessage, auditLogDescription, null, document);
         }
 
         res.status(200).json({ status: 'OK' });
     } catch (err) {
+        const auditLogMessage = `Error updating record in table ${collectionName}.`;
+        const auditLogDescription = `Error message: ${err.message}.`
+        await writeToAuditLog(userID, auditLogMessage, auditLogDescription, null, document);
+
         res.status(200).json({ status: 'ERROR', message: err.message });
     }
 }
 
 async function insertDocument(req, res) {
+    const userID = req.body.userID;
+    const collectionName = req.body.collection;
+    const document = req.body.document;
     try {
         const db = mongo.getDB();
-        const collectionName = req.body.collection;
-        const document = req.body.document;
         const collection = db.collection(collectionName);
 
         const resp = await collection.insertOne(document);
+        const auditLogMessage = `Added record to table ${collectionName}.`;
+        const auditLogDescription = `A new record was added to the ${collectionName} table.`
+        await writeToAuditLog(userID, auditLogMessage, auditLogDescription, null, document);
+
         res.status(200).json({ status: 'OK' });
     } catch (err) {
+        const auditLogMessage = `Error adding record to table ${collectionName}.`;
+        const auditLogDescription = `Error message: ${err.message}.`
+        await writeToAuditLog(userID, auditLogMessage, auditLogDescription, null, document);
+
         res.status(200).json({ status: 'ERROR', message: err.message });
     }
 }
 
 async function deleteDocument(req, res) {
+    const userID = req.params.userID;
+    const collectionName = req.params.collection;
+    const id = req.params.id;
     try {
         const db = mongo.getDB();
-        const collectionName = req.params.collection;
-        const id = req.params.id;
         const collection = db.collection(collectionName);
         const query = { _id: new ObjectId(id) };
 
+        const oldDoc = await collection.findOne(query);
         const resp = await collection.deleteOne(query);
+        const auditLogMessage = `Deleted record from the table ${collectionName}.`;
+        const auditLogDescription = `A record was deleted from the ${collectionName} table.`
+        await writeToAuditLog(userID, auditLogMessage, auditLogDescription, oldDoc);
+
         res.status(200).json({ status: 'OK' });
     } catch (err) {
+        const auditLogMessage = `Error deleting record ${id} from table ${collectionName}.`;
+        const auditLogDescription = `Error message: ${err.message}.`
+        await writeToAuditLog(userID, auditLogMessage, auditLogDescription);
+
         res.status(200).json({ status: 'ERROR', message: err.message });
     }
 }
 
 async function bulkInsert(req, res) {
+    const userID = req.body.userID;
+    const collectionName = req.body.collectionName;
+    const documents = req.body.documents;
     try {
         const db = mongo.getDB();
-        const collectionName = req.body.collectionName;
-        const documents = req.body.documents;
         const collection = db.collection(collectionName);
 
         let bulkOperations = [];
@@ -262,10 +287,16 @@ async function bulkInsert(req, res) {
         }
 
         const resp = await collection.bulkWrite(bulkOperations);
-        const message = `${resp.insertedCount} records were inserted.`
+        const message = `${resp.insertedCount} records were inserted into the ${collectionName} table.`;
+        const auditLogMessage = `Records inserted into the table ${collectionName}.`;
+        await writeToAuditLog(userID, auditLogMessage, message);
 
         res.status(200).json({ status: 'OK', message: message });
     } catch (err) {
+        const auditLogMessage = `Error inserting records into table ${collectionName}.`;
+        const auditLogDescription = `Error message: ${err.message}.`
+        await writeToAuditLog(userID, auditLogMessage, auditLogDescription);
+
         res.status(200).json({ status: 'ERROR', message: err.message });
     }
 }
@@ -273,6 +304,7 @@ async function bulkInsert(req, res) {
 async function bulkReplace(req, res) {
     const db = mongo.getDB();
     const client = mongo.getClient();
+    const userID = req.body.userID;
     const collectionName = req.body.collectionName;
     const documents = req.body.documents;
     const collection = db.collection(collectionName);
@@ -286,6 +318,7 @@ async function bulkReplace(req, res) {
 
     let status = 'OK';
     let statusMessage = '';
+    let auditLogMessage = '';
     try {
         const transactionResults = await session.withTransaction(async () => {
             await collection.deleteMany({}, { session: session });
@@ -296,12 +329,15 @@ async function bulkReplace(req, res) {
             }
 
             const resp = await collection.bulkWrite(bulkOperations);
-            statusMessage = `${resp.insertedCount} records were inserted.`
+            auditLogMessage = `All records in the table ${collectionName} replaced.`;
+            statusMessage = `All of the records in the ${collectionName} table were replaced with ${resp.insertedCount} new records.`
         }, transactionOptions);
     } catch (err) {
         status = 'ERROR';
         statusMessage = err.message;
+        auditLogMessage = `Error inserting records into table ${collectionName}.`;
     } finally {
+        await writeToAuditLog(userID, auditLogMessage, statusMessage);
         res.status(200).json({ status: status, message: statusMessage });
     }
 }
@@ -309,6 +345,7 @@ async function bulkReplace(req, res) {
 async function bulkCreate(req, res) {
     const db = mongo.getDB();
     const client = mongo.getClient();
+    const userID = req.body.userID;
     const collectionName = req.body.collectionName;
     const description = req.body.description;
     const documents = req.body.documents;
@@ -324,6 +361,7 @@ async function bulkCreate(req, res) {
 
     let status = 'OK';
     let statusMessage = '';
+    let auditLogMessage = '';
     try {
         const transactionResults = await session.withTransaction(async () => {
             const now = new Date();
@@ -343,20 +381,24 @@ async function bulkCreate(req, res) {
 
             const dataCollection = db.collection(collectionName);
             const resp = await dataCollection.bulkWrite(bulkOperations);
-            statusMessage = `${resp.insertedCount} records were inserted.`
+            auditLogMessage = `New table ${collectionName} created.`;
+            statusMessage = `New table ${collectionName} created with ${resp.insertedCount} records.`
         }, transactionOptions);
     } catch (err) {
         status = 'ERROR';
         statusMessage = err.message;
+        auditLogMessage = `Error creating / adding data to new table ${collectionName}.`;
     } finally {
+        await writeToAuditLog(userID, auditLogMessage, statusMessage);
         res.status(200).json({ status: status, message: statusMessage });
     }
 }
 
 async function deleteCollection(req, res) {
+    const userID = req.params.userID;
+    const collectionName = req.params.collectionName;
     try {
         const db = mongo.getDB();
-        const collectionName = req.params.collectionName;
         const collection = db.collection('Collections');
 
         await collection.findOneAndDelete({ name: collectionName });
@@ -364,8 +406,16 @@ async function deleteCollection(req, res) {
         const dataCollection = db.collection(collectionName);
         await dataCollection.drop();
 
+        const auditLogMessage = `Deleted table ${collectionName}.`;
+        const auditLogDescription = `The ${collectionName} table was deleted from the database.`
+        await writeToAuditLog(userID, auditLogMessage, auditLogDescription);
+
         res.status(200).json({ status: 'OK' });
     } catch (err) {
+        const auditLogMessage = `Error attmpting to delete table ${collectionName}.`;
+        const auditLogDescription = `Error message: ${err.message}`;
+        await writeToAuditLog(userID, auditLogMessage, auditLogDescription);
+
         res.status(200).json({ status: 'ERROR', message: err.message });
     }
 }
