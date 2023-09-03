@@ -22,6 +22,7 @@ import { ExportTableFilenameDialogComponent } from './table-detail/export-table-
 import { UserEditorDialogComponent } from './users-page/user-editor-dialog/user-editor-dialog.component';
 import { RoleEditorDialogComponent } from './roles-page/role-editor-dialog/role-editor-dialog.component';
 import { AuditLogPageComponent } from './audit-log-page/audit-log-page.component';
+import { AuditLogDetailDialogComponent } from './audit-log-page/audit-log-detail-dialog/audit-log-detail-dialog.component';
 
 @NgModule({
   declarations: [
@@ -38,7 +39,8 @@ import { AuditLogPageComponent } from './audit-log-page/audit-log-page.component
     ExportTableFilenameDialogComponent,
     UserEditorDialogComponent,
     RoleEditorDialogComponent,
-    AuditLogPageComponent
+    AuditLogPageComponent,
+    AuditLogDetailDialogComponent
   ],
   imports: [
     BrowserModule,

@@ -1,9 +1,11 @@
 import { Component, OnInit } from '@angular/core';
+import { MatDialogRef, MatDialog } from '@angular/material/dialog';
 import { Sort } from '@angular/material/sort';
 
 import { SylvesterApiService } from '../sylvester-api.service';
 import { SylvesterAuditLog } from '../nelnet/sylvester-audit-log';
 import { UtilsService } from '../utils.service';
+import { AuditLogDetailDialogComponent } from './audit-log-detail-dialog/audit-log-detail-dialog.component';
 
 @Component({
   selector: 'app-audit-log-page',
@@ -18,12 +20,21 @@ export class AuditLogPageComponent implements OnInit {
   currentSort: Sort = {active: '', direction: ''};
   displayedColumns: string[] = ['timeStamp', 'userID', 'lastName', 'firstName', 'message'];
 
+  auditLogDetailDialogRef!: MatDialogRef<AuditLogDetailDialogComponent>;
+
   constructor (
     private apiService: SylvesterApiService,
-    private utils: UtilsService
+    private utils: UtilsService,
+    private dialog: MatDialog
   ) {}
 
   ngOnInit(): void {
+    const lsAuditLogsSortActive = localStorage.getItem('AuditLogsSortActive');
+    const lsAuditLogsSortDirection = localStorage.getItem('AuditLogsSortDirection');
+    if (lsAuditLogsSortActive && lsAuditLogsSortDirection) {
+      this.currentSort.active = lsAuditLogsSortActive;
+      this.currentSort.direction = localStorage.getItem('AuditLogsSortDirection') === 'asc' ? 'asc' : 'desc';
+    }
     this.getLogs();
   }
 
@@ -61,6 +72,6 @@ export class AuditLogPageComponent implements OnInit {
   }
 
   rowClicked(index: number): void {
-    console.log();
+    this.auditLogDetailDialogRef = this.dialog.open(AuditLogDetailDialogComponent, {data: this.sortedLogs[index]._id});
   }
 }

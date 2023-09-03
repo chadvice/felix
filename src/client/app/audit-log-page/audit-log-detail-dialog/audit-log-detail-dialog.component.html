@@ -1,0 +1,76 @@
+<mat-dialog-content>
+    <mat-card appearance="outlined" class="mat-mdc-elevation-specific mat-elevation-z8">
+        <mat-card-header>
+            <mat-card-title>Audit Log Detail</mat-card-title>
+        </mat-card-header>
+
+        <table style="width: 100%; margin: 10px;">
+            <tr>
+                <td>
+                    TimeStamp
+                </td>
+                <td>
+                    {{log.timeStamp | date:'short'}}
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    User ID
+                </td>
+                <td>
+                    {{log.userID}}
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    User Name
+                </td>
+                <td>
+                    {{log.firstName}}  {{log.lastName}}
+                </td>
+            </tr>
+            <tr>
+            <tr>
+                <td>
+                    Log Message
+                </td>
+                <td>
+                    {{log.message}}
+                </td>
+            </tr>
+            <tr *ngIf="log.description">
+                <td>
+                    Log Description
+                </td>
+                <td>
+                    {{log.description}}
+                </td>
+            </tr>
+            <tr *ngIf="log.oldData || log.newData">
+                <td>
+                    Old Record:
+                    <br>
+                    {{getOldData()}}
+                </td>
+            </tr>
+        </table>
+
+        <!-- <div class="form-container">
+            <form  #dataForm="ngForm">
+                <mat-form-field *ngFor="let col of data.cols" style="width: 400px;">
+                    <mat-label>{{col.name}}</mat-label>
+                    <input matInput name="{{col.name}}" [(ngModel)]="data.record[col.name]">
+                </mat-form-field>
+            </form>
+        </div> -->
+    </mat-card>
+
+    <!-- <div class="button-container">
+        <button mat-raised-button color="accent" (click)="save()" [disabled]="documentIsEmpty() || !this.data.canEdit">Save</button>
+        <button mat-raised-button color="warn" style="margin-left: 10px;" (click)="cancel()">Cancel</button>
+
+        <div style="float: right;">
+            <button mat-raised-button color="warn" style="margin-left: 10px;" (click)="delete()" [disabled]="data.new || !this.data.canEdit">Delete Record</button>
+        </div>
+    </div> -->
+</mat-dialog-content>
