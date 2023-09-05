@@ -4,6 +4,7 @@ import { Subscription } from 'rxjs';
 import { Router } from '@angular/router';
 
 import { AuthService } from './auth/auth.service';
+import { UtilsService } from './utils.service';
 import { SylvesterApiService } from './sylvester-api.service';
 import { ImportDataDialogComponent } from './import-data-dialog/import-data-dialog.component';
 import { SylvesterCollectionsDocument } from './nelnet/sylvester-collection';
@@ -33,6 +34,7 @@ export class AppComponent implements OnInit, OnDestroy {
 
   constructor (
     public auth: AuthService,
+    private utils: UtilsService,
     private apiService: SylvesterApiService,
     private dialog: MatDialog,
     private messenger: SylvesterMessengerService,
@@ -67,7 +69,9 @@ export class AppComponent implements OnInit, OnDestroy {
     const userID = this.auth.getUserID();
     if (userID) {
       this.apiService.getTablesForUser(userID).subscribe(tables => {
-        this.tables = tables;
+        this.tables = tables.sort((a, b) => {
+          return this.utils.compare(a.name, b.name, true);
+        });
       })
     }
     // this.apiService.getTables().subscribe(tables => {
