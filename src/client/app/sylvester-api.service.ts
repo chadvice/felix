@@ -176,6 +176,8 @@ export class SylvesterApiService {
       fields: fields,
       documents: documents
     }
+    
+    this.clearTablesCache();
 
     return this.http.post<APIResponse>(url, body, this.getHttpOptions()).pipe(
       catchError(this.handleError<APIResponse>('bulkCreate')),
@@ -184,8 +186,10 @@ export class SylvesterApiService {
 
   deleteCollection(collection: string): Observable<APIResponse> {
     const userID = this.getUserID();
-    const url: string = `${environment.sylvesterApiUrl}/collection/${userID}/${collection}`
-
+    const url: string = `${environment.sylvesterApiUrl}/collection/${userID}/${collection}`;
+    
+    this.clearTablesCache();
+    
     return this.http.delete<APIResponse>(url, this.getHttpOptions()).pipe(
       catchError(this.handleError<APIResponse>('deleteCollection')),
     )

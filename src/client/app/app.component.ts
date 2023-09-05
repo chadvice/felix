@@ -79,6 +79,7 @@ export class AppComponent implements OnInit, OnDestroy {
     this.importDataDialogRef = this.dialog.open(ImportDataDialogComponent, {disableClose: true, height: '80%'});
     this.importDataDialogRef.afterClosed().subscribe(resp => {
       if (resp) {
+        this.apiService.clearTablesCache();
         this.getTables();
         this.messenger.setTablesUpdated(true);
       }
