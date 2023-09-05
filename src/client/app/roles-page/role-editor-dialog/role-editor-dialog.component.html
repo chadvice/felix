@@ -2,6 +2,7 @@
     <h2 style="text-align: center;">Role Editor</h2>
 
     <form  #userForm="ngForm">
+      <div>
         <mat-form-field>
             <mat-label>Name</mat-label>
             <input matInput name="name" [(ngModel)]="name">
@@ -11,6 +12,7 @@
             <mat-label>Description</mat-label>
             <input matInput name="description" [(ngModel)]="description">
         </mat-form-field>
+      </div>
     </form>
     
     <h3>Selected Tables</h3>

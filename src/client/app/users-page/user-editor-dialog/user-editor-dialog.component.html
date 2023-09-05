@@ -4,20 +4,22 @@
     <div class="main-container">
         <div class="user-detail-container">
             <form  #userForm="ngForm">
-                <mat-form-field style="width: 440px;">
-                    <mat-label>User ID</mat-label>
-                    <input matInput name="userID" [(ngModel)]="user.userID" [disabled]="!newUser" required (ngModelChange)="userIDChanged()">
-                </mat-form-field>
-                <br>
-                <mat-form-field>
-                    <mat-label>First Name</mat-label>
-                    <input matInput name="firstName" [(ngModel)]="user.firstName" required>
-                </mat-form-field>
+                <div>
+                    <mat-form-field style="width: 440px;">
+                        <mat-label>User ID</mat-label>
+                        <input matInput name="userID" [(ngModel)]="user.userID" [disabled]="!newUser" required (ngModelChange)="userIDChanged()">
+                    </mat-form-field>
+                    <br>
+                    <mat-form-field>
+                        <mat-label>First Name</mat-label>
+                        <input matInput name="firstName" [(ngModel)]="user.firstName" required>
+                    </mat-form-field>
 
-                <mat-form-field>
-                    <mat-label>Last Name</mat-label>
-                    <input matInput name="lastName" [(ngModel)]="user.lastName" required>
-                </mat-form-field>
+                    <mat-form-field>
+                        <mat-label>Last Name</mat-label>
+                        <input matInput name="lastName" [(ngModel)]="user.lastName" required>
+                    </mat-form-field>
+                </div>
             </form>
 
             <div style="font-size:medium;">Global Permissions</div>
