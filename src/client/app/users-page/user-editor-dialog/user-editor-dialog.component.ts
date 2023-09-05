@@ -78,7 +78,22 @@ export class UserEditorDialogComponent implements OnInit {
       userID: this.data.user.userID,
       lastName: this.data.user.lastName,
       firstName: this.data.user.firstName,
-      roleIDs: userRoleIDs
+      roleIDs: userRoleIDs,
+      canImport: this.data.user.canImport,// ? this.data.user.canImport : false,
+      canExport: this.data.user.canExport,// ? this.data.user.canExport : false,
+      canCreateTable: this.data.user.canCreateTable,// ? this.data.user.canCreateTable : false,
+      canViewAuditLogs: this.data.user.canViewAuditLogs,// ? this.data.user.canViewAuditLogs : false,
+      canEditUsers: this.data.user.canEditUsers,// ? this.data.user.canEditUsers : false,
+      canEditRoles: this.data.user.canEditRoles,// ? this.data.user.canEditRoles : false
+    }
+
+    if (this.newUser) {
+      this.user.canImport = false;
+      this.user.canExport = false;
+      this.user.canCreateTable = false;
+      this.user.canViewAuditLogs = false;
+      this.user.canEditUsers = false;
+      this.user.canEditRoles = false;
     }
   }
 
@@ -121,6 +136,30 @@ export class UserEditorDialogComponent implements OnInit {
       if (this.selectedRoles[n].selected !== this.originalSelectedRoles[n]) {
         return true;
       }
+    }
+
+    if (this.user.canImport !== this.data.user.canImport) {
+      return true;
+    }
+
+    if (this.user.canExport !== this.data.user.canExport) {
+      return true;
+    }
+
+    if (this.user.canCreateTable !== this.data.user.canCreateTable) {
+      return true;
+    }
+
+    if (this.user.canViewAuditLogs !== this.data.user.canViewAuditLogs) {
+      return true;
+    }
+
+    if (this.user.canEditUsers !== this.data.user.canEditUsers) {
+      return true;
+    }
+
+    if (this.user.canEditRoles !== this.data.user.canEditRoles) {
+      return true;
     }
 
     return false;

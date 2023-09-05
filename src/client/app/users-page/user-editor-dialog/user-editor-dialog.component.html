@@ -1,32 +1,47 @@
 <mat-dialog-content>
     <h2 style="text-align: center;">User Editor</h2>
 
-    <form  #userForm="ngForm">
-        <mat-form-field style="width: 440px;">
-            <mat-label>User ID</mat-label>
-            <input matInput name="userID" [(ngModel)]="user.userID" [disabled]="!newUser" required (ngModelChange)="userIDChanged()">
-        </mat-form-field>
-        <br>
-        <mat-form-field>
-            <mat-label>First Name</mat-label>
-            <input matInput name="firstName" [(ngModel)]="user.firstName" required>
-        </mat-form-field>
+    <div class="main-container">
+        <div class="user-detail-container">
+            <form  #userForm="ngForm">
+                <mat-form-field style="width: 440px;">
+                    <mat-label>User ID</mat-label>
+                    <input matInput name="userID" [(ngModel)]="user.userID" [disabled]="!newUser" required (ngModelChange)="userIDChanged()">
+                </mat-form-field>
+                <br>
+                <mat-form-field>
+                    <mat-label>First Name</mat-label>
+                    <input matInput name="firstName" [(ngModel)]="user.firstName" required>
+                </mat-form-field>
 
-        <mat-form-field>
-            <mat-label>Last Name</mat-label>
-            <input matInput name="lastName" [(ngModel)]="user.lastName" required>
-        </mat-form-field>
-    </form>
-    
-    <h3>Selected Roles</h3>
-    <div *ngFor="let role of selectedRoles">
-    <mat-checkbox [(ngModel)]="role.selected">
-        {{role.name}} <i>({{role.description}})</i>
-    </mat-checkbox>
+                <mat-form-field>
+                    <mat-label>Last Name</mat-label>
+                    <input matInput name="lastName" [(ngModel)]="user.lastName" required>
+                </mat-form-field>
+            </form>
+
+            <div style="font-size:medium;">Global Permissions</div>
+            <mat-checkbox [(ngModel)]="user.canImport">Import Data</mat-checkbox>
+            <mat-checkbox [(ngModel)]="user.canExport">Export Data</mat-checkbox>
+            <mat-checkbox [(ngModel)]="user.canCreateTable">Create Tables</mat-checkbox>
+            <br>
+            <mat-checkbox [(ngModel)]="user.canViewAuditLogs">View Audit Logs</mat-checkbox>
+            <mat-checkbox [(ngModel)]="user.canEditUsers">Edit Users</mat-checkbox>
+            <mat-checkbox [(ngModel)]="user.canEditRoles">Edit Roles</mat-checkbox>
+        </div>
+            
+        <div style="font-size:medium; margin-top: 10px;">Selected Roles</div>
+        <div class="roles-container">
+        <ng-container *ngFor="let role of selectedRoles">
+            <mat-checkbox [(ngModel)]="role.selected">
+                {{role.name}} <i>({{role.description}})</i>
+            </mat-checkbox>
+            <br>
+        </ng-container>
+        </div>
+
+        <span style="text-align: center;">&nbsp;{{errorMessage}}</span>
     </div>
-
-    <br>
-    <p style="text-align: center;">&nbsp;{{errorMessage}}</p>
 
     <div class="button-container">
         <button mat-raised-button color="accent" (click)="save()" [disabled]="!canSave()">Save</button>

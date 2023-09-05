@@ -2,14 +2,10 @@
     <div *ngIf="isLoading" class="loading-overlay">
         <mat-spinner *ngIf="isLoading"></mat-spinner>
     </div>
-    <!-- <mat-card appearance="outlined" class="mat-mdc-elevation-specific mat-elevation-z8">
-        <mat-card-header>
-            <mat-card-title>Audit Log Detail</mat-card-title>
-        </mat-card-header> -->
 
         <h2>Audit Log Detail</h2>
 
-        <div *ngIf="!isLoading" class="main-container">
+        <div *ngIf="!isLoading">
             <div *ngIf="!isLoading" class="header-container">
                 <table>
                     <tr>
