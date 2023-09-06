@@ -35,7 +35,7 @@ export class AuthService {
       }
     } catch (err) {
       console.log('Error initializing OidcClient', err);
-      // this.sessionExpiredDialogRef = this.dialog.open(SessionExpiredDialogComponent, {disableClose: true});
+      this.sessionExpiredDialogRef = this.dialog.open(SessionExpiredDialogComponent, {disableClose: true});
     }
   }
 
