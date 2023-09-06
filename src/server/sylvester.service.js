@@ -659,20 +659,7 @@ async function getAuditLog(req, res) {
 }
 /* #endregion */
 
-async function test(req, res) {
-    const db = mongo.getDB();
-
-    try {
-        const collections = await db.listCollections({}, {nameOnly: true}).toArray();
-        res.status(200).json(collections);
-    } catch(err) {
-        res.status(200).json(err.message);
-    }
-
-}
-
 module.exports = {
-    test,
     getTables,
     getTablesForUserID,
     getTableNames,

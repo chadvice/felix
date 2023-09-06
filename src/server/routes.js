@@ -14,10 +14,6 @@ router.get('/tablenames', (req, res) => {
     sylvesterService.getTableNames(req, res);
 });
 
-router.get('/test', (req, res) => {
-    sylvesterService.test(req, res);
-})
-
 router.post('/table', (req, res) => {
     sylvesterService.createTable(req, res);
 });
