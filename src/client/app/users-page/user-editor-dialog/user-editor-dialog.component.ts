@@ -158,6 +158,10 @@ export class UserEditorDialogComponent implements OnInit {
       return true;
     }
 
+    if (this.user.canAlterTable !== this.data.user.canAlterTable) {
+      return true;
+    }
+
     if (this.user.canViewAuditLogs !== this.data.user.canViewAuditLogs) {
       return true;
     }

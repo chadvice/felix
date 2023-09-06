@@ -35,6 +35,7 @@ export class TableDetailComponent implements OnInit, OnDestroy {
   canEdit!: boolean;
   canExport: boolean = false;
   canDelete: boolean = false;
+  canAlter: boolean = false;
 
   displayData!: any[];
   sortedData!: any[];
@@ -171,6 +172,10 @@ export class TableDetailComponent implements OnInit, OnDestroy {
 
         if (userInfo.canDeleteTable) {
           this.canDelete = userInfo.canDeleteTable;
+        }
+
+        if (userInfo.canAlterTable) {
+          this.canAlter = userInfo.canAlterTable;
         }
       })
     }
