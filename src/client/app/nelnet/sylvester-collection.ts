@@ -6,7 +6,7 @@ export interface SylvesterDocumentField {
 }
 
 export interface SylvesterCollectionsDocument {
-    _id: ObjectId,
+    _id?: ObjectId,
     created: Date,
     name: string,
     description: string,

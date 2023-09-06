@@ -68,24 +68,26 @@ export class RoleEditorDialogComponent implements OnInit {
           canEdit = this.data.tablePermissions[collIndex].canEdit;
         }
 
-        const cse: CollectionSelectionElement = {
-          id: table._id,
-          selected: collIndex === -1 ? false : true,
-          name: table.name,
-          description: table.description,
-          canEdit: canEdit
+        if (table._id) {
+          const cse: CollectionSelectionElement = {
+            id: table._id,
+            selected: collIndex === -1 ? false : true,
+            name: table.name,
+            description: table.description,
+            canEdit: canEdit
+          }
+  
+          const ocse: CollectionSelectionElement = {
+            id: table._id,
+            selected: collIndex === -1 ? false : true,
+            name: table.name,
+            description: table.description,
+            canEdit: canEdit
+          }
+  
+          this.selectedCollections.push(cse);
+          this.originalSelectedCollections.push(ocse);
         }
-
-        const ocse: CollectionSelectionElement = {
-          id: table._id,
-          selected: collIndex === -1 ? false : true,
-          name: table.name,
-          description: table.description,
-          canEdit: canEdit
-        }
-
-        this.selectedCollections.push(cse);
-        this.originalSelectedCollections.push(ocse);
       })
 
       this.isLoading = false;

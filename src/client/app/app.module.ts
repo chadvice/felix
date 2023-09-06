@@ -23,6 +23,7 @@ import { UserEditorDialogComponent } from './users-page/user-editor-dialog/user-
 import { RoleEditorDialogComponent } from './roles-page/role-editor-dialog/role-editor-dialog.component';
 import { AuditLogPageComponent } from './audit-log-page/audit-log-page.component';
 import { AuditLogDetailDialogComponent } from './audit-log-page/audit-log-detail-dialog/audit-log-detail-dialog.component';
+import { NewTableEditorDialogComponent } from './table-detail/new-table-editor-dialog/new-table-editor-dialog.component';
 
 @NgModule({
   declarations: [
@@ -40,7 +41,8 @@ import { AuditLogDetailDialogComponent } from './audit-log-page/audit-log-detail
     UserEditorDialogComponent,
     RoleEditorDialogComponent,
     AuditLogPageComponent,
-    AuditLogDetailDialogComponent
+    AuditLogDetailDialogComponent,
+    NewTableEditorDialogComponent
   ],
   imports: [
     BrowserModule,

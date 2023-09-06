@@ -7,6 +7,7 @@ import { AuthService } from './auth/auth.service';
 import { UtilsService } from './utils.service';
 import { SylvesterApiService } from './sylvester-api.service';
 import { ImportDataDialogComponent } from './import-data-dialog/import-data-dialog.component';
+import { NewTableEditorDialogComponent } from './table-detail/new-table-editor-dialog/new-table-editor-dialog.component';
 import { SylvesterCollectionsDocument } from './nelnet/sylvester-collection';
 import { SylvesterMessengerService } from './sylvester-messenger.service';
 import { SylvesterUser } from './nelnet/sylvester-user';
@@ -31,6 +32,7 @@ export class AppComponent implements OnInit, OnDestroy {
   showSideNav: boolean = false;
 
   importDataDialogRef!: MatDialogRef<ImportDataDialogComponent>;
+  newTableDialogRef!: MatDialogRef<NewTableEditorDialogComponent>;
 
   tableDeletedSubscription!: Subscription;
 
@@ -126,7 +128,12 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   newTable(): void {
-    console.log();
+    this.newTableDialogRef = this.dialog.open(NewTableEditorDialogComponent, {width: '80%', disableClose: true});
+    this.newTableDialogRef.afterClosed().subscribe(resp => {
+      if (resp) {
+        console.log();
+      }
+    })
   }
 
 }

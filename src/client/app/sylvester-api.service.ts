@@ -367,7 +367,7 @@ export class SylvesterApiService {
     return new Observable(obs => {
       this.getTables().subscribe(tables => {
         const table = tables.find(table => table.name === tableName);
-        if (table) {
+        if (table && table._id) {
           this.getTablePermissionsForTableID(userID, table._id).subscribe(permissions => {
             obs.next(permissions);
             obs.complete();
