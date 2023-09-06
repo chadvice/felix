@@ -28,7 +28,7 @@ interface keyField {
 })
 export class ImportDataDialogComponent implements OnInit {
   ImportMode: any = IMPORT_MODE; // This is so we can use the ENUM in the HTML template
-  importMode: IMPORT_MODE = IMPORT_MODE.NEW;
+  importMode: IMPORT_MODE = IMPORT_MODE.APPEND;
 
   selectedFileName: string | null = null;
   selectedTable: SylvesterCollectionsDocument | null = null;
@@ -41,7 +41,6 @@ export class ImportDataDialogComponent implements OnInit {
   target!: HTMLInputElement;
   fileHeaders: string[] = [];
   fileRows: any[] = [];
-  // fileTextHeaders: string[] = [];
   fileTextRows: string[][] = [];
 
   confirmationDialogRef!: MatDialogRef<ConfirmationDialogComponent>;
@@ -51,6 +50,8 @@ export class ImportDataDialogComponent implements OnInit {
   validationComplete: boolean = false;
   importComplete: boolean = false;
   importMessage: string = '';
+  
+  canCreateTable: boolean = false;
 
   constructor(
     private dialogRef: MatDialogRef<ImportDataDialogComponent>,
@@ -59,10 +60,18 @@ export class ImportDataDialogComponent implements OnInit {
     private dialog: MatDialog,
     private auth: AuthService
   ) {
-    this.importMode = IMPORT_MODE.NEW;
+    this.importMode = IMPORT_MODE.APPEND;
   }
 
   ngOnInit(): void {
+    const userID = this.auth.getUserID();
+    if (userID) {
+      this.apiService.getUserInfo(userID).subscribe(userInfo => {
+        if (userInfo.canCreateTable) {
+          this.canCreateTable = userInfo.canCreateTable;
+        }
+      })
+    }
     this.getTables();
   }
 

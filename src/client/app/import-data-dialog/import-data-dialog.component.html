@@ -45,7 +45,7 @@
                 <ng-template matStepLabel>Select Table</ng-template>
 
                 <mat-radio-group [(ngModel)]="importMode" (change)="modeChanged()" [value]="importMode">
-                    <mat-radio-button [value]="ImportMode.NEW">Create new table</mat-radio-button>
+                    <mat-radio-button [value]="ImportMode.NEW" [disabled]="!canCreateTable">Create new table</mat-radio-button>
                     <mat-radio-button [value]="ImportMode.APPEND">Append to existing table</mat-radio-button>
                     <mat-radio-button [value]="ImportMode.REPLACE">Overwrite existing table</mat-radio-button>
                 </mat-radio-group>
