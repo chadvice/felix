@@ -5,9 +5,22 @@ const path = require('path');
 const routes = require('./routes');
 const cors = require('cors');
 const bodyParser = require('body-parser');
+const sylvesterService = require('./sylvester.service');
 
 const port = process.env.PORT || '3030';
 const rootPath = path.resolve(__dirname, '../../dist');
+
+// CXOne API Call Authentication
+const cxoneApiKey = process.env.SYLVESTER_CXONE_API_KEY;
+const verifyCXOneApiKey = (req, res, next) => {
+  const apiKey = req.header("x-api-key");
+
+  if (apiKey === cxoneApiKey) {
+    next();
+  } else {
+    res.status(401).json({message: 'Missing Authentication Token'})
+  }
+}
 
 // Ping JWT Authentication Stuff
 // const eJwt = require('express-jwt');
@@ -47,6 +60,11 @@ if(process.env.NODE_ENV === 'production') {
 }
 
 app.use(express.static(`${rootPath}/sylvester`));
+
+// CXOne Table Query
+app.get('/api/cx/:tableName/:fieldName/:key', verifyCXOneApiKey, (req, res) => {
+  sylvesterService.getRecordFromTable(req, res);
+})
 
 // app.use('/api', routes, (err, req, res, next) => {
 app.use('/api', jwtCheck, routes, (err, req, res, next) => {

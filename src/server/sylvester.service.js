@@ -427,7 +427,7 @@ async function deleteCollection(req, res) {
 
         await collection.findOneAndDelete({ name: collectionName });
 
-        const collections = await db.listCollections({}, {nameOnly: true}).toArray();
+        const collections = await db.listCollections({}, { nameOnly: true }).toArray();
         if (collections.findIndex(coll => coll.name === collectionName) !== -1) {
             const dataCollection = db.collection(collectionName);
             await dataCollection.drop();
@@ -659,6 +659,30 @@ async function getAuditLog(req, res) {
 }
 /* #endregion */
 
+/* #region  CXOne API Endpoint */
+async function getRecordFromTable(req, res) {
+    const tableName = req.params.tableName;
+    const fieldName = req.params.fieldName;
+    const key = req.params.key;
+
+    const db = mongo.getDB();
+    const collection = db.collection(tableName);
+
+    try {
+        const query = { [fieldName]: key }
+        const resp = await collection.find(query).toArray();
+
+        if (resp.length === 0) {
+            res.status(200).json({ message: 'No Content' });
+        } else {
+            res.status(200).json({ message: resp[0] });
+        }
+    } catch (err) {
+        res.status(200).json({ status: 'ERROR', message: err.message });
+    }
+}
+/* #endregion */
+
 module.exports = {
     getTables,
     getTablesForUserID,
@@ -683,5 +707,6 @@ module.exports = {
     updateRole,
     deleteRole,
     getAuditLogs,
-    getAuditLog
+    getAuditLog,
+    getRecordFromTable
 }
