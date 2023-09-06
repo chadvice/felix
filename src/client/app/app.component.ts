@@ -9,6 +9,14 @@ import { SylvesterApiService } from './sylvester-api.service';
 import { ImportDataDialogComponent } from './import-data-dialog/import-data-dialog.component';
 import { SylvesterCollectionsDocument } from './nelnet/sylvester-collection';
 import { SylvesterMessengerService } from './sylvester-messenger.service';
+import { SylvesterUser } from './nelnet/sylvester-user';
+
+interface navItem {
+  permissionName: string,
+  link: string,
+  label: string,
+  disabled: boolean
+}
 
 @Component({
   selector: 'app-root',
@@ -26,10 +34,16 @@ export class AppComponent implements OnInit, OnDestroy {
 
   tableDeletedSubscription!: Subscription;
 
-  navigation = [
-    { link: '/usersPage', label: 'Users', disabled: false },
-    { link: '/rolesPage', label: 'Roles', disabled: false },
-    { link: '/auditLogsPage', label: 'Audit Logs', disabled: false }
+  userID!: string;
+  userInfo!: SylvesterUser;
+
+  canImportData: boolean = false;
+  canCreateTables: boolean = false;
+
+  navigation: navItem[] = [
+    { permissionName: 'canEditUsers', link: '/usersPage', label: 'Users', disabled: true },
+    { permissionName: 'canEditRoles', link: '/rolesPage', label: 'Roles', disabled: true },
+    { permissionName: 'canViewAuditLogs', link: '/auditLogsPage', label: 'Audit Logs', disabled: true }
   ];
 
   constructor (
@@ -49,8 +63,27 @@ export class AppComponent implements OnInit, OnDestroy {
     });
 
     this.auth.init().then(_ => {
+      const userID = this.auth.getUserID();
+      if (userID) {
+        this.userID = userID;
+        this.apiService.getUserInfo(this.userID).subscribe(userInfo => {
+          this.userInfo = userInfo;
+          this.updateNavigationItems();
+          this.updateUserPermissions();
+        })
+      }
       this.getTables();
     })
+  }
+
+  updateUserPermissions(): void {
+    if (this.userInfo.canCreateTable) {
+      this.canCreateTables = this.userInfo.canCreateTable;
+    }
+
+    if (this.userInfo.canImport) {
+      this.canImportData = this.userInfo.canImport;
+    }
   }
 
   ngOnDestroy(): void {
@@ -66,13 +99,18 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   getTables(): void {
-    const userID = this.auth.getUserID();
-    if (userID) {
-      this.apiService.getTablesForUser(userID).subscribe(tables => {
+    if (this.userID) {
+      this.apiService.getTablesForUser(this.userID).subscribe(tables => {
         this.tables = tables.sort((a, b) => {
           return this.utils.compare(a.name.toLowerCase(), b.name.toLowerCase(), true);
         });
       })
+    }
+  }
+
+  updateNavigationItems(): void {
+    for (let n = 0; n < this.navigation.length; n++) {      
+      this.navigation[n].disabled = !<boolean>this.userInfo[this.navigation[n].permissionName as keyof SylvesterUser];
     }
   }
 

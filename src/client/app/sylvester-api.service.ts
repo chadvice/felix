@@ -20,9 +20,16 @@ interface APIResponse {
   providedIn: 'root'
 })
 export class SylvesterApiService {
+  /* #region Caches */
   private CACHE_DEPTH: number = 1;
   private tablesCache: Observable<SylvesterCollectionsDocument[]> | null = null;
+
+  private tablePermissionsUserID: string | null = null;
   private tablePermissionsCache: Observable<SylvesterTablePermission[]> | null = null;
+
+  private userInfoID: string | null = null;
+  private userInfoIDCache: Observable<SylvesterUser> | null = null;
+  /* #endregion */
 
   constructor(
     private http: HttpClient,
@@ -176,7 +183,7 @@ export class SylvesterApiService {
       fields: fields,
       documents: documents
     }
-    
+
     this.clearTablesCache();
 
     return this.http.post<APIResponse>(url, body, this.getHttpOptions()).pipe(
@@ -187,9 +194,9 @@ export class SylvesterApiService {
   deleteCollection(collection: string): Observable<APIResponse> {
     const userID = this.getUserID();
     const url: string = `${environment.sylvesterApiUrl}/collection/${userID}/${collection}`;
-    
+
     this.clearTablesCache();
-    
+
     return this.http.delete<APIResponse>(url, this.getHttpOptions()).pipe(
       catchError(this.handleError<APIResponse>('deleteCollection')),
     )
@@ -204,7 +211,18 @@ export class SylvesterApiService {
     )
   }
 
-  getUser(userID: string): Observable<SylvesterUser> {
+  getUserInfo(userID: string): Observable<SylvesterUser> {
+    if (!this.userInfoIDCache || this.userInfoID === null || this.userInfoID !== userID) {
+      this.userInfoID = userID;
+      this.userInfoIDCache = this.requestUserInfo(userID).pipe(
+        shareReplay(this.CACHE_DEPTH)
+      )
+    }
+
+    return this.userInfoIDCache;
+  }
+
+  private requestUserInfo(userID: string): Observable<SylvesterUser> {
     const url: string = `${environment.sylvesterApiUrl}/user/${userID}`;
 
     return this.http.get<SylvesterUser>(url, this.getHttpOptions()).pipe(
@@ -291,7 +309,8 @@ export class SylvesterApiService {
   /* #endregion */
 
   getTablePermissionsForUser(userID: string): Observable<SylvesterTablePermission[]> {
-    if (!this.tablePermissionsCache) {
+    if (!this.tablePermissionsCache || this.tablePermissionsUserID === null || this.tablePermissionsUserID !== userID) {
+      this.tablePermissionsUserID = userID;
       this.tablePermissionsCache = this.requestTablePermissionsForUser(userID).pipe(
         shareReplay(this.CACHE_DEPTH)
       )

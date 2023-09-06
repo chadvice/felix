@@ -19,8 +19,8 @@
 
     <span class="spacer"></span>
 
-    <button *ngIf="auth.isAuthenticated()" mat-raised-button style="font-size: 18px;" color="accent" (click)="import()">Import Data</button>
-    <button *ngIf="auth.isAuthenticated()" mat-raised-button style="font-size: 18px;" color="accent" (click)="newTable()">New Table</button>
+    <button *ngIf="auth.isAuthenticated() && canImportData" mat-raised-button style="font-size: 18px;" color="accent" (click)="import()">Import Data</button>
+    <button *ngIf="auth.isAuthenticated() && canCreateTables" mat-raised-button style="font-size: 18px;" color="accent" (click)="newTable()">New Table</button>
 
     <button *ngIf="!auth.isAuthenticated()" mat-raised-button style="font-size: 18px" color="accent" (click)="login()">Login</button>
     <button *ngIf="auth.isAuthenticated()" mat-raised-button style="font-size: 18px" color="warn" (click)="auth.logout()">Logout</button>

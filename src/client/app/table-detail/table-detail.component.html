@@ -15,8 +15,8 @@
             </button>
             <button mat-raised-button color="primary" style="margin-left: 10px;" (click)="addDocument()" [disabled]="!canEdit">New Row</button>
             <button mat-raised-button color="primary" style="margin-left: 10px;" (click)="editTableStructure()" [disabled]="!canEdit">Edit {{dataTableName}} Structure</button>
-            <button mat-raised-button color="primary" style="margin-left: 10px;" (click)="exportTable()">Export Table</button>
-            <button mat-raised-button color="warn" style="margin-left: 10px;" (click)="deleteTable()" [disabled]="!canEdit">Delete {{dataTableName}}</button>
+            <button mat-raised-button color="primary" style="margin-left: 10px;" (click)="exportTable()" [disabled]="!canExport">Export Table</button>
+            <button mat-raised-button color="warn" style="margin-left: 10px;" (click)="deleteTable()" [disabled]="!canEdit || !canDelete">Delete {{dataTableName}}</button>
         </span>
     </div>
 

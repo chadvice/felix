@@ -26,11 +26,15 @@ import { SylvesterMessengerService } from '../sylvester-messenger.service';
 export class TableDetailComponent implements OnInit, OnDestroy {
   isLoading: boolean = false;
 
+  userID!: string;
+
   dataTableName!: string ;
   dataTableDescription!: string;
   showControlButtons: boolean = true;
   dataTable!: SylvesterCollection;
   canEdit!: boolean;
+  canExport: boolean = false;
+  canDelete: boolean = false;
 
   displayData!: any[];
   sortedData!: any[];
@@ -64,6 +68,12 @@ export class TableDetailComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
+    const userID = this.auth.getUserID();
+    if (userID) {
+      this.userID = userID;
+      this.getUserPermissions();
+    }
+
     const lsSortActive = localStorage.getItem(`${this.dataTableName}_sortActive`);
     const lsSortDirection = localStorage.getItem(`${this.dataTableName}_sortDirection`);
     if (lsSortActive && lsSortDirection) {
@@ -95,10 +105,9 @@ export class TableDetailComponent implements OnInit, OnDestroy {
   getTableData(): void {
     this.isLoading = true;
 
-    const userID = this.auth.getUserID();
-    if (userID) {
+    if (this.userID) {
       const tableData = this.apiService.getTable(this.dataTableName);
-      const permissions = this.apiService.getTablePermissionsForTableName(userID, this.dataTableName);
+      const permissions = this.apiService.getTablePermissionsForTableName(this.userID, this.dataTableName);
 
       forkJoin([tableData, permissions]).subscribe(([table, permissions]) => {
         this.canEdit = permissions;
@@ -149,6 +158,20 @@ export class TableDetailComponent implements OnInit, OnDestroy {
         }
         
         return true;
+      })
+    }
+  }
+
+  getUserPermissions(): void {
+    if (this.userID) {
+      this.apiService.getUserInfo(this.userID).subscribe(userInfo => {
+        if (userInfo.canExport) {
+          this.canExport = userInfo.canExport;
+        }
+
+        if (userInfo.canDeleteTable) {
+          this.canDelete = userInfo.canDeleteTable;
+        }
       })
     }
   }
