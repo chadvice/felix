@@ -81,23 +81,7 @@ export class ImportDataDialogComponent implements OnInit {
             }
           }
         }
-
-        // const editableTables = permissions.filter(perm => perm.canEdit);
-      
-        // this.tables = tables.filter(table => {
-        //   if (editableTables.findIndex(et => et.tableID === table._id) !== -1) {
-        //     return true;
-        //   } else {
-        //     return false;
-        //   }
-        // })
       })
-
-      
-
-      // this.apiService.getTables().subscribe(tables => {
-      //   this.tables = tables;
-      // })
     }
   }
 
