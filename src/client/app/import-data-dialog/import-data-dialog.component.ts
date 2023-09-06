@@ -1,13 +1,14 @@
 import { Component, OnInit } from '@angular/core';
+import { StepperSelectionEvent } from '@angular/cdk/stepper';
+import { Observable, forkJoin } from 'rxjs';
 
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { CONFIRM_DIALOG_MODE, ConfirmationDialogComponent } from '../confirmation-dialog/confirmation-dialog.component';
 import { SylvesterCollectionsDocument, SylvesterDocumentField } from '../nelnet/sylvester-collection';
 import { SylvesterApiService } from '../sylvester-api.service';
 import { UtilsService } from '../utils.service';
-import { Observable } from 'rxjs';
+import { AuthService } from '../auth/auth.service';
 import { parse } from 'papaparse';
-import { StepperSelectionEvent } from '@angular/cdk/stepper';
 
 export enum IMPORT_MODE {
   NEW = 0,
@@ -55,15 +56,49 @@ export class ImportDataDialogComponent implements OnInit {
     private dialogRef: MatDialogRef<ImportDataDialogComponent>,
     private utils: UtilsService,
     private apiService: SylvesterApiService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private auth: AuthService
   ) {
     this.importMode = IMPORT_MODE.NEW;
   }
 
   ngOnInit(): void {
-    this.apiService.getTables().subscribe(tables => {
-      this.tables = tables;
-    })
+    this.getTables();
+  }
+
+  getTables(): void {
+    const userID = this.auth.getUserID();
+    if (userID) {
+      const tables = this.apiService.getTables();
+      const permissions = this.apiService.getTablePermissionsForUser(userID);
+      forkJoin([tables, permissions]).subscribe(([tables, permissions]) => {
+        this.tables = [];
+        for (let n = 0; n < permissions.length; n++) {
+          if (permissions[n].canEdit) {
+            const tableIndex = tables.findIndex(table => table._id === permissions[n].tableID);
+            if (tableIndex !== -1) {
+              this.tables.push(tables[tableIndex]);
+            }
+          }
+        }
+
+        // const editableTables = permissions.filter(perm => perm.canEdit);
+      
+        // this.tables = tables.filter(table => {
+        //   if (editableTables.findIndex(et => et.tableID === table._id) !== -1) {
+        //     return true;
+        //   } else {
+        //     return false;
+        //   }
+        // })
+      })
+
+      
+
+      // this.apiService.getTables().subscribe(tables => {
+      //   this.tables = tables;
+      // })
+    }
   }
 
   disallowSpaces(event: KeyboardEvent): boolean {
