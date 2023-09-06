@@ -1,4 +1,3 @@
-const { pipe } = require('rxjs');
 const mongo = require('./mongo');
 const { ObjectId } = require('mongodb');
 mongo.connect();
@@ -66,6 +65,31 @@ async function getTableNames(req, res) {
     const resp = await collection.find({}, options).toArray();
 
     res.status(200).json(resp.map(r => r.name));
+}
+
+async function createTable(req, res) {
+    const db = mongo.getDB();
+    const client = mongo.getClient();
+    const collection = db.collection('Collections');
+    const userID = req.body.userID;
+    const tableName = req.body.table.name;
+
+    try {
+        await collection.insertOne(req.body.table);
+
+        const auditLogMessage = `Created table ${tableName}.`;
+        const auditLogDescription = `Added the ${tableName} table to the database.`
+        await writeToAuditLog(userID, auditLogMessage, auditLogDescription);
+
+        res.status(200).json({ status: 'OK' });
+
+    } catch (err) {
+        const auditLogMessage = `Error creating new table ${tableName}.`;
+        const auditLogDescription = `Error message: ${err.message}.`
+        await writeToAuditLog(userID, auditLogMessage, auditLogDescription);
+
+        res.status(200).json({ status: 'ERROR', message: err.message });
+    }
 }
 
 async function updateCollection(req, res) {
@@ -403,8 +427,11 @@ async function deleteCollection(req, res) {
 
         await collection.findOneAndDelete({ name: collectionName });
 
-        const dataCollection = db.collection(collectionName);
-        await dataCollection.drop();
+        const collections = await db.listCollections({}, {nameOnly: true}).toArray();
+        if (collections.findIndex(coll => coll.name === collectionName) !== -1) {
+            const dataCollection = db.collection(collectionName);
+            await dataCollection.drop();
+        }
 
         const auditLogMessage = `Deleted table ${collectionName}.`;
         const auditLogDescription = `The ${collectionName} table was deleted from the database.`
@@ -632,10 +659,24 @@ async function getAuditLog(req, res) {
 }
 /* #endregion */
 
+async function test(req, res) {
+    const db = mongo.getDB();
+
+    try {
+        const collections = await db.listCollections({}, {nameOnly: true}).toArray();
+        res.status(200).json(collections);
+    } catch(err) {
+        res.status(200).json(err.message);
+    }
+
+}
+
 module.exports = {
+    test,
     getTables,
     getTablesForUserID,
     getTableNames,
+    createTable,
     updateCollection,
     getTable,
     updateDocument,

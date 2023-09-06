@@ -82,6 +82,20 @@ export class SylvesterApiService {
     )
   }
 
+  createTable(table: SylvesterCollectionsDocument): Observable<APIResponse> {
+    const url: string = `${environment.sylvesterApiUrl}/table`
+
+    const userID = this.getUserID();
+    const body = {
+      userID: userID,
+      table: table
+    }
+
+    return this.http.post<APIResponse>(url, body, this.getHttpOptions()).pipe(
+      catchError(this.handleError<APIResponse>('createTable')),
+    )
+  }
+
   alterCollection(collectionName: string, changes: CollectionChanges): Observable<APIResponse> {
     const url: string = `${environment.sylvesterApiUrl}/collection`
 

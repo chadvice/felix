@@ -10,18 +10,18 @@
             <form  #tableForm="ngForm">
                 <mat-form-field style="width: 400px;">
                     <mat-label>Table Name</mat-label>
-                    <input matInput name="tableName" [(ngModel)]="table.name" (keypress)="keyFilter($event)">
+                    <input matInput name="tableName" [(ngModel)]="table.name" (keypress)="keyFilter($event)" required (ngModelChange)="tableNameChanged()">
                 </mat-form-field>
 
                 <mat-form-field style="width: 400px;">
                     <mat-label>Table Description</mat-label>
-                    <input matInput name="tableDescription" [(ngModel)]="table.description">
+                    <input matInput name="tableDescription" [(ngModel)]="table.description" required>
                 </mat-form-field>
                 <br>
                 <ng-container *ngFor="let field of table.fields; let i = index;">
                     <mat-form-field>
                         <mat-label>Column Name</mat-label>
-                        <input matInput name="{{i}}" [(ngModel)]="field.name" (keypress)="keyFilter($event)">
+                        <input matInput name="{{i}}" [(ngModel)]="field.name" (keypress)="keyFilter($event)" required>
                         <button mat-button matSuffix color="warn" (click)="removeFieldClicked(i)"><mat-icon>delete</mat-icon></button>
                     </mat-form-field>
                 </ng-container>
@@ -35,10 +35,11 @@
                 <button mat-raised-button color="accent" (click)="addField()" [disabled]="formContainsEmptyFields()">Add Column</button>
             </td>
             <td style="width: 34%; text-align: center;">
-                <button mat-raised-button color="accent" [disabled]="formContainsEmptyFields() || formContainsDuplicateFields() || table.fields.length === 0" (click)="save()">Save</button>
+                <button mat-raised-button color="accent" [disabled]="!canSave()" (click)="save()">Save</button>
                 <button mat-raised-button color="warn" style="margin-left: 10px;" (click)="cancel()">Cancel</button>
             </td>
             <td style="width: 33%; text-align: right;">
+                <span style="color: red;">{{errorMessage}}</span>
                 <span *ngIf="formContainsDuplicateFields()" style="color: red;">ERROR: There are one or more duplicate field names</span>
             </td>
         </tr>

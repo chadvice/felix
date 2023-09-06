@@ -2,6 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { MatDialogRef, MatDialog } from '@angular/material/dialog';
 import { Subscription } from 'rxjs';
 import { Router } from '@angular/router';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 import { AuthService } from './auth/auth.service';
 import { UtilsService } from './utils.service';
@@ -54,7 +55,8 @@ export class AppComponent implements OnInit, OnDestroy {
     private apiService: SylvesterApiService,
     private dialog: MatDialog,
     private messenger: SylvesterMessengerService,
-    private router: Router
+    private router: Router,
+    private snackBar: MatSnackBar
   ) {}
 
   ngOnInit(): void {
@@ -129,9 +131,17 @@ export class AppComponent implements OnInit, OnDestroy {
 
   newTable(): void {
     this.newTableDialogRef = this.dialog.open(NewTableEditorDialogComponent, {width: '80%', disableClose: true});
-    this.newTableDialogRef.afterClosed().subscribe(resp => {
-      if (resp) {
-        console.log();
+    this.newTableDialogRef.afterClosed().subscribe(newTable => {
+      if (newTable) {
+        this.apiService.createTable(newTable).subscribe(resp => {
+          if (resp.status === 'OK') {
+            this.apiService.clearTablesCache();
+            this.getTables();
+            this.snackBar.open('New table created', 'OK', { horizontalPosition: 'center', verticalPosition: 'bottom', duration: 1500 });
+          } else {
+            alert(`There was an error creating the new table: ${resp.message}`);
+          }
+        })
       }
     })
   }

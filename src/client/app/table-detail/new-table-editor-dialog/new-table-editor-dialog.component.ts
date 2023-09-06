@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { CONFIRM_DIALOG_MODE, ConfirmationDialogComponent } from '../../confirmation-dialog/confirmation-dialog.component';
+import { SylvesterApiService } from '../../sylvester-api.service';
 import { UtilsService } from '../../utils.service';
 import { SylvesterCollectionsDocument, SylvesterDocumentField } from '../../nelnet/sylvester-collection';
 
@@ -13,14 +13,28 @@ import { SylvesterCollectionsDocument, SylvesterDocumentField } from '../../neln
 export class NewTableEditorDialogComponent implements OnInit {
   table!: SylvesterCollectionsDocument;
   allowedFieldNameCharacters: RegExp = this.utils.getAllowedFieldNameCharacters();
+  tableNames!: string[];
+  errorMessage: string = '';
 
   constructor (
     private dialogRef: MatDialogRef<NewTableEditorDialogComponent>,
     private dialog: MatDialog,
-    private utils: UtilsService
+    private utils: UtilsService,
+    private apiService: SylvesterApiService
     ) { }
 
   ngOnInit(): void {
+    this.getTables();
+    this.initialzeTable();
+  }
+
+  getTables(): void {
+    this.apiService.getTableNames().subscribe(tableNames => {
+      this.tableNames = tableNames;
+    });
+  }
+
+  initialzeTable(): void {
     this.table = {
       created: new Date(),
       name: '',
@@ -50,6 +64,13 @@ export class NewTableEditorDialogComponent implements OnInit {
     this.table.fields.push(field);
   }
 
+  tableNameChanged(): void {
+    this.errorMessage = '';
+    if (this.table.name.length > 0 && this.tableNames.findIndex(tableName => tableName.toLowerCase() === this.table.name.toLowerCase()) !== -1) {
+      this.errorMessage = `ERROR: Table name "${this.table.name}" is already in use.`
+    }
+  }
+
   formContainsEmptyFields(): boolean {
     if (this.utils.ltrim(this.table.description) === '') {
       return true;
@@ -72,6 +93,26 @@ export class NewTableEditorDialogComponent implements OnInit {
     return this.utils.checkForDuplicates(
       this.table.fields.map(field => this.utils.ltrim(field.name))
       );
+  }
+
+  canSave(): boolean {
+    if (this.formContainsEmptyFields()) {
+      return false;
+    }
+    
+    if (this.formContainsDuplicateFields()) {
+      return false;
+    }
+    
+    if (this.table.fields.length === 0) {
+      return false;
+    }
+
+    if (this.errorMessage.length > 0) {
+      return false;
+    }
+
+    return true;
   }
 
   save(): void {
