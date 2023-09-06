@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { forkJoin } from 'rxjs';
 import { MatDialogRef, MatDialog } from '@angular/material/dialog';
+import { Sort } from '@angular/material/sort';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
 import { SylvesterApiService } from '../sylvester-api.service';
@@ -21,10 +22,14 @@ interface UserRow {
 })
 export class UsersPageComponent implements OnInit {
   isLoading: boolean = false;
+  users!: UserRow[];
   sortedUsers!: UserRow[];
+  currentSort: Sort = {active: '', direction: ''};
   roles!: SylvesterRole[];
   userEditorDialogRef!: MatDialogRef<UserEditorDialogComponent>;
-  displayedColumns: string[] = ['userID', 'lastName', 'firstName', 'roles'];
+
+  
+  displayedColumns: string[] = ['userID', 'lastName', 'firstName', 'roles', 'canImport', 'canExport', 'canCreateTable', 'canDeleteTable', 'canAlterTable', 'canViewAuditLogs', 'canEditUsers', 'canEditRoles'];
 
   constructor (
     private apiService: SylvesterApiService,
@@ -34,6 +39,12 @@ export class UsersPageComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    const lsUsersSortActive = localStorage.getItem('SylvesterUsersSortActive');
+    const lsUsersSortDirection = localStorage.getItem('SylvesterUsersSortDirection');
+    if (lsUsersSortActive && lsUsersSortDirection) {
+      this.currentSort.active = lsUsersSortActive;
+      this.currentSort.direction = localStorage.getItem('SylvesterUsersSortDirection') === 'asc' ? 'asc' : 'desc';
+    }
     this.getUsers();
   }
 
@@ -44,7 +55,7 @@ export class UsersPageComponent implements OnInit {
     const roles = this.apiService.getRoles();
     forkJoin([users, roles]).subscribe(([users, roles]) => {
       this.roles = roles;
-      let userRows: UserRow[] = [];
+      this.users = [];
       users.forEach(user => {
         let roleList: string = '';
         
@@ -63,16 +74,41 @@ export class UsersPageComponent implements OnInit {
           roles: roleList
         }
 
-        userRows.push(userRow);
+        this.users.push(userRow);
       })
 
-      this.sortedUsers = userRows.sort((a, b) => {
-        return this.utils.compare(a.user.lastName, b.user.lastName, true);
-      })
+      this.sortUsers(this.currentSort);
+
 
       this.isLoading = false;
     })
     
+  }
+
+  sortUsers(sort: Sort): void {
+    this.sortedUsers = this.users.sort((a, b) => {
+      return this.utils.compare(a.user.lastName, b.user.lastName, true);
+    })
+    //////////////////////////////////
+    this.currentSort = sort;
+    localStorage.setItem('SylvesterUsersSortActive', this.currentSort.active);
+    localStorage.setItem('SylvesterUsersSortDirection', this.currentSort.direction);
+
+    const data = this.users.slice();
+    if (!sort.active || sort.direction === '') {
+      this.sortedUsers = data;
+      return;
+    }
+
+    this.sortedUsers = data.sort((a, b) => {
+      const isAsc = sort.direction === 'asc';
+      switch (sort.active) {
+        case 'userName': return this.utils.compare(a.user.userID, b.user.userID, isAsc);
+        case 'lastName': return this.utils.compare(a.user.lastName, b.user.lastName, isAsc);
+        case 'firstName': return this.utils.compare(a.user.firstName, b.user.firstName, isAsc);
+        default: return 0;
+      }
+    });
   }
 
   rowClicked(index: number): void {
@@ -131,5 +167,13 @@ export class UsersPageComponent implements OnInit {
           break;
       }
     })
+  }
+
+  getPermissionIcon(enabled: boolean): string {
+    if (enabled) {
+      return 'radio_button_checked';
+    } else {
+      return 'radio_button_unchecked'
+    }
   }
 }

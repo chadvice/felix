@@ -29,11 +29,11 @@ export class AuditLogPageComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    const lsAuditLogsSortActive = localStorage.getItem('AuditLogsSortActive');
-    const lsAuditLogsSortDirection = localStorage.getItem('AuditLogsSortDirection');
+    const lsAuditLogsSortActive = localStorage.getItem('SylvesterAuditLogsSortActive');
+    const lsAuditLogsSortDirection = localStorage.getItem('SylvesterAuditLogsSortDirection');
     if (lsAuditLogsSortActive && lsAuditLogsSortDirection) {
       this.currentSort.active = lsAuditLogsSortActive;
-      this.currentSort.direction = localStorage.getItem('AuditLogsSortDirection') === 'asc' ? 'asc' : 'desc';
+      this.currentSort.direction = localStorage.getItem('SylvesterAuditLogsSortDirection') === 'asc' ? 'asc' : 'desc';
     }
     this.getLogs();
   }
@@ -50,8 +50,8 @@ export class AuditLogPageComponent implements OnInit {
 
   sortLogs(sort: Sort): void {
     this.currentSort = sort;
-    localStorage.setItem('AuditLogsSortActive', this.currentSort.active);
-    localStorage.setItem('AuditLogsSortDirection', this.currentSort.direction);
+    localStorage.setItem('SylvesterAuditLogsSortActive', this.currentSort.active);
+    localStorage.setItem('SylvesterAuditLogsSortDirection', this.currentSort.direction);
 
     const data = this.logs.slice();
     if (!sort.active || sort.direction === '') {

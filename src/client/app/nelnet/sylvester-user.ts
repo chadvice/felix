@@ -9,6 +9,7 @@ export interface SylvesterUser {
     canExport?: boolean,
     canCreateTable?: boolean,
     canDeleteTable?: boolean,
+    canAlterTable?: boolean,
     canViewAuditLogs?: boolean,
     canEditUsers?: boolean
     canEditRoles?: boolean

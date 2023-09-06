@@ -83,6 +83,7 @@ export class UserEditorDialogComponent implements OnInit {
       canExport: this.data.user.canExport,
       canCreateTable: this.data.user.canCreateTable,
       canDeleteTable: this.data.user.canDeleteTable,
+      canAlterTable: this.data.user.canAlterTable,
       canViewAuditLogs: this.data.user.canViewAuditLogs,
       canEditUsers: this.data.user.canEditUsers,
       canEditRoles: this.data.user.canEditRoles
@@ -93,6 +94,7 @@ export class UserEditorDialogComponent implements OnInit {
       this.user.canExport = false;
       this.user.canCreateTable = false;
       this.user.canDeleteTable = false;
+      this.user.canAlterTable = false;
       this.user.canViewAuditLogs = false;
       this.user.canEditUsers = false;
       this.user.canEditRoles = false;
