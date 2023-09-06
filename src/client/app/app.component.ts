@@ -70,13 +70,10 @@ export class AppComponent implements OnInit, OnDestroy {
     if (userID) {
       this.apiService.getTablesForUser(userID).subscribe(tables => {
         this.tables = tables.sort((a, b) => {
-          return this.utils.compare(a.name, b.name, true);
+          return this.utils.compare(a.name.toLowerCase(), b.name.toLowerCase(), true);
         });
       })
     }
-    // this.apiService.getTables().subscribe(tables => {
-    //   this.tables = tables;
-    // })
   }
 
   import(): void {
