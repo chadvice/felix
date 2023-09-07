@@ -35,11 +35,11 @@
             <div *ngIf="log.oldData || log.newData" class="data-container">
                 <table>
                     <tr>
-                        <th>Old Record</th>
-                        <th>New Record</th>
+                        <th *ngIf="log.oldData" style="text-align: left;">Old Record</th>
+                        <th *ngIf="log.newData" style="text-align: left;">New Record</th>
                     </tr>
                     <tr>
-                        <td>
+                        <td *ngIf="log.oldData">
                             <table>
                                 <tr *ngFor="let key of oldDataKeys">
                                     <td>{{key}}</td>
@@ -47,7 +47,7 @@
                                 </tr>
                             </table>
                         </td>
-                        <td>
+                        <td *ngIf="log.newData">
                             <table>
                                 <tr *ngFor="let key of newDataKeys">
                                     <td [style]="getChangedFieldStyle(key)">{{key}}</td>
