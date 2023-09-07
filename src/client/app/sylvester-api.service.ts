@@ -247,13 +247,21 @@ export class SylvesterApiService {
   updateUser(user: SylvesterUser): Observable<APIResponse> {
     const url: string = `${environment.sylvesterApiUrl}/user`;
 
-    return this.http.put<APIResponse>(url, user, this.getHttpOptions()).pipe(
+    const userID = this.getUserID();
+
+    const body = {
+      userID: userID,
+      document: user
+    }
+
+    return this.http.put<APIResponse>(url, body, this.getHttpOptions()).pipe(
       catchError(this.handleError<APIResponse>('updateUser')),
     )
   }
 
-  deleteUser(userID: string): Observable<APIResponse> {
-    const url: string = `${environment.sylvesterApiUrl}/user/${userID}`;
+  deleteUser(id: string): Observable<APIResponse> {
+    const userID = this.getUserID();
+    const url: string = `${environment.sylvesterApiUrl}/user/${userID}/${id}`;
 
     return this.http.delete<APIResponse>(url, this.getHttpOptions()).pipe(
       catchError(this.handleError<APIResponse>('deleteUser')),

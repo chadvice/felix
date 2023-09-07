@@ -470,17 +470,57 @@ async function getUser(req, res) {
 async function updateUser(req, res) {
     try {
         const db = mongo.getDB();
-        const document = req.body;
+        const document = req.body.document;
+        const userID = req.body.userID;
         const collection = db.collection('Users');
 
         for (let n = 0; n < document.roleIDs.length; n++) {
             document.roleIDs[n] = new ObjectId(document.roleIDs[n]);
         }
 
-        const resp = await collection.findOneAndReplace({ userID: document.userID }, document, { upsert: true });
+        const oldDoc = await collection.findOne({userID: document.userID});
+        const oldRoleNames = await getRoleNamesForIDs(db, oldDoc.roleIDs);
+        const newRoleNames = await getRoleNamesForIDs(db, document.roleIDs);
+        await collection.findOneAndReplace({ userID: document.userID }, document, { upsert: true });
+
+        let auditLogMessage = '';
+        let auditLogDescription = '';
+        if (oldDoc) {
+            auditLogMessage = `Updated user ID ${document.userID}.`;
+            auditLogDescription = `The settings for user ID ${document.userID} were changed.  See old & new records for details.`
+            delete oldDoc.roleIDs;
+            oldDoc.roles = oldRoleNames;
+            delete document.roleIDs;
+            document.roles = newRoleNames;
+            await writeToAuditLog(userID, auditLogMessage, auditLogDescription, oldDoc, document);
+        } else {
+            auditLogMessage = `Added new user ID ${document.userID}.`;
+            auditLogDescription = `A new user record was created for user ID ${document.userID}.`
+            await writeToAuditLog(userID, auditLogMessage, auditLogDescription, null, document);
+        }
+
         res.status(200).json({ status: 'OK' });
     } catch (err) {
+        const auditLogMessage = `Error adding or updating user ID ${document.userID}.`;
+        const auditLogDescription = `Error message: ${err.message}.`
+        await writeToAuditLog(userID, auditLogMessage, auditLogDescription, null, document);
+
         res.status(200).json({ status: 'ERROR', message: err.message });
+    }
+}
+
+async function getRoleNamesForIDs(db, roleIDs) {
+    const collection = db.collection('Roles');
+    let ids = [];
+    for (let n = 0; n < roleIDs.length; n++) {
+        ids.push(new ObjectId(roleIDs[n]));
+    }
+    try {
+        const resp = await collection.find({_id: {$in: ids}}).project({_id: 0, name: 1}).toArray();
+        const idNames = resp.reduce((res, role) => res.concat(role.name), []);
+        return idNames;
+    } catch(err) {
+        return [];
     }
 }
 
@@ -488,11 +528,21 @@ async function deleteUser(req, res) {
     try {
         const db = mongo.getDB();
         const userID = req.params.userID;
+        const id = req.params.id;
         const collection = db.collection('Users');
 
-        const resp = await collection.findOneAndDelete({ userID: userID });
+        const resp = await collection.findOneAndDelete({ userID: id });
+
+        const auditLogMessage = `Deleted user ID ${id}.`;
+        const auditLogDescription = `The user with ID ${id} was deleted.`
+        await writeToAuditLog(userID, auditLogMessage, auditLogDescription);
+
         res.status(200).json({ status: 'OK' });
     } catch (err) {
+        const auditLogMessage = `Error deleting user ID ${id}.`;
+        const auditLogDescription = `Error message: ${err.message}.`
+        await writeToAuditLog(userID, auditLogMessage, auditLogDescription, null, document);
+
         res.status(200).json({ status: 'ERROR', message: err.message });
     }
 }

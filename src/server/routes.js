@@ -67,7 +67,7 @@ router.put('/user/', (req, res) => {
     sylvesterService.updateUser(req, res);
 });
 
-router.delete('/user/:userID', (req, res) => {
+router.delete('/user/:userID/:id', (req, res) => {
     sylvesterService.deleteUser(req, res);
 });
 /* #endregion */
