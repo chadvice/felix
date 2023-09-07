@@ -536,7 +536,7 @@ async function deleteUser(req, res) {
 
         const oldDoc = await collection.findOne({ userID: id });
         await collection.findOneAndDelete({ userID: id });
-        
+
         const oldRoleNames = await getRoleNamesForIDs(db, oldDoc.roleIDs);
         delete oldDoc.roleIDs;
         oldDoc.roles = oldRoleNames;
@@ -626,13 +626,14 @@ async function updateRole(req, res) {
             document.tablePermissions[n].tableID = new ObjectId(document.tablePermissions[n].tableID);
         }
 
+        newRoleDoc = await extractTablesForRole(db, document);
+
         if (documentID) {
             const oldDoc = await collection.findOne({_id: new ObjectId(documentID)});
             delete oldDoc._id;
             await collection.findOneAndReplace({ _id: new ObjectId(documentID) }, document, { upsert: true });
 
             oldRoleDoc = await extractTablesForRole(db, oldDoc);
-            newRoleDoc = await extractTablesForRole(db, document);
 
             auditLogMessage = `Updated role ${document.name}.`;
             auditLogDescription = `The role record ${document.name} was updated.  See old & new records for details.`
@@ -678,11 +679,12 @@ async function deleteRole(req, res) {
         const collection = db.collection('Roles');
 
         const oldDoc = await collection.findOne({ _id: new ObjectId(roleID) });
+        oldRoleDoc = await extractTablesForRole(db, oldDoc);
         await collection.findOneAndDelete({ _id: new ObjectId(roleID) });
 
         const auditLogMessage = `Deleted role ${oldDoc.name}.`;
         const auditLogDescription = `The ${oldDoc.name} role was deleted.`
-        await writeToAuditLog(userID, auditLogMessage, auditLogDescription, oldDoc);
+        await writeToAuditLog(userID, auditLogMessage, auditLogDescription, oldRoleDoc);
         res.status(200).json({ status: 'OK' });
     } catch (err) {
         const auditLogMessage = `Error deleting role ID ${roleID}.`;

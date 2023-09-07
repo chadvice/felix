@@ -89,7 +89,7 @@ router.put('/role/', (req, res) => {
     sylvesterService.updateRole(req, res);
 });
 
-router.delete('/role/:uesrID/:roleID', (req, res) => {
+router.delete('/role/:userID/:roleID', (req, res) => {
     sylvesterService.deleteRole(req, res);
 });
 /* #endregion */
