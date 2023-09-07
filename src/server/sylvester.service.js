@@ -425,6 +425,11 @@ async function deleteCollection(req, res) {
         const db = mongo.getDB();
         const collection = db.collection('Collections');
 
+        const oldDoc = await collection.findOne({ name: collectionName });
+        if (oldDoc) {
+            rolesCollection = db.collection('Roles');
+            await rolesCollection.updateMany({}, {$pull: {tablePermissions: {tableID: new ObjectId(oldDoc._id)}}});
+        }
         await collection.findOneAndDelete({ name: collectionName });
 
         const collections = await db.listCollections({}, { nameOnly: true }).toArray();
@@ -432,6 +437,7 @@ async function deleteCollection(req, res) {
             const dataCollection = db.collection(collectionName);
             await dataCollection.drop();
         }
+
 
         const auditLogMessage = `Deleted table ${collectionName}.`;
         const auditLogDescription = `The ${collectionName} table was deleted from the database.`
