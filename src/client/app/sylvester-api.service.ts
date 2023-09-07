@@ -297,13 +297,21 @@ export class SylvesterApiService {
   updateRole(role: SylvesterRole): Observable<APIResponse> {
     const url: string = `${environment.sylvesterApiUrl}/role`;
 
-    return this.http.put<APIResponse>(url, role, this.getHttpOptions()).pipe(
+    const userID = this.getUserID();
+
+    const body = {
+      userID: userID,
+      document: role
+    }
+
+    return this.http.put<APIResponse>(url, body, this.getHttpOptions()).pipe(
       catchError(this.handleError<APIResponse>('updateRole')),
     )
   }
 
   deleteRole(roleID: ObjectId): Observable<APIResponse> {
-    const url: string = `${environment.sylvesterApiUrl}/role/${roleID}`;
+    const userID = this.getUserID();
+    const url: string = `${environment.sylvesterApiUrl}/role/${userID}/${roleID}`;
 
     return this.http.delete<APIResponse>(url, this.getHttpOptions()).pipe(
       catchError(this.handleError<APIResponse>('deleteRole')),

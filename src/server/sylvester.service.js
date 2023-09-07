@@ -468,30 +468,33 @@ async function getUser(req, res) {
 }
 
 async function updateUser(req, res) {
+    const db = mongo.getDB();
+    const document = req.body.document;
+    const userID = req.body.userID;
+    const collection = db.collection('Users');
+
     try {
-        const db = mongo.getDB();
-        const document = req.body.document;
-        const userID = req.body.userID;
-        const collection = db.collection('Users');
 
         for (let n = 0; n < document.roleIDs.length; n++) {
             document.roleIDs[n] = new ObjectId(document.roleIDs[n]);
         }
 
         const oldDoc = await collection.findOne({userID: document.userID});
-        const oldRoleNames = await getRoleNamesForIDs(db, oldDoc.roleIDs);
-        const newRoleNames = await getRoleNamesForIDs(db, document.roleIDs);
         await collection.findOneAndReplace({ userID: document.userID }, document, { upsert: true });
+        
+        const newRoleNames = await getRoleNamesForIDs(db, document.roleIDs);
+        delete document.roleIDs;
+        document.roles = newRoleNames;
 
         let auditLogMessage = '';
         let auditLogDescription = '';
         if (oldDoc) {
-            auditLogMessage = `Updated user ID ${document.userID}.`;
-            auditLogDescription = `The settings for user ID ${document.userID} were changed.  See old & new records for details.`
+            const oldRoleNames = await getRoleNamesForIDs(db, oldDoc.roleIDs);
             delete oldDoc.roleIDs;
             oldDoc.roles = oldRoleNames;
-            delete document.roleIDs;
-            document.roles = newRoleNames;
+
+            auditLogMessage = `Updated user ID ${document.userID}.`;
+            auditLogDescription = `The settings for user ID ${document.userID} were changed.  See old & new records for details.`
             await writeToAuditLog(userID, auditLogMessage, auditLogDescription, oldDoc, document);
         } else {
             auditLogMessage = `Added new user ID ${document.userID}.`;
@@ -531,11 +534,16 @@ async function deleteUser(req, res) {
         const id = req.params.id;
         const collection = db.collection('Users');
 
-        const resp = await collection.findOneAndDelete({ userID: id });
+        const oldDoc = await collection.findOne({ userID: id });
+        await collection.findOneAndDelete({ userID: id });
+        
+        const oldRoleNames = await getRoleNamesForIDs(db, oldDoc.roleIDs);
+        delete oldDoc.roleIDs;
+        oldDoc.roles = oldRoleNames;
 
         const auditLogMessage = `Deleted user ID ${id}.`;
         const auditLogDescription = `The user with ID ${id} was deleted.`
-        await writeToAuditLog(userID, auditLogMessage, auditLogDescription);
+        await writeToAuditLog(userID, auditLogMessage, auditLogDescription, oldDoc);
 
         res.status(200).json({ status: 'OK' });
     } catch (err) {
@@ -608,8 +616,9 @@ async function getRole(req, res) {
 async function updateRole(req, res) {
     try {
         const db = mongo.getDB();
-        const document = req.body;
-        const documentID = req.body._id;
+        const userID = req.body.userID;
+        const document = req.body.document;
+        const documentID = document._id;
         delete document._id;
         const collection = db.collection('Roles');
 
@@ -617,11 +626,23 @@ async function updateRole(req, res) {
             document.tablePermissions[n].tableID = new ObjectId(document.tablePermissions[n].tableID);
         }
 
-        let resp;
         if (documentID) {
-            resp = await collection.findOneAndReplace({ _id: new ObjectId(documentID) }, document, { upsert: true });
+            const oldDoc = await collection.findOne({_id: new ObjectId(documentID)});
+            delete oldDoc._id;
+            await collection.findOneAndReplace({ _id: new ObjectId(documentID) }, document, { upsert: true });
+
+            oldRoleDoc = await extractTablesForRole(db, oldDoc);
+            newRoleDoc = await extractTablesForRole(db, document);
+
+            auditLogMessage = `Updated role ${document.name}.`;
+            auditLogDescription = `The role record ${document.name} was updated.  See old & new records for details.`
+            await writeToAuditLog(userID, auditLogMessage, auditLogDescription, oldRoleDoc, newRoleDoc);
         } else {
-            resp = await collection.insertOne(document);
+            await collection.insertOne(document);
+
+            auditLogMessage = `Added new role ${document.name}.`;
+            auditLogDescription = `A new role record was created with the name ${document.name}.`
+            await writeToAuditLog(userID, auditLogMessage, auditLogDescription, null, newRoleDoc);
         }
 
         res.status(200).json({ status: 'OK' });
@@ -630,15 +651,44 @@ async function updateRole(req, res) {
     }
 }
 
+async function extractTablesForRole(db, role) {
+    let roleDoc = {
+        name: role.name,
+        description: role.description
+    }
+
+    const collection = db.collection('Collections');
+    const tables = await collection.find({}).toArray();
+
+    for (let n = 0; n < role.tablePermissions.length; n++) {
+        tableIndex = tables.findIndex(table =>  table._id.equals(role.tablePermissions[n].tableID));
+        if (tableIndex !== -1) {
+            roleDoc[tables[tableIndex].name] = role.tablePermissions[n].canEdit ? 'Edit' : 'View';
+        }
+    }
+
+    return roleDoc;
+}
+
 async function deleteRole(req, res) {
     try {
         const db = mongo.getDB();
+        const userID = req.params.userID;
         const roleID = req.params.roleID;
         const collection = db.collection('Roles');
 
-        const resp = await collection.findOneAndDelete({ _id: new ObjectId(roleID) });
+        const oldDoc = await collection.findOne({ _id: new ObjectId(roleID) });
+        await collection.findOneAndDelete({ _id: new ObjectId(roleID) });
+
+        const auditLogMessage = `Deleted role ${oldDoc.name}.`;
+        const auditLogDescription = `The ${oldDoc.name} role was deleted.`
+        await writeToAuditLog(userID, auditLogMessage, auditLogDescription, oldDoc);
         res.status(200).json({ status: 'OK' });
     } catch (err) {
+        const auditLogMessage = `Error deleting role ID ${roleID}.`;
+        const auditLogDescription = `Error message: ${err.message}.`
+        await writeToAuditLog(userID, auditLogMessage, auditLogDescription, null, document);
+
         res.status(200).json({ status: 'ERROR', message: err.message });
     }
 }
