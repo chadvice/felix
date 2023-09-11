@@ -146,4 +146,12 @@ export class AppComponent implements OnInit, OnDestroy {
     })
   }
 
+  showAuthUserInfo(): void {
+    if (this.auth.userInfo) {
+      alert(JSON.stringify(this.auth.userInfo,null,'    '));
+    } else {
+      alert('--- Not Set ---');
+    }
+  }
+
 }
