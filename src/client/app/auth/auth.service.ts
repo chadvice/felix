@@ -84,7 +84,7 @@ export class AuthService {
   }
 
   getUserID(): string | undefined {
-    return this.userInfo?.preferred_username;
+    return this.userInfo[AuthConfig.JWTUserIDField];
   }
 
   getTokenResponse(): TokenResponse | undefined {
