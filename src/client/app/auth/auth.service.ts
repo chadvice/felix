@@ -54,16 +54,16 @@ export class AuthService {
     try {
       this.userInfo = await this.oidcClient?.fetchUserInfo();
       
-      if (this.userInfo.preferred_username) {
-        localStorage.setItem('username', this.userInfo.preferred_username);
-      }
+      // if (this.userInfo.preferred_username) {
+      //   localStorage.setItem('username', this.userInfo.preferred_username);
+      // }
     } catch {
       this.token = (await this.oidcClient?.refreshToken()) || undefined;
       this.userInfo = await this.oidcClient?.fetchUserInfo();
 
-      if (this.userInfo.preferred_username) {
-        localStorage.setItem('username', this.userInfo.preferred_username);
-      }
+      // if (this.userInfo.preferred_username) {
+      //   localStorage.setItem('username', this.userInfo.preferred_username);
+      // }
     }
   }
 
