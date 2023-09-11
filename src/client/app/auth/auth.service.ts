@@ -23,7 +23,7 @@ export class AuthService {
   async init() {
     try {
       // this.oidcClient = await OidcClient.initializeFromOpenIdConfig(`https://auth.pingone.com/${AuthConfig.pingEnvironmentID}/as`, {
-      this.oidcClient = await OidcClient.initializeFromOpenIdConfig(`https://ssodev.nelnet.com`, {
+      this.oidcClient = await OidcClient.initializeFromOpenIdConfig(AuthConfig.pingLoginURL, {
         client_id: AuthConfig.pingClientID,
         redirect_uri: AuthConfig.pingRedirectUri,
         scope: 'openid profile email'//, revokescope'
