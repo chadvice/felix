@@ -37,6 +37,7 @@
   <mat-sidenav-content>
     <div style="height: calc(100vh - 64px);">
       <router-outlet></router-outlet>
+      <span *ngIf="userNotFoundError.length > 0">{{userNotFoundError}}</span>
     </div>
   </mat-sidenav-content>
 </mat-sidenav-container>

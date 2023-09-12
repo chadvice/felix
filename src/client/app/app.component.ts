@@ -39,6 +39,7 @@ export class AppComponent implements OnInit, OnDestroy {
 
   userID!: string;
   userInfo!: SylvesterUser;
+  userNotFoundError: string = '';
 
   canImportData: boolean = false;
   canCreateTables: boolean = false;
@@ -71,10 +72,15 @@ export class AppComponent implements OnInit, OnDestroy {
       if (userID) {
         this.userID = userID;
         this.apiService.getUserInfo(this.userID).subscribe(userInfo => {
+          if (!userInfo) {
+            this.userNotFoundError = `ERROR: User ID \"${userID}\" is not configured`
+          }
           this.userInfo = userInfo;
           this.updateNavigationItems();
           this.updateUserPermissions();
         })
+      } else {
+        this.userNotFoundError = `ERROR: Unabled to retrieve User ID from token.`
       }
       this.getTables();
     })
