@@ -13,7 +13,7 @@ import { UtilsService } from '../utils.service';
 import { SylvesterApiService } from '../sylvester-api.service';
 import { TableRowEditorDialogComponent, TableRowEditorDialogData } from './table-row-editor-dialog/table-row-editor-dialog.component';
 import { CollectionChanges, TableStructureEditorDialogComponent, TableStructureEditorDialogData } from '../table-structure-editor-dialog/table-structure-editor-dialog.component';
-import { SylvesterTable } from '../nelnet/sylvester-collection';
+import { SylvesterTable } from '../nelnet/sylvester-table';
 import { CONFIRM_DIALOG_MODE, ConfirmationDialogComponent } from '../confirmation-dialog/confirmation-dialog.component';
 import { ExportTableFilenameDialogComponent } from './export-table-filename-dialog/export-table-filename-dialog.component';
 import { SylvesterMessengerService } from '../sylvester-messenger.service';

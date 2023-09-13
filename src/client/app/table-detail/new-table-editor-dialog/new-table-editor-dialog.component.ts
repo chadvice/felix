@@ -3,7 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { SylvesterApiService } from '../../sylvester-api.service';
 import { UtilsService } from '../../utils.service';
-import { SylvesterTableSchema, SylvesterColumn } from '../../nelnet/sylvester-collection';
+import { SylvesterTableSchema, SylvesterColumn } from '../../nelnet/sylvester-table';
 
 @Component({
   selector: 'app-new-table-editor-dialog',

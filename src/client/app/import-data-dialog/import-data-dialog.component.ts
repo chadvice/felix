@@ -4,7 +4,7 @@ import { Observable, forkJoin } from 'rxjs';
 
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { CONFIRM_DIALOG_MODE, ConfirmationDialogComponent } from '../confirmation-dialog/confirmation-dialog.component';
-import { SylvesterTableSchema, SylvesterColumn } from '../nelnet/sylvester-collection';
+import { SylvesterTableSchema, SylvesterColumn } from '../nelnet/sylvester-table';
 import { SylvesterApiService } from '../sylvester-api.service';
 import { UtilsService } from '../utils.service';
 import { AuthService } from '../auth/auth.service';

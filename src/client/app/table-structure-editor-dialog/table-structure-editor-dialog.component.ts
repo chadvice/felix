@@ -2,7 +2,7 @@ import { Component, Inject, OnInit } from '@angular/core';
 
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { CONFIRM_DIALOG_MODE, ConfirmationDialogComponent } from '../confirmation-dialog/confirmation-dialog.component';
-import { SylvesterColumn } from '../nelnet/sylvester-collection';
+import { SylvesterColumn } from '../nelnet/sylvester-table';
 import { UtilsService } from '../utils.service';
 
 export interface TableStructureEditorDialogData {
