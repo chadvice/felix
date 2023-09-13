@@ -222,16 +222,16 @@ async function updateDocument(req, res) {
     try {
         const db = mongo.getDB();
         const userID = req.body.userID;
-        const collectionName = req.body.collection;
+        const tableName = req.body.table;
         const document = req.body.document;
-        const collection = db.collection(collectionName);
+        const collection = db.collection(tableName);
         const query = { _id: new ObjectId(req.body.document._id) };
         delete document._id;
 
         const oldDoc = await collection.findOne(query);
         await collection.replaceOne(query, document);
-        const auditLogMessage = `Changed record in table ${collectionName}.`;
-        const auditLogDescription = `A record was updated in the ${collectionName} table.`
+        const auditLogMessage = `Changed record in table ${tableName}.`;
+        const auditLogDescription = `A record was updated in the ${tableName} table.`
 
         if (oldDoc) {
             await writeToAuditLog(userID, auditLogMessage, auditLogDescription, oldDoc, document);
@@ -241,7 +241,7 @@ async function updateDocument(req, res) {
 
         res.status(200).json({ status: 'OK' });
     } catch (err) {
-        const auditLogMessage = `Error updating record in table ${collectionName}.`;
+        const auditLogMessage = `Error updating record in table ${tableName}.`;
         const auditLogDescription = `Error message: ${err.message}.`
         await writeToAuditLog(userID, auditLogMessage, auditLogDescription, null, document);
 

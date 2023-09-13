@@ -119,7 +119,7 @@ export class SylvesterApiService {
 
     const body = {
       userID: userID,
-      collection: table,
+      table: table,
       document: document
     }
 
