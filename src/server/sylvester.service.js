@@ -230,8 +230,8 @@ async function updateRow(req, res) {
 
         const oldRow = await collection.findOne(query);
         await collection.replaceOne(query, row);
-        const auditLogMessage = `Changed record in table ${tableName}.`;
-        const auditLogDescription = `A record was updated in the ${tableName} table.`
+        const auditLogMessage = `Changed row in table ${tableName}.`;
+        const auditLogDescription = `A row was updated in the ${tableName} table.`
 
         if (oldRow) {
             await writeToAuditLog(userID, auditLogMessage, auditLogDescription, oldRow, row);
@@ -241,7 +241,7 @@ async function updateRow(req, res) {
 
         res.status(200).json({ status: 'OK' });
     } catch (err) {
-        const auditLogMessage = `Error updating record in table ${tableName}.`;
+        const auditLogMessage = `Error updating row in table ${tableName}.`;
         const auditLogDescription = `Error message: ${err.message}.`
         await writeToAuditLog(userID, auditLogMessage, auditLogDescription, null, row);
 
@@ -249,24 +249,24 @@ async function updateRow(req, res) {
     }
 }
 
-async function insertDocument(req, res) {
+async function insertRow(req, res) {
     const userID = req.body.userID;
     const tableName = req.body.table;
-    const document = req.body.document;
+    const row = req.body.row;
     try {
         const db = mongo.getDB();
         const collection = db.collection(tableName);
 
-        const resp = await collection.insertOne(document);
-        const auditLogMessage = `Added record to table ${tableName}.`;
-        const auditLogDescription = `A new record was added to the ${tableName} table.`
-        await writeToAuditLog(userID, auditLogMessage, auditLogDescription, null, document);
+        await collection.insertOne(row);
+        const auditLogMessage = `Added row to table ${tableName}.`;
+        const auditLogDescription = `A new row was added to the ${tableName} table.`
+        await writeToAuditLog(userID, auditLogMessage, auditLogDescription, null, row);
 
         res.status(200).json({ status: 'OK' });
     } catch (err) {
-        const auditLogMessage = `Error adding record to table ${tableName}.`;
+        const auditLogMessage = `Error adding row to table ${tableName}.`;
         const auditLogDescription = `Error message: ${err.message}.`
-        await writeToAuditLog(userID, auditLogMessage, auditLogDescription, null, document);
+        await writeToAuditLog(userID, auditLogMessage, auditLogDescription, null, row);
 
         res.status(200).json({ status: 'ERROR', message: err.message });
     }
@@ -799,7 +799,7 @@ module.exports = {
     updateTableSchema,
     getTable,
     updateRow,
-    insertDocument,
+    insertRow,
     deleteDocument,
     bulkInsert,
     bulkReplace,

@@ -129,14 +129,14 @@ export class SylvesterApiService {
   }
 
   insertRow(table: string, row: Object): Observable<APIResponse> {
-    const url: string = `${environment.sylvesterApiUrl}/document`
+    const url: string = `${environment.sylvesterApiUrl}/row`
 
     const userID = this.getUserID();
 
     const body = {
       userID: userID,
       table: table,
-      document: row
+      row: row
     }
 
     return this.http.post<APIResponse>(url, body, this.getHttpOptions()).pipe(

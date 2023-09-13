@@ -30,8 +30,8 @@ router.put('/row', (req, res) => {
     sylvesterService.updateRow(req, res);
 });
 
-router.post('/document', (req, res) => {
-    sylvesterService.insertDocument(req, res);
+router.post('/row', (req, res) => {
+    sylvesterService.insertRow(req, res);
 });
 
 router.delete('/document/:table/:userID/:id', (req, res) => {
