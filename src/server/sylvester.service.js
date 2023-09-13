@@ -251,20 +251,20 @@ async function updateDocument(req, res) {
 
 async function insertDocument(req, res) {
     const userID = req.body.userID;
-    const collectionName = req.body.collection;
+    const tableName = req.body.table;
     const document = req.body.document;
     try {
         const db = mongo.getDB();
-        const collection = db.collection(collectionName);
+        const collection = db.collection(tableName);
 
         const resp = await collection.insertOne(document);
-        const auditLogMessage = `Added record to table ${collectionName}.`;
-        const auditLogDescription = `A new record was added to the ${collectionName} table.`
+        const auditLogMessage = `Added record to table ${tableName}.`;
+        const auditLogDescription = `A new record was added to the ${tableName} table.`
         await writeToAuditLog(userID, auditLogMessage, auditLogDescription, null, document);
 
         res.status(200).json({ status: 'OK' });
     } catch (err) {
-        const auditLogMessage = `Error adding record to table ${collectionName}.`;
+        const auditLogMessage = `Error adding record to table ${tableName}.`;
         const auditLogDescription = `Error message: ${err.message}.`
         await writeToAuditLog(userID, auditLogMessage, auditLogDescription, null, document);
 
