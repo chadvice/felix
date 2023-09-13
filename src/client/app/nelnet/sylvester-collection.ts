@@ -1,20 +1,20 @@
 import { ObjectId } from "mongodb"
 
-export interface SylvesterDocumentField {
+export interface SylvesterColumn {
     name: string,
     type: string
 }
 
-export interface SylvesterCollectionsDocument {
+export interface SylvesterTableSchema {
     _id?: ObjectId,
     created: Date,
     name: string,
     description: string,
-    fields: SylvesterDocumentField[]
+    fields: SylvesterColumn[]
 }
 
-export interface SylvesterCollection {
+export interface SylvesterTable {
     description: string,
-    columns: SylvesterDocumentField[],
+    columns: SylvesterColumn[],
     rows: any[]
 }

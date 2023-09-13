@@ -1,13 +1,13 @@
 import { Component, Inject, ViewChild } from '@angular/core';
 
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { SylvesterDocumentField } from '../../nelnet/sylvester-collection';
+import { SylvesterColumn } from '../../nelnet/sylvester-collection';
 import { ConfirmationDialogComponent, CONFIRM_DIALOG_MODE } from '../../confirmation-dialog/confirmation-dialog.component';
 
 export interface TableRowEditorDialogData {
   tableName: string,
   tableDescription: string,
-  cols: SylvesterDocumentField[],
+  cols: SylvesterColumn[],
   record: any,
   new: boolean,
   canEdit: boolean

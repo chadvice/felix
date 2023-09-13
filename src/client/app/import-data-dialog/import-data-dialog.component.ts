@@ -4,7 +4,7 @@ import { Observable, forkJoin } from 'rxjs';
 
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { CONFIRM_DIALOG_MODE, ConfirmationDialogComponent } from '../confirmation-dialog/confirmation-dialog.component';
-import { SylvesterCollectionsDocument, SylvesterDocumentField } from '../nelnet/sylvester-collection';
+import { SylvesterTableSchema, SylvesterColumn } from '../nelnet/sylvester-collection';
 import { SylvesterApiService } from '../sylvester-api.service';
 import { UtilsService } from '../utils.service';
 import { AuthService } from '../auth/auth.service';
@@ -31,8 +31,8 @@ export class ImportDataDialogComponent implements OnInit {
   importMode: IMPORT_MODE = IMPORT_MODE.APPEND;
 
   selectedFileName: string | null = null;
-  selectedTable: SylvesterCollectionsDocument | null = null;
-  tables!: SylvesterCollectionsDocument[];
+  selectedTable: SylvesterTableSchema | null = null;
+  tables!: SylvesterTableSchema[];
   tableName: string = '';
   tableDescription: string = '';
   tableNameInUse: boolean = false;
@@ -384,7 +384,7 @@ export class ImportDataDialogComponent implements OnInit {
   import(): void {
     switch (this.importMode) {
       case IMPORT_MODE.NEW:
-        const fields:SylvesterDocumentField[] = this.fileHeaders.map(header => {
+        const fields:SylvesterColumn[] = this.fileHeaders.map(header => {
           return {name: header, type: 'string'}
         })
         this.apiService.bulkCreate(this.tableName, this.tableDescription, fields, this.fileRows).subscribe(resp => {

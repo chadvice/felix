@@ -9,7 +9,7 @@ import { UtilsService } from './utils.service';
 import { SylvesterApiService } from './sylvester-api.service';
 import { ImportDataDialogComponent } from './import-data-dialog/import-data-dialog.component';
 import { NewTableEditorDialogComponent } from './table-detail/new-table-editor-dialog/new-table-editor-dialog.component';
-import { SylvesterCollectionsDocument } from './nelnet/sylvester-collection';
+import { SylvesterTableSchema } from './nelnet/sylvester-collection';
 import { SylvesterMessengerService } from './sylvester-messenger.service';
 import { SylvesterUser } from './nelnet/sylvester-user';
 
@@ -28,7 +28,7 @@ interface navItem {
 export class AppComponent implements OnInit, OnDestroy {
   title = 'Sylvester';
   
-  tables!: SylvesterCollectionsDocument[];
+  tables!: SylvesterTableSchema[];
   selectedTableName: string | null = null;
   showSideNav: boolean = false;
 

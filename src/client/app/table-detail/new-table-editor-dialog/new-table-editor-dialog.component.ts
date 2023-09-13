@@ -3,7 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { SylvesterApiService } from '../../sylvester-api.service';
 import { UtilsService } from '../../utils.service';
-import { SylvesterCollectionsDocument, SylvesterDocumentField } from '../../nelnet/sylvester-collection';
+import { SylvesterTableSchema, SylvesterColumn } from '../../nelnet/sylvester-collection';
 
 @Component({
   selector: 'app-new-table-editor-dialog',
@@ -11,7 +11,7 @@ import { SylvesterCollectionsDocument, SylvesterDocumentField } from '../../neln
   styleUrls: ['./new-table-editor-dialog.component.scss']
 })
 export class NewTableEditorDialogComponent implements OnInit {
-  table!: SylvesterCollectionsDocument;
+  table!: SylvesterTableSchema;
   allowedFieldNameCharacters: RegExp = this.utils.getAllowedFieldNameCharacters();
   tableNames!: string[];
   errorMessage: string = '';
@@ -56,7 +56,7 @@ export class NewTableEditorDialogComponent implements OnInit {
   }
 
   addField(): void {
-    const field: SylvesterDocumentField = {
+    const field: SylvesterColumn = {
       name: '',
       type: 'string'
     }

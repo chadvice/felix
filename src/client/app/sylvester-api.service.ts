@@ -4,7 +4,7 @@ import { Observable, catchError, of, shareReplay } from 'rxjs';
 
 import { environment } from '../environments/environment';
 import { AuthService } from './auth/auth.service';
-import { SylvesterCollection, SylvesterCollectionsDocument, SylvesterDocumentField } from './nelnet/sylvester-collection';
+import { SylvesterTable, SylvesterTableSchema, SylvesterColumn } from './nelnet/sylvester-collection';
 import { CollectionChanges } from './table-structure-editor-dialog/table-structure-editor-dialog.component';
 import { SylvesterUser } from './nelnet/sylvester-user';
 import { SylvesterRole, SylvesterTablePermission } from './nelnet/sylvester-role';
@@ -22,7 +22,7 @@ interface APIResponse {
 export class SylvesterApiService {
   /* #region Caches */
   private CACHE_DEPTH: number = 1;
-  private tablesCache: Observable<SylvesterCollectionsDocument[]> | null = null;
+  private tablesCache: Observable<SylvesterTableSchema[]> | null = null;
 
   private tablePermissionsUserID: string | null = null;
   private tablePermissionsCache: Observable<SylvesterTablePermission[]> | null = null;
@@ -36,7 +36,7 @@ export class SylvesterApiService {
     private auth: AuthService
   ) { }
 
-  getTables(): Observable<SylvesterCollectionsDocument[]> {
+  getTables(): Observable<SylvesterTableSchema[]> {
     if (!this.tablesCache) {
       this.tablesCache = this.requestTables().pipe(
         shareReplay(this.CACHE_DEPTH)
@@ -46,11 +46,11 @@ export class SylvesterApiService {
     return this.tablesCache;
   }
 
-  private requestTables(): Observable<SylvesterCollectionsDocument[]> {
+  private requestTables(): Observable<SylvesterTableSchema[]> {
     const url: string = `${environment.sylvesterApiUrl}/tables`
 
-    return this.http.get<SylvesterCollectionsDocument[]>(url, this.getHttpOptions()).pipe(
-      catchError(this.handleError<SylvesterCollectionsDocument[]>('getTables')),
+    return this.http.get<SylvesterTableSchema[]>(url, this.getHttpOptions()).pipe(
+      catchError(this.handleError<SylvesterTableSchema[]>('getTables')),
     )
   }
 
@@ -58,11 +58,11 @@ export class SylvesterApiService {
     this.tablesCache = null;
   }
 
-  getTablesForUser(userID: string): Observable<SylvesterCollectionsDocument[]> {
+  getTablesForUser(userID: string): Observable<SylvesterTableSchema[]> {
     const url: string = `${environment.sylvesterApiUrl}/tables/${userID}`
 
-    return this.http.get<SylvesterCollectionsDocument[]>(url, this.getHttpOptions()).pipe(
-      catchError(this.handleError<SylvesterCollectionsDocument[]>('getTablesForUser')),
+    return this.http.get<SylvesterTableSchema[]>(url, this.getHttpOptions()).pipe(
+      catchError(this.handleError<SylvesterTableSchema[]>('getTablesForUser')),
     )
   }
 
@@ -74,15 +74,15 @@ export class SylvesterApiService {
     )
   }
 
-  getTable(tableName: string): Observable<SylvesterCollection> {
+  getTable(tableName: string): Observable<SylvesterTable> {
     const url: string = `${environment.sylvesterApiUrl}/table/${tableName}`
 
-    return this.http.get<SylvesterCollection>(url, this.getHttpOptions()).pipe(
-      catchError(this.handleError<SylvesterCollection>('getTable')),
+    return this.http.get<SylvesterTable>(url, this.getHttpOptions()).pipe(
+      catchError(this.handleError<SylvesterTable>('getTable')),
     )
   }
 
-  createTable(table: SylvesterCollectionsDocument): Observable<APIResponse> {
+  createTable(table: SylvesterTableSchema): Observable<APIResponse> {
     const url: string = `${environment.sylvesterApiUrl}/table`
 
     const userID = this.getUserID();
@@ -185,7 +185,7 @@ export class SylvesterApiService {
     )
   }
 
-  bulkCreate(collectionName: string, description: string, fields: SylvesterDocumentField[], documents: Object[]): Observable<APIResponse> {
+  bulkCreate(collectionName: string, description: string, fields: SylvesterColumn[], documents: Object[]): Observable<APIResponse> {
     const url: string = `${environment.sylvesterApiUrl}/bulkcreate`
 
     const userID = this.getUserID();
