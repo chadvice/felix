@@ -299,11 +299,11 @@ async function deleteDocument(req, res) {
 
 async function bulkInsert(req, res) {
     const userID = req.body.userID;
-    const collectionName = req.body.collectionName;
+    const tableName = req.body.tableName;
     const documents = req.body.documents;
     try {
         const db = mongo.getDB();
-        const collection = db.collection(collectionName);
+        const collection = db.collection(tableName);
 
         let bulkOperations = [];
         for (let n = 0; n < documents.length; n++) {
@@ -311,13 +311,13 @@ async function bulkInsert(req, res) {
         }
 
         const resp = await collection.bulkWrite(bulkOperations);
-        const message = `${resp.insertedCount} records were inserted into the ${collectionName} table.`;
-        const auditLogMessage = `Records inserted into the table ${collectionName}.`;
+        const message = `${resp.insertedCount} records were inserted into the ${tableName} table.`;
+        const auditLogMessage = `Records inserted into the table ${tableName}.`;
         await writeToAuditLog(userID, auditLogMessage, message);
 
         res.status(200).json({ status: 'OK', message: message });
     } catch (err) {
-        const auditLogMessage = `Error inserting records into table ${collectionName}.`;
+        const auditLogMessage = `Error inserting records into table ${tableName}.`;
         const auditLogDescription = `Error message: ${err.message}.`
         await writeToAuditLog(userID, auditLogMessage, auditLogDescription);
 
