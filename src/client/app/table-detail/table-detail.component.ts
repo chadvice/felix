@@ -276,7 +276,7 @@ export class TableDetailComponent implements OnInit, OnDestroy {
       if (dialogResp) {
         const changes: TableChanges = dialogResp;
         if (changes.newDescription || changes.fieldChanges.length > 0) {
-          this.apiService.alterCollection(this.dataTableName, changes).subscribe(resp => {
+          this.apiService.alterTable(this.dataTableName, changes).subscribe(resp => {
             if (resp.status === 'OK') {
               this.snackBar.open('Table structure changes saved', 'OK', { horizontalPosition: 'center', verticalPosition: 'bottom', duration: 1500 });
               this.getTableData();
@@ -344,7 +344,7 @@ export class TableDetailComponent implements OnInit, OnDestroy {
     this.confirmationDialogRef = this.dialog.open(ConfirmationDialogComponent, {data: dialogData});
     this.confirmationDialogRef.afterClosed().subscribe(dialogResp => {
       if (dialogResp) {
-        this.apiService.deleteCollection(this.dataTableName).subscribe(resp => {
+        this.apiService.deleteTable(this.dataTableName).subscribe(resp => {
           if (resp.status === 'OK') {
             const dialogData = {
               mode: CONFIRM_DIALOG_MODE.OK,

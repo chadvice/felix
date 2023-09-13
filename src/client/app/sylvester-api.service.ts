@@ -96,7 +96,7 @@ export class SylvesterApiService {
     )
   }
 
-  alterCollection(collectionName: string, changes: TableChanges): Observable<APIResponse> {
+  alterTable(collectionName: string, changes: TableChanges): Observable<APIResponse> {
     const url: string = `${environment.sylvesterApiUrl}/collection`
 
     const userID = this.getUserID();
@@ -205,7 +205,7 @@ export class SylvesterApiService {
     )
   }
 
-  deleteCollection(collection: string): Observable<APIResponse> {
+  deleteTable(collection: string): Observable<APIResponse> {
     const userID = this.getUserID();
     const url: string = `${environment.sylvesterApiUrl}/collection/${userID}/${collection}`;
 
