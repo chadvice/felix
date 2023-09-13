@@ -9,7 +9,7 @@ import { forkJoin } from 'rxjs';
 
 interface RoleRow {
   role: SylvesterRole,
-  collectionsString: string
+  tablesString: string
 }
 
 @Component({
@@ -20,7 +20,7 @@ interface RoleRow {
 export class RolesPageComponent implements OnInit {
   isLoading: boolean = false;
   roles!: RoleRow[];
-  displayedColumns: string[] = ['name', 'description', 'collections'];
+  displayedColumns: string[] = ['name', 'description', 'tables'];
   roleEditorDialogRef!: MatDialogRef<RoleEditorDialogComponent>;
 
   constructor (
@@ -41,23 +41,23 @@ export class RolesPageComponent implements OnInit {
       this.roles = [];
 
       rolesData.forEach(role => {
-        let collections: string = '';
+        let tables: string = '';
         if (role.tablePermissions) {
           role.tablePermissions.forEach(coll => {
-            const collection = tablesData.find(table => table._id === coll.tableID);
-            if (collection) {
-              if (collections.length > 0) {
-                collections += ', ';
+            const table = tablesData.find(table => table._id === coll.tableID);
+            if (table) {
+              if (tables.length > 0) {
+                tables += ', ';
               }
   
-              collections += collection.name;
+              tables += table.name;
             }
           });
         }
 
         const rr: RoleRow = {
           role: role,
-          collectionsString: collections
+          tablesString: tables
         }
 
         this.roles.push(rr);

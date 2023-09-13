@@ -12,7 +12,7 @@ export interface RoleEditorResponse {
   role?: SylvesterRole
 }
 
-interface CollectionSelectionElement {
+interface TableSelectionElement {
   id: ObjectId,
   selected: boolean,
   name: string,
@@ -27,8 +27,8 @@ interface CollectionSelectionElement {
 })
 export class RoleEditorDialogComponent implements OnInit {
   isLoading: boolean = false;
-  originalSelectedCollections!: CollectionSelectionElement[];
-  selectedCollections!: CollectionSelectionElement[];
+  originalSelectedTables!: TableSelectionElement[];
+  selectedTables!: TableSelectionElement[];
   confirmationDialogRef!: MatDialogRef<ConfirmationDialogComponent>;
   name: string = '';
   description?: string = '';
@@ -54,8 +54,8 @@ export class RoleEditorDialogComponent implements OnInit {
   loadData(): void {
     this.isLoading = true;
     this.apiService.getTables().subscribe(tables => {
-      this.originalSelectedCollections = [];
-      this.selectedCollections = [];
+      this.originalSelectedTables = [];
+      this.selectedTables = [];
       tables.forEach(table => {
 
         let collIndex = -1;
@@ -69,7 +69,7 @@ export class RoleEditorDialogComponent implements OnInit {
         }
 
         if (table._id) {
-          const cse: CollectionSelectionElement = {
+          const cse: TableSelectionElement = {
             id: table._id,
             selected: collIndex === -1 ? false : true,
             name: table.name,
@@ -77,7 +77,7 @@ export class RoleEditorDialogComponent implements OnInit {
             canEdit: canEdit
           }
   
-          const ocse: CollectionSelectionElement = {
+          const ocse: TableSelectionElement = {
             id: table._id,
             selected: collIndex === -1 ? false : true,
             name: table.name,
@@ -85,8 +85,8 @@ export class RoleEditorDialogComponent implements OnInit {
             canEdit: canEdit
           }
   
-          this.selectedCollections.push(cse);
-          this.originalSelectedCollections.push(ocse);
+          this.selectedTables.push(cse);
+          this.originalSelectedTables.push(ocse);
         }
       })
 
@@ -125,11 +125,11 @@ export class RoleEditorDialogComponent implements OnInit {
       return true;
     }
 
-    if (this.selectedCollections && this.selectedCollections.length > 0) {
-      for (let n = 0; n < this.selectedCollections.length; n++) {
+    if (this.selectedTables && this.selectedTables.length > 0) {
+      for (let n = 0; n < this.selectedTables.length; n++) {
         if (
-          this.selectedCollections[n].selected !== this.originalSelectedCollections[n].selected ||
-          this.selectedCollections[n].canEdit !== this.originalSelectedCollections[n].canEdit
+          this.selectedTables[n].selected !== this.originalSelectedTables[n].selected ||
+          this.selectedTables[n].canEdit !== this.originalSelectedTables[n].canEdit
           ) {
             return true;
           }
@@ -178,7 +178,7 @@ export class RoleEditorDialogComponent implements OnInit {
   }
 
   save(): void {
-    const tablePermissions: SylvesterTablePermission[] = this.selectedCollections.filter(coll => coll.selected).map(coll => {
+    const tablePermissions: SylvesterTablePermission[] = this.selectedTables.filter(coll => coll.selected).map(coll => {
       return {
         tableID: coll.id,
         canEdit: coll.canEdit

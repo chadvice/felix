@@ -25,9 +25,9 @@
                   <td mat-cell *matCellDef="let roleRow"> {{roleRow.role.description}} </td>
                 </ng-container>
 
-                <ng-container matColumnDef="collections">
+                <ng-container matColumnDef="tables">
                   <th mat-header-cell *matHeaderCellDef> Included Tables </th>
-                  <td mat-cell *matCellDef="let roleRow"> {{roleRow.collectionsString}} </td>
+                  <td mat-cell *matCellDef="let roleRow"> {{roleRow.tablesString}} </td>
                 </ng-container>
 
                 <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true;"></tr>
