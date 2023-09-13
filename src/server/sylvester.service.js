@@ -329,9 +329,9 @@ async function bulkReplace(req, res) {
     const db = mongo.getDB();
     const client = mongo.getClient();
     const userID = req.body.userID;
-    const collectionName = req.body.collectionName;
+    const tableName = req.body.tableName;
     const documents = req.body.documents;
-    const collection = db.collection(collectionName);
+    const collection = db.collection(tableName);
     const session = client.startSession();
 
     const transactionOptions = {
@@ -353,13 +353,13 @@ async function bulkReplace(req, res) {
             }
 
             const resp = await collection.bulkWrite(bulkOperations);
-            auditLogMessage = `All records in the table ${collectionName} replaced.`;
-            statusMessage = `All of the records in the ${collectionName} table were replaced with ${resp.insertedCount} new records.`
+            auditLogMessage = `All records in the table ${tableName} replaced.`;
+            statusMessage = `All of the records in the ${tableName} table were replaced with ${resp.insertedCount} new records.`
         }, transactionOptions);
     } catch (err) {
         status = 'ERROR';
         statusMessage = err.message;
-        auditLogMessage = `Error inserting records into table ${collectionName}.`;
+        auditLogMessage = `Error inserting records into table ${tableName}.`;
     } finally {
         await writeToAuditLog(userID, auditLogMessage, statusMessage);
         res.status(200).json({ status: status, message: statusMessage });
