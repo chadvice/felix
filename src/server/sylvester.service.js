@@ -370,7 +370,7 @@ async function bulkCreate(req, res) {
     const db = mongo.getDB();
     const client = mongo.getClient();
     const userID = req.body.userID;
-    const collectionName = req.body.collectionName;
+    const tableName = req.body.tableName;
     const description = req.body.description;
     const documents = req.body.documents;
     const fields = req.body.fields;
@@ -391,7 +391,7 @@ async function bulkCreate(req, res) {
             const now = new Date();
             const doc = {
                 created: now.toISOString(),
-                name: collectionName,
+                name: tableName,
                 description: description,
                 fields: fields
             }
@@ -403,15 +403,15 @@ async function bulkCreate(req, res) {
                 bulkOperations.push({ "insertOne": { "document": documents[n] } });
             }
 
-            const dataCollection = db.collection(collectionName);
+            const dataCollection = db.collection(tableName);
             const resp = await dataCollection.bulkWrite(bulkOperations);
-            auditLogMessage = `New table ${collectionName} created.`;
-            statusMessage = `New table ${collectionName} created with ${resp.insertedCount} records.`
+            auditLogMessage = `New table ${tableName} created.`;
+            statusMessage = `New table ${tableName} created with ${resp.insertedCount} records.`
         }, transactionOptions);
     } catch (err) {
         status = 'ERROR';
         statusMessage = err.message;
-        auditLogMessage = `Error creating / adding data to new table ${collectionName}.`;
+        auditLogMessage = `Error creating / adding data to new table ${tableName}.`;
     } finally {
         await writeToAuditLog(userID, auditLogMessage, statusMessage);
         res.status(200).json({ status: status, message: statusMessage });

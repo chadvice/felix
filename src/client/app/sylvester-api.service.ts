@@ -192,7 +192,7 @@ export class SylvesterApiService {
 
     const body = {
       userID: userID,
-      collectionName: tableName,
+      tableName: tableName,
       description: description,
       fields: fields,
       documents: documents
