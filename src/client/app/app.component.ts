@@ -152,23 +152,4 @@ export class AppComponent implements OnInit, OnDestroy {
     })
   }
 
-  showAuthUserInfo(): void {
-    const userID = this.auth.getUserID();
-    let alertMessage = 'UserID: '
-    if (userID) {
-      alertMessage += userID;
-    } else {
-      alertMessage += 'NOT SET'
-    }
-
-    alertMessage += '\n\nJWT Auth Data\n';
-    if (this.auth.userInfo) {
-      alertMessage += JSON.stringify(this.auth.userInfo,null,'    ')
-    } else {
-      alert('--- Not Set ---');
-    }
-
-    alert(alertMessage);
-  }
-
 }
