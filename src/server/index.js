@@ -24,6 +24,12 @@ const verifyCXOneApiKey = (req, res, next) => {
 
 // Ping JWT Authentication Stuff
 // const eJwt = require('express-jwt');
+let jwksUri = '';
+if(process.env.NODE_ENV === 'production') {
+  jwksUri = 'https://ssodev.nelnet.com/pf/JWKS';
+} else {
+  jwksUri = 'https://auth.pingone.com/2e6fb850-41fc-4f87-9fbe-18fe1447439c/as/jwks';
+}
 var { expressjwt: eJwt } = require("express-jwt");
 const jwks = require('jwks-rsa');
 const jwtCheck = eJwt({
@@ -31,7 +37,7 @@ const jwtCheck = eJwt({
       cache: true,
       rateLimit: true,
       jwksRequestsPerMinute: 5,
-      jwksUri: 'https://auth.pingone.com/2e6fb850-41fc-4f87-9fbe-18fe1447439c/as/jwks'
+      jwksUri: jwksUri
   }),
   // audience: 'https://agon-apollo.herokuapp.com/api',
   // issuer: 'https://agon.us.auth0.com/',
@@ -68,7 +74,7 @@ app.get('/api/cx/:tableName/:fieldName/:key', verifyCXOneApiKey, (req, res) => {
 
 // app.use('/api', routes, (err, req, res, next) => {
 app.use('/api', jwtCheck, routes, (err, req, res, next) => {
-  if (err.  name === 'UnauthorizedError') {
+  if (err.name === 'UnauthorizedError') {
     return res.status(401).send({
       success: false,
       message: err.message
