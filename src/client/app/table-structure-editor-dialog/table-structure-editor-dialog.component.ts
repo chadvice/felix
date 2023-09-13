@@ -18,7 +18,7 @@ export interface TableStructureEditorField {
   removed: boolean
 }
 
-export interface CollectionChanges {
+export interface TableChanges {
   newDescription: string | null,
   fieldChanges: TableStructureEditorField[]
 }
@@ -156,8 +156,8 @@ export class TableStructureEditorDialogComponent implements OnInit {
     }
   }
 
-  getChanges(): CollectionChanges {
-    let changes: CollectionChanges = {
+  getChanges(): TableChanges {
+    let changes: TableChanges = {
       newDescription: null,
       fieldChanges: []
     };

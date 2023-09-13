@@ -5,7 +5,7 @@ import { Observable, catchError, of, shareReplay } from 'rxjs';
 import { environment } from '../environments/environment';
 import { AuthService } from './auth/auth.service';
 import { SylvesterTable, SylvesterTableSchema, SylvesterColumn } from './nelnet/sylvester-table';
-import { CollectionChanges } from './table-structure-editor-dialog/table-structure-editor-dialog.component';
+import { TableChanges } from './table-structure-editor-dialog/table-structure-editor-dialog.component';
 import { SylvesterUser } from './nelnet/sylvester-user';
 import { SylvesterRole, SylvesterTablePermission } from './nelnet/sylvester-role';
 import { ObjectId } from 'mongodb';
@@ -96,7 +96,7 @@ export class SylvesterApiService {
     )
   }
 
-  alterCollection(collectionName: string, changes: CollectionChanges): Observable<APIResponse> {
+  alterCollection(collectionName: string, changes: TableChanges): Observable<APIResponse> {
     const url: string = `${environment.sylvesterApiUrl}/collection`
 
     const userID = this.getUserID();
