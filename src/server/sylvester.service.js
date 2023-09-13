@@ -274,22 +274,22 @@ async function insertDocument(req, res) {
 
 async function deleteDocument(req, res) {
     const userID = req.params.userID;
-    const collectionName = req.params.collection;
+    const tableName = req.params.table;
     const id = req.params.id;
     try {
         const db = mongo.getDB();
-        const collection = db.collection(collectionName);
+        const collection = db.collection(tableName);
         const query = { _id: new ObjectId(id) };
 
         const oldDoc = await collection.findOne(query);
         const resp = await collection.deleteOne(query);
-        const auditLogMessage = `Deleted record from the table ${collectionName}.`;
-        const auditLogDescription = `A record was deleted from the ${collectionName} table.`
+        const auditLogMessage = `Deleted record from the table ${tableName}.`;
+        const auditLogDescription = `A record was deleted from the ${tableName} table.`
         await writeToAuditLog(userID, auditLogMessage, auditLogDescription, oldDoc);
 
         res.status(200).json({ status: 'OK' });
     } catch (err) {
-        const auditLogMessage = `Error deleting record ${id} from table ${collectionName}.`;
+        const auditLogMessage = `Error deleting record ${id} from table ${tableName}.`;
         const auditLogDescription = `Error message: ${err.message}.`
         await writeToAuditLog(userID, auditLogMessage, auditLogDescription);
 

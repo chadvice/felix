@@ -34,7 +34,7 @@ router.post('/document', (req, res) => {
     sylvesterService.insertDocument(req, res);
 });
 
-router.delete('/document/:collection/:userID/:id', (req, res) => {
+router.delete('/document/:table/:userID/:id', (req, res) => {
     sylvesterService.deleteDocument(req, res);
 });
 
