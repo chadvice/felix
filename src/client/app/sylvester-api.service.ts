@@ -102,7 +102,7 @@ export class SylvesterApiService {
     const userID = this.getUserID();
     const body = {
       userID: userID,
-      collectionName: tableName,
+      tableName: tableName,
       newDescription: changes.newDescription,
       fieldChanges: changes.fieldChanges
     }

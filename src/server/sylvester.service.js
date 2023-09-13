@@ -99,7 +99,7 @@ async function updateTableSchema(req, res) {
     const session = client.startSession();
 
     const userID = req.body.userID;
-    const collectionName = req.body.collectionName;
+    const tableName = req.body.tableName;
     const newDescription = req.body.newDescription;
     const fieldChanges = req.body.fieldChanges;
 
@@ -118,7 +118,7 @@ async function updateTableSchema(req, res) {
             if (newDescription?.length > 0) {
                 statusMessage = `Description changed to ${newDescription}.  `;
                 logMessage = `Description changed to ${newDescription}.  `;
-                await collection.updateOne({ name: collectionName }, { $set: { "description": newDescription } }, { session: session });
+                await collection.updateOne({ name: tableName }, { $set: { "description": newDescription } }, { session: session });
             }
 
             // Apply any field changes requested
@@ -127,7 +127,7 @@ async function updateTableSchema(req, res) {
             let fieldAddCount = 0;
 
             if (fieldChanges?.length > 0) {
-                const dataCollection = db.collection(collectionName);
+                const dataCollection = db.collection(tableName);
                 let resp;
 
                 for (let n = 0; n < fieldChanges.length; n++) {
@@ -138,23 +138,23 @@ async function updateTableSchema(req, res) {
 
                     if (oldName && removed) {
                         await dataCollection.updateMany({}, { $unset: { [oldName]: '' } }, { session: session });
-                        resp = await collection.updateOne({ 'name': collectionName }, { $pull: { fields: { name: oldName } } }, { session: session });
+                        resp = await collection.updateOne({ 'name': tableName }, { $pull: { fields: { name: oldName } } }, { session: session });
                         if (resp?.modifiedCount > 0) {
                             logMessage += `Removed field ${oldName}. `;
                             fieldDeleteCount++;
                         }
                     } else if (oldName && newName) {
                         await dataCollection.updateMany({}, { $rename: { [oldName]: newName } }, { session: session });
-                        resp = await collection.updateOne({ 'name': collectionName, 'fields.name': oldName }, { $set: { "fields.$.name": newName } }, { session: session });
+                        resp = await collection.updateOne({ 'name': tableName, 'fields.name': oldName }, { $set: { "fields.$.name": newName } }, { session: session });
                         if (resp?.modifiedCount > 0) {
                             logMessage += `Renamed field ${oldName} to ${newName}. `;
                             fieldChangeCount++;
                         }
                     } else if (newName && added) {
                         // Check to see if the field exists before we add it
-                        resp = await collection.count({ $and: [{ 'name': collectionName }, { 'fields': { $elemMatch: { 'name': newName } } }] });
+                        resp = await collection.count({ $and: [{ 'name': tableName }, { 'fields': { $elemMatch: { 'name': newName } } }] });
                         if (resp === 0) {
-                            resp = await collection.updateOne({ 'name': collectionName }, { $push: { 'fields': { 'name': newName, 'type': 'string' } } }, { session: session });
+                            resp = await collection.updateOne({ 'name': tableName }, { $push: { 'fields': { 'name': newName, 'type': 'string' } } }, { session: session });
                             if (resp?.modifiedCount > 0) {
                                 logMessage += `Added field ${newName}. `;
                                 fieldAddCount++;
@@ -181,11 +181,11 @@ async function updateTableSchema(req, res) {
         let auditLogMessage;
         if (status === 'OK') {
             if (logMessage.length > 0) {
-                auditLogMessage = `Updated table ${collectionName} structure`;
+                auditLogMessage = `Updated table ${tableName} structure`;
                 auditLogDescription = logMessage;
             }
         } else {
-            auditLogMessage = `Error attmpting to update table ${collectionName}`;
+            auditLogMessage = `Error attmpting to update table ${tableName}`;
             auditLogDescription = `Error message: ${err.message}`;
         }
 
