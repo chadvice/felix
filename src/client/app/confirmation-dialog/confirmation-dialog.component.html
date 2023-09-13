@@ -27,7 +27,7 @@
       <!-- Save / Cancel -->
       <div *ngSwitchCase="ConfirmDialogMode.SAVE_CANCEL">
         <button mat-raised-button color="accent" type="button" (click)="closeDialog(true)">Save</button>
-        <button mat-raised-button type="button" (click)="closeDialog(false)">Cancel</button>
+        <button mat-raised-button type="button" color="warn" (click)="closeDialog(false)">Cancel</button>
       </div>
       <!-- Delete / Cancel -->
       <div *ngSwitchCase="ConfirmDialogMode.DELETE_CANCEL">

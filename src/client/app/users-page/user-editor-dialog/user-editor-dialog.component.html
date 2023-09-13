@@ -7,7 +7,7 @@
                 <div>
                     <mat-form-field style="width: 440px;">
                         <mat-label>User ID</mat-label>
-                        <input matInput name="userID" [(ngModel)]="user.userID" [disabled]="!newUser" required (ngModelChange)="userIDChanged()">
+                        <input matInput name="userID" [(ngModel)]="user.userID" placeholder="xxxxx@nelnet.net (user clockid)" [disabled]="!newUser" required (ngModelChange)="userIDChanged()">
                     </mat-form-field>
                     <br>
                     <mat-form-field>

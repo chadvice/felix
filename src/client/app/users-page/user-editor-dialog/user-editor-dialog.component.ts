@@ -206,6 +206,25 @@ export class UserEditorDialogComponent implements OnInit {
   }
 
   save(): void {
+    if (this.newUser && this.user.userID && !/@nelnet.net\s*$/.test(this.user.userID)) {
+      const dialogData = {
+        mode: CONFIRM_DIALOG_MODE.SAVE_CANCEL,
+        title: 'Correct User ID?',
+        messageArray: ['The User ID you entered does not end in "@nelnet.net".', 'If you continue, this user may not have valid access.', 'Are you sure you want to save this user with this User ID?'],
+        messageCentered: true
+      }
+      this.confirmationDialogRef = this.dialog.open(ConfirmationDialogComponent, {data: dialogData});
+      this.confirmationDialogRef.afterClosed().subscribe(dialogResp => {
+        if (dialogResp) {
+          this.saveAndClose();
+        }
+      })
+    } else {
+      this.saveAndClose();
+    }
+  }
+
+  saveAndClose(): void {
     this.user.roleIDs = this.selectedRoles.filter(role => role.selected).map(role => role.roleID);
     const resp: UserEditorDialogResponse = {
       status: 'save',
