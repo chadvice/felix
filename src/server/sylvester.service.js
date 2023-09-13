@@ -92,7 +92,7 @@ async function createTable(req, res) {
     }
 }
 
-async function updateCollection(req, res) {
+async function updateTableSchema(req, res) {
     const db = mongo.getDB();
     const client = mongo.getClient();
     const collection = db.collection('Collections');
@@ -418,7 +418,7 @@ async function bulkCreate(req, res) {
     }
 }
 
-async function deleteCollection(req, res) {
+async function deleteTable(req, res) {
     const userID = req.params.userID;
     const collectionName = req.params.collectionName;
     try {
@@ -796,7 +796,7 @@ module.exports = {
     getTablesForUserID,
     getTableNames,
     createTable,
-    updateCollection,
+    updateTableSchema,
     getTable,
     updateDocument,
     insertDocument,
@@ -804,7 +804,7 @@ module.exports = {
     bulkInsert,
     bulkReplace,
     bulkCreate,
-    deleteCollection,
+    deleteTable,
     getUsers,
     getUser,
     updateUser,

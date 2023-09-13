@@ -18,8 +18,8 @@ router.post('/table', (req, res) => {
     sylvesterService.createTable(req, res);
 });
 
-router.put('/collection', (req, res) => {
-    sylvesterService.updateCollection(req, res);
+router.put('/table', (req, res) => {
+    sylvesterService.updateTableSchema(req, res);
 });
 
 router.get('/table/:tableName', (req, res) => {
@@ -50,8 +50,8 @@ router.post('/bulkcreate', (req, res) => {
     sylvesterService.bulkCreate(req, res);
 });
 
-router.delete('/collection/:userID/:collectionName', (req, res) => {
-    sylvesterService.deleteCollection(req, res);
+router.delete('/table/:userID/:collectionName', (req, res) => {
+    sylvesterService.deleteTable(req, res);
 });
 
 /* #region  Users */

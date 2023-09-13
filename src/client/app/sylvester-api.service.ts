@@ -96,30 +96,30 @@ export class SylvesterApiService {
     )
   }
 
-  alterTable(collectionName: string, changes: TableChanges): Observable<APIResponse> {
-    const url: string = `${environment.sylvesterApiUrl}/collection`
+  alterTable(tableName: string, changes: TableChanges): Observable<APIResponse> {
+    const url: string = `${environment.sylvesterApiUrl}/table`
 
     const userID = this.getUserID();
     const body = {
       userID: userID,
-      collectionName: collectionName,
+      collectionName: tableName,
       newDescription: changes.newDescription,
       fieldChanges: changes.fieldChanges
     }
 
     return this.http.put<APIResponse>(url, body, this.getHttpOptions()).pipe(
-      catchError(this.handleError<APIResponse>('alterCollection')),
+      catchError(this.handleError<APIResponse>('alterTable')),
     )
   }
 
-  updateDocument(collection: string, document: Object): Observable<APIResponse> {
+  updateDocument(table: string, document: Object): Observable<APIResponse> {
     const url: string = `${environment.sylvesterApiUrl}/document`
 
     const userID = this.getUserID();
 
     const body = {
       userID: userID,
-      collection: collection,
+      collection: table,
       document: document
     }
 
@@ -128,14 +128,14 @@ export class SylvesterApiService {
     )
   }
 
-  insertDocument(collection: string, document: Object): Observable<APIResponse> {
+  insertDocument(table: string, document: Object): Observable<APIResponse> {
     const url: string = `${environment.sylvesterApiUrl}/document`
 
     const userID = this.getUserID();
 
     const body = {
       userID: userID,
-      collection: collection,
+      collection: table,
       document: document
     }
 
@@ -144,23 +144,23 @@ export class SylvesterApiService {
     )
   }
 
-  deleteDocument(collection: string, id: string): Observable<APIResponse> {
+  deleteDocument(table: string, id: string): Observable<APIResponse> {
     const userID = this.getUserID();
-    const url: string = `${environment.sylvesterApiUrl}/document/${collection}/${userID}/${id}`
+    const url: string = `${environment.sylvesterApiUrl}/document/${table}/${userID}/${id}`
 
     return this.http.delete<APIResponse>(url, this.getHttpOptions()).pipe(
       catchError(this.handleError<APIResponse>('deleteDocument')),
     )
   }
 
-  bulkInsert(collectionName: string, documents: Object[]): Observable<APIResponse> {
+  bulkInsert(tableName: string, documents: Object[]): Observable<APIResponse> {
     const url: string = `${environment.sylvesterApiUrl}/bulkinsert`;
 
     const userID = this.getUserID();
 
     const body = {
       userID: userID,
-      collectionName: collectionName,
+      collectionName: tableName,
       documents: documents
     }
 
@@ -169,14 +169,14 @@ export class SylvesterApiService {
     )
   }
 
-  bulkReplace(collectionName: string, documents: Object[]): Observable<APIResponse> {
+  bulkReplace(tableName: string, documents: Object[]): Observable<APIResponse> {
     const url: string = `${environment.sylvesterApiUrl}/bulkreplace`;
 
     const userID = this.getUserID();
 
     const body = {
       userID: userID,
-      collectionName: collectionName,
+      collectionName: tableName,
       documents: documents
     }
 
@@ -185,14 +185,14 @@ export class SylvesterApiService {
     )
   }
 
-  bulkCreate(collectionName: string, description: string, fields: SylvesterColumn[], documents: Object[]): Observable<APIResponse> {
+  bulkCreate(tableName: string, description: string, fields: SylvesterColumn[], documents: Object[]): Observable<APIResponse> {
     const url: string = `${environment.sylvesterApiUrl}/bulkcreate`
 
     const userID = this.getUserID();
 
     const body = {
       userID: userID,
-      collectionName: collectionName,
+      collectionName: tableName,
       description: description,
       fields: fields,
       documents: documents
@@ -205,14 +205,14 @@ export class SylvesterApiService {
     )
   }
 
-  deleteTable(collection: string): Observable<APIResponse> {
+  deleteTable(table: string): Observable<APIResponse> {
     const userID = this.getUserID();
-    const url: string = `${environment.sylvesterApiUrl}/collection/${userID}/${collection}`;
+    const url: string = `${environment.sylvesterApiUrl}/table/${userID}/${table}`;
 
     this.clearTablesCache();
 
     return this.http.delete<APIResponse>(url, this.getHttpOptions()).pipe(
-      catchError(this.handleError<APIResponse>('deleteCollection')),
+      catchError(this.handleError<APIResponse>('deleteTable')),
     )
   }
 
