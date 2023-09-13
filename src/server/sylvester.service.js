@@ -420,32 +420,32 @@ async function bulkCreate(req, res) {
 
 async function deleteTable(req, res) {
     const userID = req.params.userID;
-    const collectionName = req.params.collectionName;
+    const tableName = req.params.tableName;
     try {
         const db = mongo.getDB();
         const collection = db.collection('Collections');
 
-        const oldDoc = await collection.findOne({ name: collectionName });
+        const oldDoc = await collection.findOne({ name: tableName });
         if (oldDoc) {
             rolesCollection = db.collection('Roles');
             await rolesCollection.updateMany({}, {$pull: {tablePermissions: {tableID: new ObjectId(oldDoc._id)}}});
         }
-        await collection.findOneAndDelete({ name: collectionName });
+        await collection.findOneAndDelete({ name: tableName });
 
         const collections = await db.listCollections({}, { nameOnly: true }).toArray();
-        if (collections.findIndex(coll => coll.name === collectionName) !== -1) {
-            const dataCollection = db.collection(collectionName);
+        if (collections.findIndex(coll => coll.name === tableName) !== -1) {
+            const dataCollection = db.collection(tableName);
             await dataCollection.drop();
         }
 
 
-        const auditLogMessage = `Deleted table ${collectionName}.`;
-        const auditLogDescription = `The ${collectionName} table was deleted from the database.`
+        const auditLogMessage = `Deleted table ${tableName}.`;
+        const auditLogDescription = `The ${tableName} table was deleted from the database.`
         await writeToAuditLog(userID, auditLogMessage, auditLogDescription);
 
         res.status(200).json({ status: 'OK' });
     } catch (err) {
-        const auditLogMessage = `Error attmpting to delete table ${collectionName}.`;
+        const auditLogMessage = `Error attmpting to delete table ${tableName}.`;
         const auditLogDescription = `Error message: ${err.message}`;
         await writeToAuditLog(userID, auditLogMessage, auditLogDescription);
 

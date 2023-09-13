@@ -50,7 +50,7 @@ router.post('/bulkcreate', (req, res) => {
     sylvesterService.bulkCreate(req, res);
 });
 
-router.delete('/table/:userID/:collectionName', (req, res) => {
+router.delete('/table/:userID/:tableName', (req, res) => {
     sylvesterService.deleteTable(req, res);
 });
 
