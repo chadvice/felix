@@ -146,7 +146,7 @@ export class SylvesterApiService {
 
   deleteRow(table: string, id: string): Observable<APIResponse> {
     const userID = this.getUserID();
-    const url: string = `${environment.sylvesterApiUrl}/document/${table}/${userID}/${id}`
+    const url: string = `${environment.sylvesterApiUrl}/row/${table}/${userID}/${id}`
 
     return this.http.delete<APIResponse>(url, this.getHttpOptions()).pipe(
       catchError(this.handleError<APIResponse>('deleteRow')),

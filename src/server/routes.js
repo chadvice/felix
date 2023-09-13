@@ -34,8 +34,8 @@ router.post('/row', (req, res) => {
     sylvesterService.insertRow(req, res);
 });
 
-router.delete('/document/:table/:userID/:id', (req, res) => {
-    sylvesterService.deleteDocument(req, res);
+router.delete('/row/:table/:userID/:id', (req, res) => {
+    sylvesterService.deleteRow(req, res);
 });
 
 router.post('/bulkinsert', (req, res) => {

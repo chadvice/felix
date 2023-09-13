@@ -272,7 +272,7 @@ async function insertRow(req, res) {
     }
 }
 
-async function deleteDocument(req, res) {
+async function deleteRow(req, res) {
     const userID = req.params.userID;
     const tableName = req.params.table;
     const id = req.params.id;
@@ -283,13 +283,13 @@ async function deleteDocument(req, res) {
 
         const oldDoc = await collection.findOne(query);
         const resp = await collection.deleteOne(query);
-        const auditLogMessage = `Deleted record from the table ${tableName}.`;
-        const auditLogDescription = `A record was deleted from the ${tableName} table.`
+        const auditLogMessage = `Deleted row from the table ${tableName}.`;
+        const auditLogDescription = `A row was deleted from the ${tableName} table.`
         await writeToAuditLog(userID, auditLogMessage, auditLogDescription, oldDoc);
 
         res.status(200).json({ status: 'OK' });
     } catch (err) {
-        const auditLogMessage = `Error deleting record ${id} from table ${tableName}.`;
+        const auditLogMessage = `Error deleting row ${id} from table ${tableName}.`;
         const auditLogDescription = `Error message: ${err.message}.`
         await writeToAuditLog(userID, auditLogMessage, auditLogDescription);
 
@@ -800,7 +800,7 @@ module.exports = {
     getTable,
     updateRow,
     insertRow,
-    deleteDocument,
+    deleteRow,
     bulkInsert,
     bulkReplace,
     bulkCreate,
