@@ -218,32 +218,32 @@ async function getTable(req, res) {
     res.status(200).json(resp);
 }
 
-async function updateDocument(req, res) {
+async function updateRow(req, res) {
     try {
         const db = mongo.getDB();
         const userID = req.body.userID;
         const tableName = req.body.table;
-        const document = req.body.document;
+        const row = req.body.row;
         const collection = db.collection(tableName);
-        const query = { _id: new ObjectId(req.body.document._id) };
-        delete document._id;
+        const query = { _id: new ObjectId(req.body.row._id) };
+        delete row._id;
 
-        const oldDoc = await collection.findOne(query);
-        await collection.replaceOne(query, document);
+        const oldRow = await collection.findOne(query);
+        await collection.replaceOne(query, row);
         const auditLogMessage = `Changed record in table ${tableName}.`;
         const auditLogDescription = `A record was updated in the ${tableName} table.`
 
-        if (oldDoc) {
-            await writeToAuditLog(userID, auditLogMessage, auditLogDescription, oldDoc, document);
+        if (oldRow) {
+            await writeToAuditLog(userID, auditLogMessage, auditLogDescription, oldRow, row);
         } else {
-            await writeToAuditLog(userID, auditLogMessage, auditLogDescription, null, document);
+            await writeToAuditLog(userID, auditLogMessage, auditLogDescription, null, row);
         }
 
         res.status(200).json({ status: 'OK' });
     } catch (err) {
         const auditLogMessage = `Error updating record in table ${tableName}.`;
         const auditLogDescription = `Error message: ${err.message}.`
-        await writeToAuditLog(userID, auditLogMessage, auditLogDescription, null, document);
+        await writeToAuditLog(userID, auditLogMessage, auditLogDescription, null, row);
 
         res.status(200).json({ status: 'ERROR', message: err.message });
     }
@@ -798,7 +798,7 @@ module.exports = {
     createTable,
     updateTableSchema,
     getTable,
-    updateDocument,
+    updateRow,
     insertDocument,
     deleteDocument,
     bulkInsert,

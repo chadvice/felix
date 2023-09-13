@@ -216,7 +216,7 @@ export class TableDetailComponent implements OnInit, OnDestroy {
     this.tableRowEditorDialogRef.afterClosed().subscribe(dialogResp => {
       if (dialogResp) {
         if (dialogResp.action === 'save') {
-          this.apiService.updateDocument(this.dataTableName, dialogResp.document).subscribe(resp => {
+          this.apiService.updateRow(this.dataTableName, dialogResp.document).subscribe(resp => {
             if (resp.status === 'OK') {
               this.snackBar.open('Table changes saved', 'OK', { horizontalPosition: 'center', verticalPosition: 'bottom', duration: 1500 });
               this.getTableData();
@@ -225,7 +225,7 @@ export class TableDetailComponent implements OnInit, OnDestroy {
             }
           })
         } else if (dialogResp.action === 'delete') {
-          this.apiService.deleteDocument(this.dataTableName, this.dataTable.rows[index]._id).subscribe(resp => {
+          this.apiService.deleteRow(this.dataTableName, this.dataTable.rows[index]._id).subscribe(resp => {
             if (resp.status === 'OK') {
               this.snackBar.open('Record deleted', 'OK', { horizontalPosition: 'center', verticalPosition: 'bottom', duration: 1500 });
               this.getTableData();
@@ -252,7 +252,7 @@ export class TableDetailComponent implements OnInit, OnDestroy {
 
     this.tableRowEditorDialogRef.afterClosed().subscribe(dialogResp => {
       if (dialogResp && dialogResp.action === 'save') {
-        this.apiService.insertDocument(this.dataTableName, dialogResp.document).subscribe(resp => {
+        this.apiService.insertRow(this.dataTableName, dialogResp.document).subscribe(resp => {
           if (resp.status === 'OK') {
             this.snackBar.open('New record added', 'OK', { horizontalPosition: 'center', verticalPosition: 'bottom', duration: 1500 });
             this.getTableData();

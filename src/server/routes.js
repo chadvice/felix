@@ -26,8 +26,8 @@ router.get('/table/:tableName', (req, res) => {
     sylvesterService.getTable(req, res);
 });
 
-router.put('/document', (req, res) => {
-    sylvesterService.updateDocument(req, res);
+router.put('/row', (req, res) => {
+    sylvesterService.updateRow(req, res);
 });
 
 router.post('/document', (req, res) => {

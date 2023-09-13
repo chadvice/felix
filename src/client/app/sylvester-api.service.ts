@@ -112,23 +112,23 @@ export class SylvesterApiService {
     )
   }
 
-  updateDocument(table: string, document: Object): Observable<APIResponse> {
-    const url: string = `${environment.sylvesterApiUrl}/document`
+  updateRow(table: string, row: Object): Observable<APIResponse> {
+    const url: string = `${environment.sylvesterApiUrl}/row`
 
     const userID = this.getUserID();
 
     const body = {
       userID: userID,
       table: table,
-      document: document
+      row: row
     }
 
     return this.http.put<APIResponse>(url, body, this.getHttpOptions()).pipe(
-      catchError(this.handleError<APIResponse>('updateDocument')),
+      catchError(this.handleError<APIResponse>('updateRow')),
     )
   }
 
-  insertDocument(table: string, document: Object): Observable<APIResponse> {
+  insertRow(table: string, row: Object): Observable<APIResponse> {
     const url: string = `${environment.sylvesterApiUrl}/document`
 
     const userID = this.getUserID();
@@ -136,24 +136,24 @@ export class SylvesterApiService {
     const body = {
       userID: userID,
       table: table,
-      document: document
+      document: row
     }
 
     return this.http.post<APIResponse>(url, body, this.getHttpOptions()).pipe(
-      catchError(this.handleError<APIResponse>('insertDocument')),
+      catchError(this.handleError<APIResponse>('insertRow')),
     )
   }
 
-  deleteDocument(table: string, id: string): Observable<APIResponse> {
+  deleteRow(table: string, id: string): Observable<APIResponse> {
     const userID = this.getUserID();
     const url: string = `${environment.sylvesterApiUrl}/document/${table}/${userID}/${id}`
 
     return this.http.delete<APIResponse>(url, this.getHttpOptions()).pipe(
-      catchError(this.handleError<APIResponse>('deleteDocument')),
+      catchError(this.handleError<APIResponse>('deleteRow')),
     )
   }
 
-  bulkInsert(tableName: string, documents: Object[]): Observable<APIResponse> {
+  bulkInsert(tableName: string, rows: Object[]): Observable<APIResponse> {
     const url: string = `${environment.sylvesterApiUrl}/bulkinsert`;
 
     const userID = this.getUserID();
@@ -161,7 +161,7 @@ export class SylvesterApiService {
     const body = {
       userID: userID,
       tableName: tableName,
-      documents: documents
+      documents: rows
     }
 
     return this.http.post<APIResponse>(url, body, this.getHttpOptions()).pipe(
@@ -169,7 +169,7 @@ export class SylvesterApiService {
     )
   }
 
-  bulkReplace(tableName: string, documents: Object[]): Observable<APIResponse> {
+  bulkReplace(tableName: string, rows: Object[]): Observable<APIResponse> {
     const url: string = `${environment.sylvesterApiUrl}/bulkreplace`;
 
     const userID = this.getUserID();
@@ -177,7 +177,7 @@ export class SylvesterApiService {
     const body = {
       userID: userID,
       tableName: tableName,
-      documents: documents
+      documents: rows
     }
 
     return this.http.post<APIResponse>(url, body, this.getHttpOptions()).pipe(
@@ -185,7 +185,7 @@ export class SylvesterApiService {
     )
   }
 
-  bulkCreate(tableName: string, description: string, fields: SylvesterColumn[], documents: Object[]): Observable<APIResponse> {
+  bulkCreate(tableName: string, description: string, fields: SylvesterColumn[], rows: Object[]): Observable<APIResponse> {
     const url: string = `${environment.sylvesterApiUrl}/bulkcreate`
 
     const userID = this.getUserID();
@@ -195,7 +195,7 @@ export class SylvesterApiService {
       tableName: tableName,
       description: description,
       fields: fields,
-      documents: documents
+      documents: rows
     }
 
     this.clearTablesCache();
