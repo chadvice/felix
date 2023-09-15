@@ -107,6 +107,8 @@ export class SylvesterApiService {
       fieldChanges: changes.fieldChanges
     }
 
+    this.clearTablesCache();
+    
     return this.http.put<APIResponse>(url, body, this.getHttpOptions()).pipe(
       catchError(this.handleError<APIResponse>('alterTable')),
     )
