@@ -35,7 +35,7 @@ export class AuthService {
       }
     } catch (err) {
       console.log('Error initializing OidcClient', err);
-      // this.sessionExpiredDialogRef = this.dialog.open(SessionExpiredDialogComponent, {disableClose: true});
+      this.sessionExpiredDialogRef = this.dialog.open(SessionExpiredDialogComponent, {disableClose: true});
     }
   }
 
@@ -53,17 +53,9 @@ export class AuthService {
 
     try {
       this.userInfo = await this.oidcClient?.fetchUserInfo();
-      
-      // if (this.userInfo.preferred_username) {
-      //   localStorage.setItem('username', this.userInfo.preferred_username);
-      // }
     } catch {
       this.token = (await this.oidcClient?.refreshToken()) || undefined;
       this.userInfo = await this.oidcClient?.fetchUserInfo();
-
-      // if (this.userInfo.preferred_username) {
-      //   localStorage.setItem('username', this.userInfo.preferred_username);
-      // }
     }
   }
 
