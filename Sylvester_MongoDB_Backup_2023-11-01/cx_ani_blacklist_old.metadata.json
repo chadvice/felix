@@ -1,0 +1,1 @@
+{"indexes":[{"v":{"$numberInt":"2"},"key":{"_id":{"$numberInt":"1"}},"name":"_id_"}],"uuid":"abf6de1528894dbebbe70a5918bd7a9a","collectionName":"cx_ani_blacklist_old","type":"collection"}
