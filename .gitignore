@@ -38,6 +38,7 @@ testem.log
 /typings
 /sample_data
 .env
+*.zip
 
 # System files
 .DS_Store
