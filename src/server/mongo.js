@@ -1,15 +1,11 @@
 const { MongoClient } = require('mongodb');
 
-//TODO: move these to .env
-const url = 'mongodb+srv://sylvester_app:bERt3wMDSI6UG1kr@cluster0.flt5v5d.mongodb.net/?retryWrites=true&w=majority';
-const dbName = 'Sylvester';
-
 let client;
 let DB;
 
 async function connect(callback) {
-    client = new MongoClient(url);
-    await client.connect();
+    client = new MongoClient(process.env.MONGO_DB_CONNECTION_STRING);
+    await client.connect(process.env.MONGO_DB_DATABASE_NAME);
 
     DB = client.db(dbName);
 }
