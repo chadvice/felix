@@ -56,22 +56,19 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
 // Redirect production requests to SSL site (taken from https://jaketrent.com/post/https-redirect-node-heroku/)
-if(process.env.NODE_ENV === 'production') {
-    app.use((req, res, next) => {
-      if (req.header('x-forwarded-proto') !== 'https')
-        res.redirect(`https://${req.header('host')}${req.url}`)
-      else
-        next()
-    })
-}
+// if(process.env.NODE_ENV === 'production') {
+//     app.use((req, res, next) => {
+//       if (req.header('x-forwarded-proto') !== 'https')
+//         res.redirect(`https://${req.header('host')}${req.url}`)
+//       else
+//         next()
+//     })
+// }
 
 app.use(express.static(`${rootPath}/sylvester`));
 
 // CXOne Table Query
-// app.get('/api/cx/:tableName/:fieldName/:key', verifyCXOneApiKey, (req, res) => {
-//   sylvesterService.getRecordFromTable(req, res);
-// })
-app.get('/api/cx/:tableName/:fieldName/:key', (req, res) => {
+app.get('/api/cx/:tableName/:fieldName/:key', verifyCXOneApiKey, (req, res) => {
   sylvesterService.getRecordFromTable(req, res);
 })
 
