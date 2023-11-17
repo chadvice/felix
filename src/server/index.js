@@ -11,7 +11,7 @@ const port = process.env.PORT || '3030';
 const rootPath = path.resolve(__dirname, '../../dist');
 
 // CXOne API Call Authentication
-const cxoneApiKey = process.env.SYLVESTER_CXONE_API_KEY;
+const cxoneApiKey = process.env.FELIX_CXONE_API_KEY;
 const verifyCXOneApiKey = (req, res, next) => {
   const apiKey = req.header("x-api-key");
 
@@ -68,7 +68,10 @@ if(process.env.NODE_ENV === 'production') {
 app.use(express.static(`${rootPath}/sylvester`));
 
 // CXOne Table Query
-app.get('/api/cx/:tableName/:fieldName/:key', verifyCXOneApiKey, (req, res) => {
+// app.get('/api/cx/:tableName/:fieldName/:key', verifyCXOneApiKey, (req, res) => {
+//   sylvesterService.getRecordFromTable(req, res);
+// })
+app.get('/api/cx/:tableName/:fieldName/:key', (req, res) => {
   sylvesterService.getRecordFromTable(req, res);
 })
 
