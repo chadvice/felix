@@ -69,6 +69,7 @@ app.use(express.static(`${rootPath}/sylvester`));
 
 // CXOne Table Query
 app.get('/api/cx/:tableName/:fieldName/:key', verifyCXOneApiKey, (req, res) => {
+  console.log(`[felix] CXone API request: ${req.url}`);
   sylvesterService.getRecordFromTable(req, res);
 })
 
@@ -86,4 +87,4 @@ app.get('/*', (req, res) => {
   res.sendFile(`${rootPath}/sylvester/index.html`);
 });
 
-app.listen(port, () => console.log(`API running on localhost:${port}`));
+app.listen(port, () => console.log(`[felix] API running on localhost:${port}`));

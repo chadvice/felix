@@ -780,11 +780,15 @@ async function getRecordFromTable(req, res) {
         const query = { [fieldName]: key }
         const resp = await collection.find(query).toArray();
 
+        let payload;
         if (resp.length === 0) {
-            res.status(200).json({ message: 'No Content' });
+            payload = { message: 'No Content' };
         } else {
-            res.status(200).json({ message: resp[0] });
+            payload = { message: resp[0] };
         }
+        
+        console.log(`[felix] CXone API response: ${JSON.stringify(payload)}`);
+        res.status(200).json(payload);
     } catch (err) {
         res.status(200).json({ status: 'ERROR', message: err.message });
     }
