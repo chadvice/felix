@@ -1,11 +1,11 @@
 export const environment = {
-    sylvesterApiUrl: 'https://sylvester.agonconsultingservices.com/api'
+    sylvesterApiUrl: 'https://felix.telephony-dev.nelnet.info/api'
 }
 
 export const AuthConfig = {
     pingClientID: 'SylvesterDEV',
     pingLoginURL: 'https://ssodev.nelnet.com',
-    pingRedirectUri: 'https://sylvester.agonconsultingservices.com',
-    pingEndSessionUri: 'https://sylvester.agonconsultingservices.com',
+    pingRedirectUri: 'https://felix.telephony-dev.nelnet.info',
+    pingEndSessionUri: 'https://felix.telephony-dev.nelnet.info',
     JWTUserIDField: 'UPN'
 }
