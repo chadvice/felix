@@ -18,12 +18,14 @@ const verifyCXOneApiKey = (req, res, next) => {
   if (apiKey === cxoneApiKey) {
     next();
   } else {
+    if (process.env.CXONE_API_LOGGING === 'on') {
+      console.log('[felix] CXone API request failed due to invalid or mising API key');
+    }
     res.status(401).json({message: 'Missing Authentication Token'})
   }
 }
 
 // Ping JWT Authentication Stuff
-// const eJwt = require('express-jwt');
 let jwksUri = '';
 if(process.env.NODE_ENV === 'production') {
   jwksUri = 'https://ssodev.nelnet.com/pf/JWKS';
@@ -39,8 +41,6 @@ const jwtCheck = eJwt({
       jwksRequestsPerMinute: 5,
       jwksUri: jwksUri
   }),
-  // audience: 'https://agon-apollo.herokuapp.com/api',
-  // issuer: 'https://agon.us.auth0.com/',
   algorithms: ['RS256']
 });
 
@@ -55,25 +55,13 @@ app.use(cors(corsOptions));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
-// Redirect production requests to SSL site (taken from https://jaketrent.com/post/https-redirect-node-heroku/)
-// if(process.env.NODE_ENV === 'production') {
-//     app.use((req, res, next) => {
-//       if (req.header('x-forwarded-proto') !== 'https')
-//         res.redirect(`https://${req.header('host')}${req.url}`)
-//       else
-//         next()
-//     })
-// }
-
 app.use(express.static(`${rootPath}/sylvester`));
 
 // CXOne Table Query
 app.get('/api/cx/:tableName/:fieldName/:key', verifyCXOneApiKey, (req, res) => {
-  console.log(`[felix] CXone API request: ${req.url}`);
   sylvesterService.getRecordFromTable(req, res);
 })
 
-// app.use('/api', routes, (err, req, res, next) => {
 app.use('/api', jwtCheck, routes, (err, req, res, next) => {
   if (err.name === 'UnauthorizedError') {
     return res.status(401).send({

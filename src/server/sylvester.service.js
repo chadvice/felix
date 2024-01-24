@@ -769,6 +769,10 @@ async function getAuditLog(req, res) {
 
 /* #region  CXOne API Endpoint */
 async function getRecordFromTable(req, res) {
+    if (process.env.CXONE_API_LOGGING === 'on') {
+        console.log(`[felix] CXone API request: ${req.url}`);
+    }
+
     const tableName = req.params.tableName;
     const fieldName = req.params.fieldName;
     const key = req.params.key;
@@ -786,8 +790,10 @@ async function getRecordFromTable(req, res) {
         } else {
             payload = { message: resp[0] };
         }
-        
-        console.log(`[felix] CXone API response: ${JSON.stringify(payload)}`);
+
+        if (process.env.CXONE_API_LOGGING === 'on') {
+            console.log(`[felix] CXone API response: ${JSON.stringify(payload)}`);
+        }
         res.status(200).json(payload);
     } catch (err) {
         res.status(200).json({ status: 'ERROR', message: err.message });
