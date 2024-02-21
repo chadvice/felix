@@ -1,1 +1,0 @@
-{"indexes":[{"v":{"$numberInt":"2"},"key":{"_id":{"$numberInt":"1"}},"name":"_id_"}],"uuid":"59382dd20524419b84c8cf0b6e6443c1","collectionName":"cx_queue_logic","type":"collection"}
