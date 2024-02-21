@@ -28,9 +28,9 @@ const verifyCXOneApiKey = (req, res, next) => {
 // Ping JWT Authentication Stuff
 let jwksUri = '';
 if(process.env.NODE_ENV === 'production') {
-  jwksUri = 'https://ssodev.nelnet.com/pf/JWKS';
+  jwksUri = 'https://sso.nelnet.com/pf/JWKS';
 } else {
-  jwksUri = 'https://auth.pingone.com/2e6fb850-41fc-4f87-9fbe-18fe1447439c/as/jwks';
+  jwksUri = 'https://ssodev.nelnet.com/pf/JWKS';
 }
 var { expressjwt: eJwt } = require("express-jwt");
 const jwks = require('jwks-rsa');
