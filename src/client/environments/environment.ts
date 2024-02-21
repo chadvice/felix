@@ -5,6 +5,7 @@ export const environment = {
 export const AuthConfig = {
     pingClientID: 'SylvesterDEV',
     pingLoginURL: 'https://ssodev.nelnet.com',
+    pingWellKnownEndpointsURL: 'https://ssodev.nelnet.com/.well-known/openid-configuration',
     pingRedirectUri: 'https://felix.telephony-dev.nelnet.info',
     pingEndSessionUri: 'https://felix.telephony-dev.nelnet.info',
     JWTUserIDField: 'UPN'
